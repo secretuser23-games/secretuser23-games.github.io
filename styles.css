@@ -1,41 +1,86 @@
-body{margin:0;
-padding:0;
-color:white;
-background-color:black;
-overflow:none;
+#mainGameCanvas{
+    display:block;
+    width:100vh;
+    height:100vh;
+    background-color:white;
+    border: 2px solid brown;
+    aspect-ratio: 1/1;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
 }
-header{
-    width:100vw;
-    height:25vh;
+#background{
+    z-index:-1;
+    position:absolute;
+    top:0;
+    left:0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #888888;
+    border-right: 2px solid brown;
+}
+body{
+    overflow:hidden;
+    margin:0;
+    padding:0;
     display:flex;
-    flex-direction:column;
     justify-content:center;
     align-items:center;
+    background-color: black;
+    color:white;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
 }
-#main{
-    position:relative;
-    top:25vh;
-    width:100vw;
-}
-#L1R1C1{
+#leftPart{
     position:absolute;
-    top:10vh;
-    left:50vw;
-    transform:translate(-50%,-50%);
-}
-.logShow{
-    position:absolute;
-    bottom:0;
+    top:0;
     left:0;
-    border: 2px solid white;
-    height:10vh;
+    width:25vh;
+    height:100vh;
+    z-index:20;
+    background-color: brown;
+}
+#rightPart{
+    position:absolute;
+    top:0;
+    right:0;
+    width:25vh;
+    height:100vh;
+    z-index:21;
+    background-color:brown;
+}
+.top{
+    justify-content:center;
+    align-items:center;
+    color:black;
+}
+.hideLogs{
+    display:none;
+}
+.showLogs{
+    position:absolute;
+    top:0;
+    right:0;
     width:100vw;
+    height:10vh;
+    z-index:22;
     background-color:white;
     color:black;
     overflow:auto;
 }
-.logHide{
-    display:none;
-    overflow:auto;
-
+#loading{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100vw;
+    height:100vh;
+    background-color:black;
+    color:white;
+    z-index:1000;
+}
+#loadingBar{
+    position:absolute;
+    top:50vh;
+    left:0;
+    width:100vw;
+    height:10vh;
 }
