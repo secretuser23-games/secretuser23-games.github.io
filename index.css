@@ -1,0 +1,156 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    background-color: #000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#mainGameContent {
+    position: relative;
+    width: 177.77777778vh;
+    height: 100vh;
+    max-width: 100vw;
+    background-image: url("images/BG's/95.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}
+
+#taskbar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background-color: #018281;
+    width: 100%;
+    height: 10vh;
+    min-height: 10vh;
+    container-type: size;
+}
+
+#startMenu {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 10vh;
+}
+
+#statsMenu {
+    height: 10vh;
+}
+
+.openMenu {
+    width: 100vh;
+    height: 75vh;
+    min-height: 75vh;
+    min-width: 50vh;
+    position: absolute;
+    top: 5vh;
+    left: 50vh;
+    background-color: black;
+    color: white;
+}
+
+.openSysMenu {
+    position: absolute;
+    left: 0;
+    bottom: 10vh;
+    height: 30vh;
+    min-height: 30vh;
+    width: 25vh;
+    min-width: 25vh;
+    background-color: #018281;
+}
+
+.closedMenu {
+    display: none;
+}
+
+.logsOpen {
+    overflow: auto;
+    min-height: 10vh;
+    height: 10vh;
+    width: 100%; 
+    min-width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: white;
+}
+
+#clock {
+    position: absolute;
+    bottom: 0; 
+    right: 0;
+    color: white;
+    font-size: 100cqh;
+    line-height: 1;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+table {
+    width: 100%;
+    height: 100%;
+}
+
+.inTable {
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    border: none;
+}
+
+.openGameMenu {
+    z-index:1000;
+    width: 100vh;
+    height: 90vh;
+    min-width: 100vh;
+    min-height: 90vh;
+    position: absolute;
+    top: 0;
+    left: 50vh;
+    background-color: white;
+}
+
+.openPowMenu {
+    width: 80vh;
+    height: 75vh;
+    min-width: 50vh;
+    min-height: 50vh;
+    position: absolute;
+    top: 5vh;
+    left: 50vh;
+    background-color: white;
+}
+
+.imageGameModes {
+    height: 50%;
+}
+
+#levelTableDiv {
+    width: 100%; 
+    height: 90vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: black;
+}
+
+.powImages {
+    height: 75%;
+    image-rendering: pixelated;
+}
+.closeMenusX{
+    height:5vh;
+    position:absolute;
+    top:0;
+    right:0;
+
+}

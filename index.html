@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>File System Idle and other games - Secret User 23</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="index.css">
+    </head>
+    <body>
+        <div id="gameMenu" class="closedMenu">
+            <img src="images/sharedMenuImages/x.png" class="closeMenusX">
+            <table>
+                <caption>Game Choices</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">File Finder games:</th>
+                        <th scope="col">Speedrun games: </th>
+                        <th scope="col">Virus games: </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><button class="inTable">File Finder (easy):<br/><img src="images/gameModes/NormalEasy.png" class="imageGameModes" title='File Finder: Find 3 files marked "Correct" and open them to complete the level. Collectiong "Incorrect" will kill you, and "?" files... Well, they are random, and may both be good and bad.'></button></td>
+                        <td><button class="inTable">File Finder Speedrun (easy):<br/><img src="images/gameModes/SpeedEasy.png" class="imageGameModes" title="Speedrun: Find the correct file, but you have a timer and must find the file before the 2 minutes are up."></button></td>
+                        <td><button class="inTable">Delete The Virus (easy):<br/><img src="images/gameModes/VirusEasy.png" class="imageGameModes" title='Virus Finder, and the replicate speed in every 2 seconds.'></button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="inTable">File Finder (medium):<br/><img src="images/gameModes/NormalMed.png" class="imageGameModes"></button></td>
+                        <td><button class="inTable">File Finder Speedrun (medium):<br/><img src="images/gameModes/SpeedNormal.png" class="imageGameModes"></button></td>
+                        <td><button class="inTable">Delete The Virus (medium):<br/><img src="images/gameModes/VirusMedium.png" class="imageGameModes"></button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="inTable">File Finder (hard):<br/><img src="images/gameModes/NormalHard.png" class="imageGameModes"></button></td>
+                        <td><button class="inTable">File Finder Speedrun (hard):<br/><img src="images/gameModes/SpeedHard.png" class="imageGameModes"></button></td>
+                        <td><button class="inTable">Delete The Virus (hard):<br/><img src="images/gameModes/VirusHard.png" class="imageGameModes"></button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="logs" class="closedMenu">Logs: </div>
+        <div id="mainGameContent">
+            <img src="images/statsMenus/95.png" id="statsMenu">
+            <div id="taskbar">
+                <img src="images/StartMenus/95.png" id="startMenu">
+                <p id="clock">XX:XX:XX XM</p>
+            </div>
+           <div id="systemMenu" class="closedMenu">
+                <table id="SystemTable">
+                    <tbody>
+                    <tr>
+                    <td><button class="inTable" onclick="showGameOptions()">Play Game</button></td>
+                    </tr>
+                    <tr>
+                    <td><button class="inTable">Main File System</button></td>
+                    </tr>
+                    <tr>
+                    <td><button class="inTable" onclick="showPowerOptions()">Power Options</button></td>
+                    </tr>
+                    <tr>
+                    <td><button class="inTable">Settings</button></td>
+                    </tr>
+                    <tr>
+                    <td><button class="inTable">Specs</button></td>
+                    <tr>
+                        <td><button class="inTable">Help</button></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="levelTableDiv" class="closedMenu">
+            <img src="images/sharedMenuImages/x.png" class="closeMenusX"></div>
+        <script src="index.js"></script>
+        <div id="statsPopup" class="closedMenu">
+            <img src="images/sharedMenuImages/reversex.png" class="closeMenusX"></div>
+        <div id="powerMenu" class="closedMenu">
+            <img src="images/sharedMenuImages/x.png" class="closeMenusX">
+            <table id="powerOptionsTable">
+                <tbody>
+                    <tr>
+                        <td><button class="inTable"><img src="images/powerOptions/off.png" class="powImages" title="Shut Down: Closes the page. All progress is saved except for any current level being played."></button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="inTable"><img src="images/powerOptions/restart.png" class="powImages" title="Restart: reloads the page. All progress is saved except for any current level being played."></button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="inTable"><img src="images/powerOptions/sleep.png" class="powImages" title="Sleep: Covers the screen in black. Press the button in the middle to turn the game back on."></button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>
