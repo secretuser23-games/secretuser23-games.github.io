@@ -14,16 +14,19 @@ body {
 }
 #mainGameContent {
     position: relative;
-    width: 177.77777778vh;
+    /* Use aspect-ratio to perfectly handle 16:9 regardless of unit rules */
+    aspect-ratio: 16 / 9;
     height: 100vh;
     max-width: 100vw;
+    /* Optional fallback: if the screen is too narrow, scale by width instead */
+    max-height: 56.25vw; 
+    
     background-image: url("images/BG's/95.jpeg");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
     overflow: hidden;
 }
-
 #taskbar {
     position: absolute;
     left: 0;
@@ -125,8 +128,9 @@ table {
     min-width: 50vh;
     min-height: 50vh;
     position: absolute;
-    top: 5vh;
-    left: 50vh;
+    top: 0;
+    left: 0;
+    transform:translate(33vh, 0);
     background-color: white;
 }
 
@@ -153,4 +157,38 @@ table {
     top:0;
     right:0;
 
+}
+.openHelpMenu{
+    height:75vh;
+    width:80vh;
+    overflow:auto;
+    position:absolute;
+    top:0;
+    left: 0;
+    transform:translate(33vh, 0);
+    background-color:#ffad48;
+}
+.openGearMenu{
+    height:80vh;
+    width:100vh;
+    overflow:auto;
+    position:absolute;
+    top:0;
+    left:0;
+    background-color:greenyellow;
+    transform:translate(33vh, 0)
+}
+.fileExplorer{
+    height:80vh;
+    width:150vh;
+    position:absolute;
+    top:0;
+    left:0;
+    background-color:black;
+    color:white;
+    transform:translate(10%, 5%)
+}
+td{
+    text-align:center;
+    vertical-align:middle;
 }
