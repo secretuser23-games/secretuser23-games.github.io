@@ -3,11 +3,17 @@ function gebid(input){
 }
 
 function log(what){
+    if(what == null){
+        return
+    }
     var out = document.createElement("p");
     out.innerHTML = what;
     gebid("logs")?.appendChild(out);
+    return out
 }
-
+function clearLog(){
+    gebid("logs").innerHTML = "Logs: "
+}
 var globalIdCounter = 0; 
 var levels =[0], specs = [`4 MB RAM`, `33 Mhz CPU`, `Integrated GPU`, `9" CRT Screen` ];
 document.cookie = "levels=" + JSON.stringify(levels) + "; path=/;";
@@ -103,7 +109,8 @@ function startGame(gameID){
                 inside: null,
                 depth: folderNode.depth + 1,
                 id: globalIdCounter++,
-                fileSize: getRandomNumber(100) + 1
+                fileSize: getRandomNumber(100) + 1,
+                parentID: 
             });
         }
     }
@@ -131,6 +138,7 @@ function openFile(id){
 }
 
 function openFolder(id){
+    currentFolderID = id
     updateFileExplorer(activeTree, id);
 }
 
@@ -155,17 +163,20 @@ function updateFileExplorer(tree, currentID){
         
         insert += `<tr><td>` +actionButton + `</td><td>` + item.Name + `</td><td>` + item.fileSize + `MB</td><td>${isExecutable}</td><td>${isCorrectSystemFile}</td></tr>`;
     }
-    log("frame")
+    clearLog();
     if(currentFolderID != -1){
-    insert += "<tr><td> + <button onclick='openFolder(" + findNodeById(tree, currentFolderID).parent.id + ")'>Return up 1 Folder</button></td></tr>";}
+    insert += "<tr><td> + <button onclick='openFolder(-1)'>Return To Top</button></td></tr>";}
     newtBody.id = "tBodyMainExplorer";
     newtBody.innerHTML = insert;
-    
+    log(lastInside)
+    log("1")
+    log(newtBody.innerHTML)
+    log("2")
     if(lastInside !== newtBody.innerHTML){
         gebid("tBodyMainExplorer")?.remove();
-        lastInside = newtBody.innerHTML;
         gebid("fileShower")?.appendChild(newtBody);
     }
+    lastInside = newtBody.innerHTML;
 }
 
 function updateTime() {
