@@ -192,3 +192,7 @@ td{
     text-align:center;
     vertical-align:middle;
 }
+#progressToWin{
+    height:5%;
+    width:100%;
+}
