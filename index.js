@@ -164,7 +164,7 @@ function openFile(id){
             gebid("progressToWin").value = 100 * (1 / maxForBar) * currentProgress;
         }
         if(currentProgress === maxForBar){
-            if(typeof win === "function") win(gameID);
+            if(typeof win === "function") win(gameID, timeLeft);
         }
         deleteFile(node.id)
     } else {
@@ -185,7 +185,7 @@ function win(gameID, timeLeft = 0){
     else{
         difficulty = 1.5;
     }
-    pointsEarned = (levels[0]*difficulty*1000)+(1000*timeLeft)+bonusPoints;
+    pointsEarned = (levels[0]*difficulty*1000)+(100*timeLeft)+bonusPoints;
     log("test")
     openPopup("win.exe")
 }
