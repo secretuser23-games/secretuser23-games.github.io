@@ -200,8 +200,43 @@ td{
     background-color:white;
     position:absolute;
     top:0;
-    left:0;
+    right:0;
     color:black;
     font-family:'Courier New', Courier, monospace;
-    font-size:100cqh;
+    height:10vh;
+    width:20vh;
+    z-index:1000;
+    font-size: 1cqw;
+    text-align:center;
+    justify-content:center;
+}
+.countdownShow{
+    width:100vw;
+    height:100vh;
+    z-index:10000;
+    background:black;
+    position:absolute;
+    top:0;
+    left:0;
+}
+#countdownForSpeedrunProgress{
+    width:100vw;
+    height:100vh;
+}
+.showWinPopup{
+    justify-content:center;
+    align-items:center;
+    background: #e7c9a9;
+    height:100vh;
+    width:125vh;
+    position:absolute;
+    top:0;
+    left:50vw;
+    transform:translate(-50%, 0);
+    z-index: 1000000000;
+    font-size: 10cqh;
+
+}
+img{
+    image-rendering: crisp-edges;
 }

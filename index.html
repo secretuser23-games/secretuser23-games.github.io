@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="index.css">
     </head>
     <body>
+        <div id="countdownForSpeedrun" class="closedMenu"><progress id="countdownForSpeedrunProgress" value="2000" max="2000"></progress></div>
         <div id="timerForSpeedrun" class="closedMenu">0 Seconds Left</div>
         <div id="mainGameContent" onclick="closeAllMenus(event)">
             <img src="images/statsMenus/95.png" id="statsMenu">
@@ -99,6 +100,7 @@
             </div>
             <div id="settingsMenu" class="closedMenu"><img src="images/sharedMenuImages/x.png" class="closeMenusX">test</div>
         </div>
+        <div id="winPopup" class="closedMenu"><p id="centerNormal">You Won! Points Earned: </p></div>
         <script src="index.js"></script>
     </body>
 </html>
