@@ -15,9 +15,17 @@ function clearLog(){
     gebid("logs").innerHTML = "Logs: "
 }
 var globalIdCounter = 0; 
-var levels=[1], specs=[`4 MB RAM`, `33 Mhz CPU`, `Integrated GPU`, `9" CRT Screen` ];
-function editCookie(){
-    document.cookie = "{levels:" + JSON.stringify(levels) + ",percentToNewOS:0,specs:" + JSON.stringify(specs) + ",currentOS:1}; path=/;";
+var levels =[0];
+var specs = [`4 MB RAM`, `33 Mhz CPU`, `Integrated GPU`, `9" CRT Screen`];
+
+function editCookie() {
+    const cookieData = {
+        levels: levels,
+        percentToNewOS: 0,
+        specs: specs,
+        currentOS: 1
+    };
+    document.cookie = "main=" + encodeURIComponent(JSON.stringify(cookieData)) + "; path=/;";
 }
 editCookie();
 function getCookieJsonValue(cookieName, jsonKey) {
@@ -39,8 +47,8 @@ function getCookieJsonValue(cookieName, jsonKey) {
 }
 
 function addStatsToPopup(){
-    const parsedLevels = JSON.parse(getCookieValue("levels"));
-    const parsedSpecs = JSON.parse(getCookieValue("specs"));
+    const parsedLevels = getCookieJsonValue("main", "levels");
+    const parsedSpecs = getCookieJsonValue("main", "specs");
     if(gebid("currentLevel")) gebid("currentLevel").innerHTML = "Current Level: " + (parsedLevels ? parsedLevels[0] : 0);
     if(gebid("currentSpecs")) {
         gebid("currentSpecs").innerHTML = "RAM: " + parsedSpecs[0] + "<br/>CPU: " + parsedSpecs[1] + "<br/>GPU: "+ parsedSpecs[2] + "<br/>Screen: " + parsedSpecs[3];
