@@ -196,3 +196,12 @@ td{
     height:5%;
     width:100%;
 }
+.showTimer{
+    background-color:white;
+    position:absolute;
+    top:0;
+    left:0;
+    color:black;
+    font-family:'Courier New', Courier, monospace;
+    font-size:100cqh;
+}

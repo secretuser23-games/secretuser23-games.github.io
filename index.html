@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="index.css">
     </head>
     <body>
+        <div id="timerForSpeedrun" class="closedMenu">0 Seconds Left</div>
         <div id="mainGameContent" onclick="closeAllMenus(event)">
             <img src="images/statsMenus/95.png" id="statsMenu">
             <div id="taskbar" onclick="closeAllMenus(event)">
@@ -15,7 +16,7 @@
             </div>
             <div id="fileExplorer" class="closedMenu">
                 <table id="fileShower">
-                    <thead><td>File Options: </td><td>Name:</td><td>File Size:</td><td>Openable?</td><td>Is Helpful?</td></thead>
+                    <thead><td>File Options: </td><td>Name:</td><td>File Size:</td><td>Openable?</td><td>Is Helpful?</td><td>ID: </td></thead>
                 </table>
                 <progress id="progressToWin" value="0" max="100"></progress>
             </div>
@@ -37,14 +38,14 @@
                             <td><button class="inTable" onclick="startGame(3)">Delete The Virus (easy):<br/><img src="images/gameModes/VirusEasy.png" class="imageGameModes"></button></td>
                         </tr>
                         <tr>
-                            <td><button class="inTable">File Finder (medium):<br/><img src="images/gameModes/NormalMed.png" class="imageGameModes"></button></td>
-                            <td><button class="inTable">File Finder Speedrun (medium):<br/><img src="images/gameModes/SpeedNormal.png" class="imageGameModes"></button></td>
-                            <td><button class="inTable">Delete The Virus (medium):<br/><img src="images/gameModes/VirusMedium.png" class="imageGameModes"></button></td>
+                            <td><button class="inTable" onclick="startGame(4)">File Finder (medium):<br/><img src="images/gameModes/NormalMed.png" class="imageGameModes"></button></td>
+                            <td><button class="inTable" onclick="startGame(5)">File Finder Speedrun (medium):<br/><img src="images/gameModes/SpeedNormal.png" class="imageGameModes"></button></td>
+                            <td><button class="inTable" onclick="startGame(6)">Delete The Virus (medium):<br/><img src="images/gameModes/VirusMedium.png" class="imageGameModes"></button></td>
                         </tr>
                         <tr>
-                            <td><button class="inTable">File Finder (hard):<br/><img src="images/gameModes/NormalHard.png" class="imageGameModes"></button></td>
-                            <td><button class="inTable">File Finder Speedrun (hard):<br/><img src="images/gameModes/SpeedHard.png" class="imageGameModes"></button></td>
-                            <td><button class="inTable">Delete The Virus (hard):<br/><img src="images/gameModes/VirusHard.png" class="imageGameModes"></button></td>
+                            <td><button class="inTable" onclick="startGame(7)">File Finder (hard):<br/><img src="images/gameModes/NormalHard.png" class="imageGameModes"></button></td>
+                            <td><button class="inTable" onclick="startGame(8)">File Finder Speedrun (hard):<br/><img src="images/gameModes/SpeedHard.png" class="imageGameModes"></button></td>
+                            <td><button class="inTable" onclick="startGame(9)">Delete The Virus (hard):<br/><img src="images/gameModes/VirusHard.png" class="imageGameModes"></button></td>
                         </tr>
                     </tbody>
                 </table>
