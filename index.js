@@ -61,6 +61,8 @@ function getCookieJsonValue(cookieName, jsonKey) {
                 return jsonObject[jsonKey] !== undefined ? jsonObject[jsonKey] : null;
             } catch (e) {
                 console.error("Malformed JSON in cookie:", e);
+                createCookie();
+                window.location.reload();
                 return null;
             }
         }
