@@ -28,7 +28,7 @@ if (document.cookie === "") {
 }
 function createCookie() {
     levels =[1];
-    specs = ["4 MB RAM", "66 Mhz CPU", "Integrated GPU, 1MB Vram", '14" CRT Screen, 360p', "512 MB HDD"];
+    specs = ["4 MB RAM", "66 Mhz CPU", "Integrated GPU, 1MB Vram", '14\" CRT Screen, 360p', "512 MB HDD"];
     percentToNewOS = 0;
     maxPercentToNewOS = 100000;
     
