@@ -14,20 +14,42 @@ function log(what){
 function clearLog(){
     gebid("logs").innerHTML = "Logs: "
 }
+var maxForBar = 0, currentProgress = 0;
+var activeTree = null;
+var currentFolderID = -1;
+var tree = [];
+var gameId = 0;
+var pointsEarned = 0;
+var hasOpenedHelp = 0;
 var globalIdCounter = 0; 
-var levels =[0];
-var specs = [`4 MB RAM`, `33 Mhz CPU`, `Integrated GPU`, `9" CRT Screen`];
+var percentToNewOS, maxPercentToNewOS, levels, specs;
+if (document.cookie === "") {
+    createCookie();
+}
+function createCookie() {
+    levels =[1];
+    specs = ["4 MB RAM", "66 Mhz CPU", "Integrated GPU, 1MB Vram", '14" CRT Screen, 360p', "512 MB HDD"];
+    percentToNewOS = 0;
+    maxPercentToNewOS = 100000;
+    
+    editCookie();
+}
 
 function editCookie() {
     const cookieData = {
         levels: levels,
-        percentToNewOS: 0,
+        percentToNewOS: percentToNewOS,
+        maxPercentToNewOS: maxPercentToNewOS,
         specs: specs,
         currentOS: 1
     };
-    document.cookie = "main=" + encodeURIComponent(JSON.stringify(cookieData)) + "; path=/;";
+    const jsonString = JSON.stringify(cookieData);
+    document.cookie = "main=" + encodeURIComponent(jsonString) + "; max-age=31536000; path=/;";
 }
-editCookie();
+percentToNewOS = getCookieJsonValue("main", "percentToNewOS")
+maxPercentToNewOS = getCookieJsonValue("main", "maxPercentToNewOS")
+levels = getCookieJsonValue("main", "levels")
+specs = getCookieJsonValue("main", "specs")
 function getCookieJsonValue(cookieName, jsonKey) {
     const cookiesArray = document.cookie.split(';');
     for (let i = 0; i < cookiesArray.length; i++) {
@@ -51,7 +73,7 @@ function addStatsToPopup(){
     const parsedSpecs = getCookieJsonValue("main", "specs");
     if(gebid("currentLevel")) gebid("currentLevel").innerHTML = "Current Level: " + (parsedLevels ? parsedLevels[0] : 0);
     if(gebid("currentSpecs")) {
-        gebid("currentSpecs").innerHTML = "RAM: " + parsedSpecs[0] + "<br/>CPU: " + parsedSpecs[1] + "<br/>GPU: "+ parsedSpecs[2] + "<br/>Screen: " + parsedSpecs[3];
+        gebid("currentSpecs").innerHTML = "RAM: " + parsedSpecs[0] + "<br/>CPU: " + parsedSpecs[1] + "<br/>GPU: "+ parsedSpecs[2] + "<br/>Screen: " + parsedSpecs[3] + "<br/> Storage: " + parsedSpecs[4];
     }
 }
 
@@ -69,17 +91,28 @@ function openStats(){ closeAllMenus(); if(gebid("statsPopup")) gebid("statsPopup
 function showGameOptions(){ closeAllMenus(); if(gebid("gameMenu")) gebid("gameMenu").className = "openGameMenu"; }
 function openSettings(){ closeAllMenus(); if(gebid("settingsMenu")) gebid("settingsMenu").className = "openGearMenu"; }
 function showPowerOptions(){ closeAllMenus(); if(gebid("powerMenu")) gebid("powerMenu").className = "openPowMenu"; }
-
-var maxForBar = 0, currentProgress = 0;
-var activeTree = null;
-var currentFolderID = -1;
-var tree = [];
-var gameId = 0;
-var pointsEarned = 0;
+function exitGame(){
+    tree = null, currentProgress = 0, activeTree = null, currentFolderId = -1, globalIDCounter = 0;
+    gebid("fileExplorer").classList = "closedMenu"
+}
 function openPopup(popupID){
     if(popupID == "win.exe"){
         gebid("winPopup").classList = "showWinPopup"
-        gebid("winPopup").innerHTML = "<p>You Win! Points Earned:<p><p>" + pointsEarned + "</p>"
+        gebid("winPopup").innerHTML = "<p>You Win! Points Earned:<p><p>" + pointsEarned + "</p><br/><button onclick='openPopup(`percentageToNewOS`)'> See Percentage To New OS</button>"
+        levels[0] += 1;
+        percentToNewOS += pointsEarned
+        editCookie();
+    }
+    else if(popupID == "percentageToNewOS"){
+        var nextButton = (percentToNewOS/maxPercentToNewOS >= 1)? `<button onclick='openPopup("newOS.exe")'>Yay! Time for a new OS!</button>`: `<button onclick='openPopup("closeFile")'>Next</button>`
+        gebid("winPopup").innerHTML = "<p>Percentage: </p><p>" + ((percentToNewOS/maxPercentToNewOS)*100).toFixed(1) + "%</p><progress value='" +percentToNewOS + "' max='" + maxPercentToNewOS+ "'></progress>" + nextButton
+    }
+    else if(popupID == "newOS.exe"){
+        gebid("winPopup").innerHTML = "<p>Unlocked New OS: (click the button to be brought to the os select page)</p><button onclick='openOSExplorer()'>Let's Go!</button>";
+    }
+    else if(popupID == "closeFile"){
+        gebid("winPopup").classList = "closedMenu";
+        exitGame();
     }
 }
 function startGame(gameID1){
@@ -171,7 +204,6 @@ function openFile(id){
         log("Opened file: " + node.Name);
     }
 }
-var hasOpenedHelp = 0;
 function win(gameID, timeLeft = 0){
     var difficulty;
     alert('You won! Click "OK" to go and claim your prizes!')
@@ -186,7 +218,6 @@ function win(gameID, timeLeft = 0){
         difficulty = 1.5;
     }
     pointsEarned = (levels[0]*difficulty*1000)+(100*timeLeft)+bonusPoints;
-    log("test")
     openPopup("win.exe")
 }
 function deleteFile(id) {
