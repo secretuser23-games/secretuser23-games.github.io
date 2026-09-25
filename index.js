@@ -23,12 +23,15 @@ var pointsEarned = 0;
 var hasOpenedHelp = 0;
 var globalIdCounter = 0; 
 var percentToNewOS, maxPercentToNewOS, levels, specs;
-if (document.cookie === "") {
-    createCookie();
+
+// Check if our data exists in localStorage
+if (localStorage.getItem("main") === null) {
+    createCookie(); // Keeping the name, but changing the mechanism
 }
+
 function createCookie() {
     levels =[1];
-    specs = ["4 MB RAM", "66 Mhz CPU", "Integrated GPU, 1MB Vram", '14\" CRT Screen, 360p', "512 MB HDD"];
+    specs = ["4 MB RAM", "66 Mhz CPU", "Integrated GPU, 1MB Vram", '14" CRT Screen, 360p', "512 MB HDD"];
     percentToNewOS = 0;
     maxPercentToNewOS = 100000;
     
@@ -43,33 +46,28 @@ function editCookie() {
         specs: specs,
         currentOS: 1
     };
-    const jsonString = JSON.stringify(cookieData);
-    document.cookie = "main=" + encodeURIComponent(jsonString) + "; max-age=31536000; path=/;";
-}
-percentToNewOS = getCookieJsonValue("main", "percentToNewOS")
-maxPercentToNewOS = getCookieJsonValue("main", "maxPercentToNewOS")
-levels = getCookieJsonValue("main", "levels")
-specs = getCookieJsonValue("main", "specs")
-function getCookieJsonValue(cookieName, jsonKey) {
-    const cookiesArray = document.cookie.split(';');
-    for (let i = 0; i < cookiesArray.length; i++) {
-        let cookie = cookiesArray[i].trim();
-        if (cookie.indexOf(cookieName + '=') === 0) {
-            const rawValue = cookie.substring(cookieName.length + 1);
-            try {
-                const jsonObject = JSON.parse(decodeURIComponent(rawValue));
-                return jsonObject[jsonKey] !== undefined ? jsonObject[jsonKey] : null;
-            } catch (e) {
-                console.error("Malformed JSON in cookie:", e);
-                createCookie();
-                window.location.reload();
-                return null;
-            }
-        }
-    }
-    return null;
+    localStorage.setItem("main", JSON.stringify(cookieData));
 }
 
+// Initial load
+percentToNewOS = getCookieJsonValue("main", "percentToNewOS");
+maxPercentToNewOS = getCookieJsonValue("main", "maxPercentToNewOS");
+levels = getCookieJsonValue("main", "levels");
+specs = getCookieJsonValue("main", "specs");
+
+function getCookieJsonValue(storageKey, jsonKey) {
+    const rawValue = localStorage.getItem(storageKey);
+    if (!rawValue) return null;
+
+    try {
+        const jsonObject = JSON.parse(rawValue);
+        return jsonObject[jsonKey] !== undefined ? jsonObject[jsonKey] : null;
+    } catch (e) {
+        console.error("Malformed JSON in local storage:", e);
+        createCookie(); 
+        return null;
+    }
+}
 function addStatsToPopup(){
     const parsedLevels = getCookieJsonValue("main", "levels");
     const parsedSpecs = getCookieJsonValue("main", "specs");
