@@ -1,3 +1,5 @@
+log(localStorage.getItem("main"))
+log(localStorage.getItem("version"))
 function gebid(input){
     return document.getElementById(input);
 }
@@ -14,6 +16,7 @@ function log(what){
 function clearLog(){
     gebid("logs").innerHTML = "Logs: "
 }
+var gameVersion = "X.0.2"
 var maxForBar = 0, currentProgress = 0;
 var activeTree = null;
 var currentFolderID = -1;
@@ -22,18 +25,17 @@ var gameId = 0;
 var pointsEarned = 0;
 var hasOpenedHelp = 0;
 var globalIdCounter = 0; 
-var percentToNewOS, maxPercentToNewOS, levels, specs;
-
-// Check if our data exists in localStorage
-if (localStorage.getItem("main") === null) {
-    createCookie(); // Keeping the name, but changing the mechanism
+var percentToNewOS, maxPercentToNewOS, levels, specs, OSesUnlocked;
+if(localStorage.getItem("version") != gameVersion || localStorage.getItem("main") === null){
+    localStorage.setItem("version", gameVersion)
+    createCookie();
 }
-
 function createCookie() {
     levels =[1];
     specs = ["4 MB RAM", "66 Mhz CPU", "Integrated GPU, 1MB Vram", '14" CRT Screen, 360p', "512 MB HDD"];
     percentToNewOS = 0;
     maxPercentToNewOS = 100000;
+    OSesUnlocked = [true,false]
     
     editCookie();
 }
@@ -44,16 +46,17 @@ function editCookie() {
         percentToNewOS: percentToNewOS,
         maxPercentToNewOS: maxPercentToNewOS,
         specs: specs,
-        currentOS: 1
+        currentOS: 1,
+        OSesUnlocked: OSesUnlocked
     };
     localStorage.setItem("main", JSON.stringify(cookieData));
 }
 
-// Initial load
 percentToNewOS = getCookieJsonValue("main", "percentToNewOS");
 maxPercentToNewOS = getCookieJsonValue("main", "maxPercentToNewOS");
 levels = getCookieJsonValue("main", "levels");
 specs = getCookieJsonValue("main", "specs");
+OSesUnlocked = getCookieJsonValue("main", "OSesUnlocked")
 
 function getCookieJsonValue(storageKey, jsonKey) {
     const rawValue = localStorage.getItem(storageKey);
@@ -108,12 +111,33 @@ function openPopup(popupID){
         gebid("winPopup").innerHTML = "<p>Percentage: </p><p>" + ((percentToNewOS/maxPercentToNewOS)*100).toFixed(1) + "%</p><progress value='" +percentToNewOS + "' max='" + maxPercentToNewOS+ "'></progress>" + nextButton
     }
     else if(popupID == "newOS.exe"){
-        gebid("winPopup").innerHTML = "<p>Unlocked New OS: (click the button to be brought to the os select page)</p><button onclick='openOSExplorer()'>Let's Go!</button>";
+        gebid("winPopup").innerHTML = "<p>Unlocked New OS: (click the button to be brought to the os select page)</p><button onclick='unlockNextOS()'>Let's Go!</button>";
     }
     else if(popupID == "closeFile"){
         gebid("winPopup").classList = "closedMenu";
         exitGame();
     }
+}
+function off(){
+    alert("Device (fake) will power down. This means the page will automatically redirect to about:blank, a blank page, and all progress will save. Click OK to shut down")
+    window.open('about:blank', '_self').close();
+}
+function restart(){
+    alert("Device (fake) will restart. This brings you to the OS select menu (if you have unlocked it). Click OK to restart.")
+    window.location = "../"
+}
+function sleep(){
+    alert("Device (fake) will go to sleep. This popup will pause everything, where all background functions will pause other than timers. Do NOT do this in the middle of a level. Click OK to end sleep mode.")
+}
+function unlockNextOS(){
+    if(OSesUnlocked[1] == false){
+        OSesUnlocked[1] = true;
+    }
+    editCookie();
+    openOSExplorer();
+}
+function openOSExplorer(){
+    document.location = "index.html"
 }
 function startGame(gameID1){
     gebid("timerForSpeedrun").classList = "closedMenu"
@@ -141,7 +165,7 @@ function startGame(gameID1){
     for(var i = 0; i < maxForBar; i++){
         let folderNode = null;
         let attempts = 0;
-        while(!folderNode && attempts < 100) {
+        while(!folderNode) {
             let testNode = findNodeById(tree, getRandomNumber(globalIdCounter));
             if(testNode && testNode.inside && Array.isArray(testNode.inside)) {
                 folderNode = testNode;
@@ -158,7 +182,8 @@ function startGame(gameID1){
                 fileSize: getRandomNumber(100) + 1,
                 parentID: folderNode.id
             });
-            log(folderNode.id)
+            if(localStorage.getItem("version").includes("dev") == true){
+            log(folderNode.id)}
         }
     }
     for(var j = 0; j < (tree[0].inside.length * 2); j++){
