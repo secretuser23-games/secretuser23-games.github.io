@@ -24,14 +24,15 @@ var tree = [];
 var gameId = 0;
 var pointsEarned = 0;
 var hasOpenedHelp = 0;
-var globalIdCounter = 0; 
+var globalIdCounter = 0;
+var currentOS = gebid("inGameVersion").innerHTML; 
 var percentToNewOS, maxPercentToNewOS, levels, specs, OSesUnlocked;
 if(localStorage.getItem("version") != gameVersion || localStorage.getItem("main") === null){
     localStorage.setItem("version", gameVersion)
     createCookie();
 }
 function createCookie() {
-    levels =[1];
+    levels =[1, 1];
     specs = ["4 MB RAM", "66 Mhz CPU", "Integrated GPU, 1MB Vram", '14" CRT Screen, 360p', "512 MB HDD"];
     percentToNewOS = 0;
     maxPercentToNewOS = 100000;
@@ -46,7 +47,7 @@ function editCookie() {
         percentToNewOS: percentToNewOS,
         maxPercentToNewOS: maxPercentToNewOS,
         specs: specs,
-        currentOS: 1,
+        currentOS: currentOS,
         OSesUnlocked: OSesUnlocked
     };
     localStorage.setItem("main", JSON.stringify(cookieData));
@@ -102,7 +103,7 @@ function openPopup(popupID){
     if(popupID == "win.exe"){
         gebid("winPopup").classList = "showWinPopup"
         gebid("winPopup").innerHTML = "<p>You Win! Points Earned:<p><p>" + pointsEarned + "</p><br/><button onclick='openPopup(`percentageToNewOS`)'> See Percentage To New OS</button>"
-        levels[0] += 1;
+        levels[(currentOS-1)] += 1;
         percentToNewOS += pointsEarned
         editCookie();
     }
@@ -132,6 +133,9 @@ function sleep(){
 function unlockNextOS(){
     if(OSesUnlocked[1] == false){
         OSesUnlocked[1] = true;
+        specs = ["8 MB RAM", "132 Mhz CPU", "Integrated GPU, 2MB Vram", '16" CRT Screen, 480p', "768 MB HDD"]
+        percentToNewOS = 0;
+        maxPercentToNewOS = 150000
     }
     editCookie();
     openOSExplorer();
