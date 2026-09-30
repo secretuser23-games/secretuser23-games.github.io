@@ -14,14 +14,12 @@ body {
 }
 #mainGameContent {
     position: relative;
-    /* Use aspect-ratio to perfectly handle 16:9 regardless of unit rules */
     aspect-ratio: 16 / 9;
     height: 100vh;
     max-width: 100vw;
-    /* Optional fallback: if the screen is too narrow, scale by width instead */
     max-height: 56.25vw; 
     
-    background-image: url("images/BG's/95.jpeg");
+    background-color: #018281;
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -31,17 +29,21 @@ body {
     position: absolute;
     left: 0;
     bottom: 0;
-    background-color: #018281;
+    background-color: grey;
+    border-top: 1vh solid #d3d3d3;
+    border-left: 1vh solid #e3e3e3;
+    border-bottom: 1vh solid #555555;
+    border-right: 1vh solid #777777; 
     width: 100%;
-    height: 10vh;
+    height: 12vh;
     min-height: 10vh;
     container-type: size;
 }
 
 #startMenu {
     position: absolute;
-    left: 0;
-    bottom: 0;
+    left: 0.5vh;
+    bottom: 0.5vh;
     height: 10vh;
 }
 
@@ -56,7 +58,8 @@ body {
     min-width: 50vh;
     position: absolute;
     top: 5vh;
-    left: 50vh;
+    left: 50%;
+    transform:translate(-50%,0);
     background-color: black;
     color: white;
 }
@@ -64,12 +67,15 @@ body {
 .openSysMenu {
     position: absolute;
     left: 0;
-    bottom: 10vh;
+    bottom: 11.1vh;
     height: 30vh;
     min-height: 30vh;
     width: 25vh;
     min-width: 25vh;
-    background-color: #018281;
+    background-color: grey;
+    border-top: 1vh solid #d3d3d3;
+    border-left: 1vh solid #e3e3e3;
+    border-right: 1vh solid #e3e3e3; 
 }
 
 .closedMenu {
@@ -113,12 +119,13 @@ table {
 .openGameMenu {
     z-index:1000;
     width: 100vh;
-    height: 90vh;
+    height: 85vh;
     min-width: 100vh;
-    min-height: 90vh;
+    min-height: 85vh;
     position: absolute;
     top: 0;
-    left: 50vh;
+    left: 50%;
+    transform:translate(-50%,0);
     background-color: white;
 }
 
@@ -128,9 +135,9 @@ table {
     min-width: 50vh;
     min-height: 50vh;
     position: absolute;
-    top: 0;
-    left: 0;
-    transform:translate(33vh, 0);
+    top: 10vh;
+    left: 50%;
+    transform:translate(-50%, 0);
     background-color: white;
 }
 
@@ -164,8 +171,8 @@ table {
     overflow:auto;
     position:absolute;
     top:0;
-    left: 0;
-    transform:translate(33vh, 0);
+    left: 50%;
+    transform:translate(-50%, 0);
     background-color:#ffad48;
 }
 .openGearMenu{
@@ -174,9 +181,9 @@ table {
     overflow:auto;
     position:absolute;
     top:0;
-    left:0;
+    left:50%;
     background-color:greenyellow;
-    transform:translate(33vh, 0)
+    transform:translate(-50%, 0)
 }
 .fileExplorer{
     height:80vh;
@@ -239,4 +246,35 @@ td{
 }
 img{
     image-rendering: crisp-edges;
+}
+.BSODShow{
+    height:100vh;
+    z-index:1000000;
+    position:fixed;
+    top:0;
+    left:50%;
+    transform:translate(-50%,0);
+}
+.ShowBSOD{
+    display:block;
+    height:100vh;
+    width:100vw;
+    position:absolute;
+    top:0;
+    left:0;
+    background-color: #0000aa;
+    z-index:99999999999999999;
+}
+.showGameModeTaskbar{
+    justify-content:center;
+    align-items:center;
+    position:absolute;
+    bottom:0.25vh;
+    left:33%;
+    transform:translate(-50%,0);
+    height:10vh;
+    width:75vh;
+    border: 2px solid white;
+    font-size: 3cqw;
+    background: white;
 }

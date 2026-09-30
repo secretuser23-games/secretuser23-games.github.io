@@ -3,10 +3,14 @@ log(localStorage.getItem("version"))
 function gebid(input){
     return document.getElementById(input);
 }
-
+for(var i=0; i< document.getElementsByClassName("closeMenusX").length; i++){
+    document.getElementsByClassName("closeMenusX")[i].addEventListener("click", function(){
+       closeAllMenus(); 
+    })
+}
 function log(what){
     if(what == null){
-        return
+        return null;
     }
     var out = document.createElement("p");
     out.innerHTML = what;
@@ -16,29 +20,35 @@ function log(what){
 function clearLog(){
     gebid("logs").innerHTML = "Logs: "
 }
-var gameVersion = "X.0.2"
+var gameVersion = "devX.0.1";
 var maxForBar = 0, currentProgress = 0;
+var timeLeft = 0;
 var activeTree = null;
 var currentFolderID = -1;
 var tree = [];
 var gameId = 0;
 var pointsEarned = 0;
-var hasOpenedHelp = 0;
+var hasOpenedHelp = false;
 var globalIdCounter = 0;
-var currentOS = gebid("inGameVersion").innerHTML; 
+var currentOS = parseInt(gebid("inGameVersion").innerHTML); 
 var percentToNewOS, maxPercentToNewOS, levels, specs, OSesUnlocked;
-if(localStorage.getItem("version") != gameVersion || localStorage.getItem("main") === null){
-    localStorage.setItem("version", gameVersion)
+if (localStorage.getItem("version") !== gameVersion || localStorage.getItem("main") === null) {
+    localStorage.setItem("version", gameVersion);
     createCookie();
+    editCookie();
+} else {
+    percentToNewOS = getCookieJsonValue("main", "percentToNewOS");
+    maxPercentToNewOS = getCookieJsonValue("main", "maxPercentToNewOS");
+    levels = getCookieJsonValue("main", "levels");
+    specs = getCookieJsonValue("main", "specs");
+    OSesUnlocked = getCookieJsonValue("main", "OSesUnlocked");
 }
 function createCookie() {
-    levels =[1, 1];
+    levels =[1,1];
     specs = ["4 MB RAM", "66 Mhz CPU", "Integrated GPU, 1MB Vram", '14" CRT Screen, 360p', "512 MB HDD"];
     percentToNewOS = 0;
     maxPercentToNewOS = 100000;
-    OSesUnlocked = [true,false]
-    
-    editCookie();
+    OSesUnlocked = [true, false];
 }
 
 function editCookie() {
@@ -53,12 +63,6 @@ function editCookie() {
     localStorage.setItem("main", JSON.stringify(cookieData));
 }
 
-percentToNewOS = getCookieJsonValue("main", "percentToNewOS");
-maxPercentToNewOS = getCookieJsonValue("main", "maxPercentToNewOS");
-levels = getCookieJsonValue("main", "levels");
-specs = getCookieJsonValue("main", "specs");
-OSesUnlocked = getCookieJsonValue("main", "OSesUnlocked")
-
 function getCookieJsonValue(storageKey, jsonKey) {
     const rawValue = localStorage.getItem(storageKey);
     if (!rawValue) return null;
@@ -68,7 +72,6 @@ function getCookieJsonValue(storageKey, jsonKey) {
         return jsonObject[jsonKey] !== undefined ? jsonObject[jsonKey] : null;
     } catch (e) {
         console.error("Malformed JSON in local storage:", e);
-        createCookie(); 
         return null;
     }
 }
@@ -89,7 +92,7 @@ function closeAllMenus(event) {
     });
 }
 
-function openHelpMenu(){ closeAllMenus(); if(gebid("helpMenu")) gebid("helpMenu").className = "openHelpMenu"; }
+function openHelpMenu(){ closeAllMenus(); if(gebid("helpMenu")) gebid("helpMenu").className = "openHelpMenu"; hasOpenedHelp = true;}
 function openSystemMenu(){ closeAllMenus(); if(gebid("systemMenu")) gebid("systemMenu").className = "openSysMenu"; }
 function openStats(){ closeAllMenus(); if(gebid("statsPopup")) gebid("statsPopup").className = "openMenu"; addStatsToPopup(); }
 function showGameOptions(){ closeAllMenus(); if(gebid("gameMenu")) gebid("gameMenu").className = "openGameMenu"; }
@@ -144,27 +147,36 @@ function openOSExplorer(){
     document.location = "index.html"
 }
 function startGame(gameID1){
-    gebid("timerForSpeedrun").classList = "closedMenu"
-    gebid("gameMenu").classList = "closedMenu"
+    clearInterval(speedrunInterval); 
+    clearInterval(countdownInterval);
+    gebid("timerForSpeedrun").classList = "closedMenu";
+    gebid("gameMenu").classList = "closedMenu";
     gebid("fileExplorer").className = "fileExplorer";
     currentFolderID = -1;
     currentProgress = 0;
+    var info;
+    switch(gameID1){
+        case 1: info = "Game Mode: Normal-Easy"
+        case 2: info = "Game Mode: Speedrun-Easy"
+        case 3: info = "Game Mode: Virus-Easy"
+        case 4: info = "Game Mode: Normal-Med"
+        case 5: info = "Game Mode: Speedrun-Med"
+        case 6: info = "Game Mode: Virus-Med"
+        case 7: info = "Game Mode: Normal-Hard"
+        case 8: info = "Game Mode: Speedrun-Hard"
+        case 9: info = "Game Mode: Virus-Hard"
+    }
+    gebid("gameModeInTaskbar").innerHTML = "<p>" + info + "</p>";
+    gebid("gameModeInTaskbar").classList = "showGameModeTaskbar"
     if(gameID1 == 7 || gameID1 == 8 || gameID1 == 9) { maxForBar = 4; tree = createTree(8); }
     else if(gameID1 == 4 || gameID1 == 5 || gameID1 == 6) { maxForBar = 3; tree = createTree(7); }
     else { maxForBar = 2; tree = createTree(6); }
-    if(gameID1 == 2){
-        startSpeedrun(121)
-        gebid("timerForSpeedrun").classList = "showTimer"
-    }
-    else if(gameID1 == 5){
-        startSpeedrun(61)
-        gebid("timerForSpeedrun").classList = "showTimer"
-    }
-    else if(gameID1 == 8){
-        startSpeedrun(31)
-        gebid("timerForSpeedrun").classList = "showTimer"
-    }
-    gameID = gameID1;
+    
+    if(gameID1 == 2) startSpeedrun(121);
+    else if(gameID1 == 5) startSpeedrun(61);
+    else if(gameID1 == 8) startSpeedrun(31);
+    
+    gameId = gameID1;
     activeTree = tree;
     for(var i = 0; i < maxForBar; i++){
         let folderNode = null;
@@ -186,30 +198,9 @@ function startGame(gameID1){
                 fileSize: getRandomNumber(100) + 1,
                 parentID: folderNode.id
             });
-            if(localStorage.getItem("version").includes("dev") == true){
-            log(folderNode.id)}
-        }
-    }
-    for(var j = 0; j < (tree[0].inside.length * 2); j++){
-        let folderNode = null;
-        let attempts = 0;
-        while(!folderNode && attempts < 100) {
-            let testNode = findNodeById(tree, getRandomNumber(globalIdCounter));
-            if(testNode && testNode.inside && Array.isArray(testNode.inside)) {
-                folderNode = testNode;
+            if(gameVersion.includes("dev")){
+                log(folderNode.id)
             }
-            attempts++;
-        }
-        
-        if(folderNode) {
-            folderNode.inside.push({
-                Name: fileNames[getRandomNumber(fileNames.length)],
-                inside: null,
-                depth: folderNode.depth + 1,
-                id: globalIdCounter++,
-                fileSize: getRandomNumber(100) + 1,
-                parentID: folderNode.id
-            });
         }
     }
     updateFileExplorer(activeTree, currentFolderID);
@@ -226,7 +217,7 @@ function openFile(id){
             gebid("progressToWin").value = 100 * (1 / maxForBar) * currentProgress;
         }
         if(currentProgress === maxForBar){
-            if(typeof win === "function") win(gameID, timeLeft);
+            win(gameId, timeLeft);
         }
         deleteFile(node.id)
     } else {
@@ -237,10 +228,12 @@ function win(gameID, timeLeft = 0){
     var difficulty;
     alert('You won! Click "OK" to go and claim your prizes!')
     var bonusPoints = (hasOpenedHelp*100)
-    if(gameID == 1 || gameID == 2 || gameId == 3){
+    hasOpenedHelp = false;
+    gebid("timerForSpeedrun").classList = "closedMenu"
+    if(gameID == 1 || gameID == 2 || gameID == 3){
         difficulty = 0.8;
     }
-    else if(gameID == 4 || gameID == 5 || gameId == 6){
+    else if(gameID == 4 || gameID == 5 || gameID == 6){
         difficulty = 1;
     }
     else{
@@ -358,40 +351,56 @@ function createTree(maxDepth){
     }
     return out;
 }
+var speedrunInterval = null; 
+var countdownInterval = null;
+
+function gameOver() {
+    clearInterval(speedrunInterval);
+    alert("Time's up! Game Over.");
+    exitGame();
+    gebid("BSODImg").classList = "BSODShow"
+    gebid("BSOD").classList = "ShowBSOD"
+}
+
 function startSpeedrun(time){
-    gebid("countdownForSpeedrun").classList = "countdownShow"
-    setInterval(() => {gebid("countdownForSpeedrunProgress").value -= 10}, 10);
-    setTimeout(() => {alert("Go!");timeLeft = time;tickDownTimer();setInterval(tickDownTimer, 1000);gebid("countdownForSpeedrun").classList = "closedMenu"}, 2000)
+    timeLeft = time; 
+    gebid("countdownForSpeedrun").classList = "countdownShow";
+    
+    let progressVal = 2000;
+    countdownInterval = setInterval(() => {
+        progressVal -= 20;
+        if(gebid("countdownForSpeedrunProgress")) gebid("countdownForSpeedrunProgress").value = progressVal;
+    }, 20);
+
+    setTimeout(() => {
+        clearInterval(countdownInterval);
+        alert("Go!");
+        gebid("timerForSpeedrun").classList = "showTimer";
+        gebid("countdownForSpeedrun").classList = "closedMenu";
+        
+        tickDownTimer();
+        speedrunInterval = setInterval(tickDownTimer, 1000);
+    }, 2000);
+}
+
+function tickDownTimer(){
+    timeLeft--;
+    if(gebid("timerForSpeedrun")) gebid("timerForSpeedrun").innerHTML = "Time Left: " + timeLeft;
     if(timeLeft <= 0){
         gameOver();
     }
-}
-var timeLeft;
-function tickDownTimer(){
-    timeLeft--;
-    gebid("timerForSpeedrun").innerHTML = "Time Left: " + timeLeft
-}
-document.addEventListener("DOMContentLoaded", () => {
-    var xButtons = document.querySelectorAll(".closeMenusX");
-    xButtons.forEach(function(button) {
-      button.addEventListener("click", function() {
-        button.parentElement.classList.add("closedMenu");
-      });
-    });
-
-    gebid("statsMenu")?.addEventListener("click", function(){ openStats(); });
+}    gebid("statsMenu")?.addEventListener("click", function(){ openStats(); });
     gebid("startMenu")?.addEventListener("click", function(){ openSystemMenu(); });
     
-    document.body.addEventListener("keydown", function(event){
-        if(event.key.toLowerCase() === "d" && gebid("logs")){
-            gebid("logs").classList.toggle("logsOpen");
-            gebid("logs").classList.toggle("closedMenu");
-        } else if(event.key.toLowerCase() === "s"){
-            openSystemMenu();
-        }
-    });
-    beginCode();
+document.body.addEventListener("keydown", function(event){
+    if(event.key.toLowerCase() === "d" && gebid("logs")){
+        gebid("logs").classList.toggle("logsOpen");
+        gebid("logs").classList.toggle("closedMenu");
+    } else if(event.key.toLowerCase() === "s"){
+        openSystemMenu();
+    }
 });
+beginCode();
 
 const fileNames = ["Random.exe", "Log.txt", "Error.exe", "Game.exe", "Bonus.exe", "CheeseNoise.mp3", "RUSHE.mp3", "Music-Player.exe", "Broken.???", "Nothing.non", "recursion.exe"];
 const randomFolderList = ["Main", "Main2", "Gameyz", "MT", "ActuallyImportantFiles", "PrivateStuff", "Secret", "InHere", "IDKWhatToPutHere", "DevSaysHi", "Thingies"];

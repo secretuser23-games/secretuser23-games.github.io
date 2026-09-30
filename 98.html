@@ -8,13 +8,15 @@
         <link rel="icon" type="image/png" href="./images/favicons/98.png">
     </head>
     <body>
+        <img src="images/BSODs/95-user.png" title="Game Over!" class="closedMenu" id="BSOD">
         <p id="inGameVersion" class="closedMenu">2</p>
         <div id="countdownForSpeedrun" class="closedMenu"><progress id="countdownForSpeedrunProgress" value="2000" max="2000"></progress></div>
         <div id="timerForSpeedrun" class="closedMenu">0 Seconds Left</div>
-        <div id="mainGameContent" onclick="closeAllMenus(event)">
+        <div id="mainGameContent" onclick="closeAllMenus(event)" style='background-image: url("images/BGs/98.jpeg")''>
             <img src="images/statsMenus/95.png" id="statsMenu">
             <div id="taskbar" onclick="closeAllMenus(event)">
-                <img src="images/StartMenus/95.png" id="startMenu">
+                <img src="images/StartMenus/98.png" id="startMenu">
+                <div id="gameModeInTaskbar" class="closedMenu">Game Mode: Normal-Easy</div>
                 <p id="clock">XX:XX:XX XM</p>
             </div>
             <div id="fileExplorer" class="closedMenu">
@@ -24,7 +26,6 @@
                 <progress id="progressToWin" value="0" max="100"></progress>
             </div>
             <div id="gameMenu" class="closedMenu">
-                <img src="images/sharedMenuImages/x.png" class="closeMenusX">
                 <table>
                     <caption>Game Choices</caption>
                     <thead>
