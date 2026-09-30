@@ -20,7 +20,7 @@ function log(what){
 function clearLog(){
     gebid("logs").innerHTML = "Logs: "
 }
-var gameVersion = "devX.0.1";
+var gameVersion = "X.0.3.1";
 var maxForBar = 0, currentProgress = 0;
 var timeLeft = 0;
 var activeTree = null;
