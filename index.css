@@ -278,3 +278,7 @@ img{
     font-size: 3cqw;
     background: white;
 }
+.towerDefenseEnemy{
+    position:fixed;
+    height:5vh;
+}

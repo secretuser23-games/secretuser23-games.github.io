@@ -21,7 +21,8 @@ function clearLog(){
     gebid("logs").innerHTML = "Logs: "
 }
 var gameMusic = false;
-var gameVersion = "X.0.4";
+var TDHealth = 5;
+var gameVersion = "X.5";
 var maxForBar = 0, currentProgress = 0;
 var timeLeft = 0;
 var activeTree = null;
@@ -148,6 +149,7 @@ function openOSExplorer(){
     document.location = "index.html"
 }
 function startGame(gameID1){
+    log("Started Game with Game ID " + gameID1)
     clearInterval(speedrunInterval); 
     clearInterval(countdownInterval);
     gebid("timerForSpeedrun").classList = "closedMenu";
@@ -157,16 +159,16 @@ function startGame(gameID1){
     currentProgress = 0;
     var info;
     switch(gameID1){
-        case 1: info = "Game Mode: Normal-Easy"
-        case 2: info = "Game Mode: Speedrun-Easy"
-        case 3: info = "Game Mode: Virus-Easy"
-        case 4: info = "Game Mode: Normal-Med"
-        case 5: info = "Game Mode: Speedrun-Med"
-        case 6: info = "Game Mode: Virus-Med"
-        case 7: info = "Game Mode: Normal-Hard"
-        case 8: info = "Game Mode: Speedrun-Hard"
-        case 9: info = "Game Mode: Virus-Hard"
-    }
+        case 1: info = "Game Mode: Normal-Easy";break;
+        case 2: info = "Game Mode: Speedrun-Easy";break;
+        case 3: info = "Game Mode: Screensaver";break;
+        case 4: info = "Game Mode: Normal-Med";break;
+        case 5: info = "Game Mode: Speedrun-Med";break;
+        case 6: info = "Game Mode: Tower Defense";break;
+        case 7: info = "Game Mode: Normal-Hard";break;
+        case 8: info = "Game Mode: Speedrun-Hard";break;
+        case 9: info = "Game Mode: Doors";break;
+        default: info = "Error: Game ID is corrupted";break;}
     gebid("gameModeInTaskbar").innerHTML = "<p>" + info + "</p>";
     gebid("gameModeInTaskbar").classList = "showGameModeTaskbar"
     if(gameID1 == 7 || gameID1 == 8 || gameID1 == 9) { maxForBar = 4; tree = createTree(8); }
@@ -175,6 +177,7 @@ function startGame(gameID1){
     if(gameID1 == 2) {startSpeedrun(121); gameMusic = false;}
     else if(gameID1 == 5){startSpeedrun(61); gameMusic = false;}
     else if(gameID1 == 8){startSpeedrun(31); gameMusic = false;}
+    else if(gameID1 == 6){startTowerDefense();}
     else{gameMusic = new Audio("images/sounds/BGM's/NormalMusic.wav");gameMusic.play();}
     gameId = gameID1;
     activeTree = tree;
@@ -204,8 +207,59 @@ function startGame(gameID1){
         }
     }
     updateFileExplorer(activeTree, currentFolderID);
+    if(gameID1 % 3 == 0){
+        gebid("fileExplorer").classList="closedMenu"
+    }
+}
+function startTowerDefense(){
+    var amount = getRandomNumber(30) + 20;
+    for (var i = 0; i < amount; i++){
+        // Fixed: Wrapped in an arrow function so it delays correctly
+        setTimeout((currentId) => createEnemy(currentId), 2500 * i, i);
+    }
+    setInterval(updateEnemies, 1000 / 60);
 }
 
+function updateEnemies(){
+    // Fixed: Cache the elements array
+    var enemies = document.getElementsByClassName("towerDefenseEnemy");
+    
+    // Loop backwards when removing/modifying elements to avoid indexing bugs
+    for (var i = enemies.length - 1; i >= 0; i--){
+        var enemy = enemies[i];
+        
+        // Fixed: Parse the current left position as an integer to do math
+        var currentLeft = parseInt(enemy.style.left) || 0;
+        var newLeft = currentLeft + (window.innerHeight / 600);
+        enemy.style.left = newLeft + "px";
+        
+        console.log("test"); // Fixed: Changed 'log' to 'console.log'
+
+        // Fixed: Comparing numbers instead of strings
+        if (newLeft >= window.innerWidth) {
+            TDHealth--;
+            enemy.remove(); // Remove the enemy from the DOM so it stops tracking
+            
+            if (TDHealth < 1) {
+                gameOver();
+                break;
+            }
+        }
+    }
+}
+
+function createEnemy(enemyId){
+    var enemy = document.createElement("img");
+    enemy.src = "images/random/TDEnemy.png";
+    enemy.id = enemyId;
+    enemy.classList.add("towerDefenseEnemy"); // Fixed: Safer way to add classes
+    
+    // Fixed: Added "px" units to top and left
+    enemy.style.top = getRandomNumber(window.innerHeight) + "px";
+    enemy.style.left = "0px"; 
+    
+    document.body.appendChild(enemy);
+}
 function openFile(id){
     if(!activeTree) return;
     var node = findNodeById(activeTree, id);
