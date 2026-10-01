@@ -20,7 +20,8 @@ function log(what){
 function clearLog(){
     gebid("logs").innerHTML = "Logs: "
 }
-var gameVersion = "X.0.3.1";
+var gameMusic = false;
+var gameVersion = "X.0.4";
 var maxForBar = 0, currentProgress = 0;
 var timeLeft = 0;
 var activeTree = null;
@@ -171,11 +172,10 @@ function startGame(gameID1){
     if(gameID1 == 7 || gameID1 == 8 || gameID1 == 9) { maxForBar = 4; tree = createTree(8); }
     else if(gameID1 == 4 || gameID1 == 5 || gameID1 == 6) { maxForBar = 3; tree = createTree(7); }
     else { maxForBar = 2; tree = createTree(6); }
-    
-    if(gameID1 == 2) startSpeedrun(121);
-    else if(gameID1 == 5) startSpeedrun(61);
-    else if(gameID1 == 8) startSpeedrun(31);
-    
+    if(gameID1 == 2) {startSpeedrun(121); gameMusic = false;}
+    else if(gameID1 == 5){startSpeedrun(61); gameMusic = false;}
+    else if(gameID1 == 8){startSpeedrun(31); gameMusic = false;}
+    else{gameMusic = new Audio("images/sounds/BGM's/NormalMusic.wav");gameMusic.play();}
     gameId = gameID1;
     activeTree = tree;
     for(var i = 0; i < maxForBar; i++){
@@ -365,12 +365,15 @@ function gameOver() {
 function startSpeedrun(time){
     timeLeft = time; 
     gebid("countdownForSpeedrun").classList = "countdownShow";
-    
+    if(time == 121){gameMusic = new Audio("images/sounds/BGM's/SpeedrunSlow.wav");}
+    else if(time == 31){gameMusic = new Audio("images/sounds/BGM's/SpeedrunFast.wav");}
+    else{gameMusic = new Audio("images/sounds/BGM's/Speedrun.wav");}
     let progressVal = 2000;
     countdownInterval = setInterval(() => {
         progressVal -= 20;
         if(gebid("countdownForSpeedrunProgress")) gebid("countdownForSpeedrunProgress").value = progressVal;
     }, 20);
+    gameMusic.play();
 
     setTimeout(() => {
         clearInterval(countdownInterval);
