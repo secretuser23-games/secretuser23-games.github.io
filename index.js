@@ -22,7 +22,7 @@ function clearLog(){
 }
 var gameMusic = false;
 var TDHealth = 5;
-var gameVersion = "X.5";
+var gameVersion = "X.4.1";
 var maxForBar = 0, currentProgress = 0;
 var timeLeft = 0;
 var activeTree = null;
@@ -214,34 +214,24 @@ function startGame(gameID1){
 function startTowerDefense(){
     var amount = getRandomNumber(30) + 20;
     for (var i = 0; i < amount; i++){
-        // Fixed: Wrapped in an arrow function so it delays correctly
         setTimeout((currentId) => createEnemy(currentId), 2500 * i, i);
     }
     setInterval(updateEnemies, 1000 / 60);
 }
 
 function updateEnemies(){
-    // Fixed: Cache the elements array
     var enemies = document.getElementsByClassName("towerDefenseEnemy");
-    
-    // Loop backwards when removing/modifying elements to avoid indexing bugs
     for (var i = enemies.length - 1; i >= 0; i--){
         var enemy = enemies[i];
-        
-        // Fixed: Parse the current left position as an integer to do math
         var currentLeft = parseInt(enemy.style.left) || 0;
         var newLeft = currentLeft + (window.innerHeight / 600);
         enemy.style.left = newLeft + "px";
-        
-        console.log("test"); // Fixed: Changed 'log' to 'console.log'
-
-        // Fixed: Comparing numbers instead of strings
         if (newLeft >= window.innerWidth) {
             TDHealth--;
-            enemy.remove(); // Remove the enemy from the DOM so it stops tracking
+            enemy.remove();
             
             if (TDHealth < 1) {
-                gameOver();
+                gameOver("noHPLeft");
                 break;
             }
         }
@@ -252,10 +242,9 @@ function createEnemy(enemyId){
     var enemy = document.createElement("img");
     enemy.src = "images/random/TDEnemy.png";
     enemy.id = enemyId;
-    enemy.classList.add("towerDefenseEnemy"); // Fixed: Safer way to add classes
-    
-    // Fixed: Added "px" units to top and left
-    enemy.style.top = getRandomNumber(window.innerHeight) + "px";
+    enemy.addEventListener("click", () => {log("test");enemy.remove()})
+    enemy.classList.add("towerDefenseEnemy");
+    enemy.style.top = getRandomNumber(window.innerHeight*0.88)+(window.innerHeight*0.12) + "px";
     enemy.style.left = "0px"; 
     
     document.body.appendChild(enemy);
@@ -408,9 +397,15 @@ function createTree(maxDepth){
 var speedrunInterval = null; 
 var countdownInterval = null;
 
-function gameOver() {
+function gameOver(typeDeath) {
+    if(typeDeath = "noHPLeft"){
+        alert("No heath left...")
+        gebid("BSODImg").src = "images/BSODs/95-user.svg"
+    }
+    if(typeDeath = "speedrunTime"){
     clearInterval(speedrunInterval);
     alert("Time's up! Game Over.");
+    gebid("BSODImg").src="images/BSODs/95-time.svg"}
     exitGame();
     gebid("BSODImg").classList = "BSODShow"
     gebid("BSOD").classList = "ShowBSOD"
@@ -444,7 +439,7 @@ function tickDownTimer(){
     timeLeft--;
     if(gebid("timerForSpeedrun")) gebid("timerForSpeedrun").innerHTML = "Time Left: " + timeLeft;
     if(timeLeft <= 0){
-        gameOver();
+        gameOver("speedrun");
     }
 }    gebid("statsMenu")?.addEventListener("click", function(){ openStats(); });
     gebid("startMenu")?.addEventListener("click", function(){ openSystemMenu(); });
