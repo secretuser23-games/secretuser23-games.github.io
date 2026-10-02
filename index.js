@@ -22,7 +22,8 @@ function clearLog(){
 }
 var gameMusic = false;
 var TDHealth = 5;
-var gameVersion = "X.4.1";
+var doors = ["correct", "false", "random"]
+var gameVersion = "X.5";
 var maxForBar = 0, currentProgress = 0;
 var timeLeft = 0;
 var activeTree = null;
@@ -92,6 +93,13 @@ function closeAllMenus(event) {
     menus.forEach(menuId => {
         if(gebid(menuId)) gebid(menuId).className = "closedMenu";
     });
+}
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
 }
 
 function openHelpMenu(){ closeAllMenus(); if(gebid("helpMenu")) gebid("helpMenu").className = "openHelpMenu"; hasOpenedHelp = true;}
@@ -174,10 +182,13 @@ function startGame(gameID1){
     if(gameID1 == 7 || gameID1 == 8 || gameID1 == 9) { maxForBar = 4; tree = createTree(8); }
     else if(gameID1 == 4 || gameID1 == 5 || gameID1 == 6) { maxForBar = 3; tree = createTree(7); }
     else { maxForBar = 2; tree = createTree(6); }
+
     if(gameID1 == 2) {startSpeedrun(121); gameMusic = false;}
     else if(gameID1 == 5){startSpeedrun(61); gameMusic = false;}
     else if(gameID1 == 8){startSpeedrun(31); gameMusic = false;}
     else if(gameID1 == 6){startTowerDefense();}
+    else if(gameID1 == 3){startScreensaver();}
+    else if(gameID1 = 9){startDoors();}
     else{gameMusic = new Audio("images/sounds/BGM's/NormalMusic.wav");gameMusic.play();}
     gameId = gameID1;
     activeTree = tree;
@@ -211,10 +222,89 @@ function startGame(gameID1){
         gebid("fileExplorer").classList="closedMenu"
     }
 }
+var mouseX, mouseY
+function startScreensaver(){
+    for(var i=0;i<10;i++){
+        createScreensaverEnemy();
+    }
+    screensaversInterval = setInterval(() => {updateScreensavers()}, 1000/60)
+    bombPlaceInterval = setInterval(() => {placeBomb()},2000)
+}
+var screensavesInterval, bombPlaceInterval;
+function updateScreensavers() {
+    // 1. Convert to static arrays so removing items doesn't break the loop indexes
+    var screensavers = Array.from(document.getElementsByClassName("screensaverBouncing"));
+    var bombs = Array.from(document.getElementsByClassName("bombScreensaver"));
+
+    // Loop backwards when removing items from arrays to avoid index-shifting bugs
+    for (var i = screensavers.length - 1; i >= 0; i--) {
+        var screensaver = screensavers[i];
+        
+        // Safety check in case the screensaver was already removed in a previous sub-loop
+        if (!screensaver.parentNode) continue; 
+        var screensaverBox = screensaver.getBoundingClientRect();
+
+        for (var j = bombs.length - 1; j >= 0; j--) {
+            var bomb = bombs[j];
+            
+            // Safety check in case the bomb was already removed
+            if (!bomb.parentNode) continue; 
+            var bombBox = bomb.getBoundingClientRect();
+
+            // 2. CORRECT COLLISION LOGIC: Check if they actually overlap
+            var isColliding = !(
+                screensaverBox.top > bombBox.bottom ||
+                screensaverBox.right < bombBox.left ||
+                screensaverBox.bottom < bombBox.top ||
+                screensaverBox.left > bombBox.right
+            );
+
+            if (isColliding) {
+                screensaver.remove();
+                bomb.remove();
+                if(document.getElementsByClassName("screensaverBouncing").length == 0){
+                    for(var i=0; i< bombs.length; i++){bombs[i].remove();}
+                    clearInterval(bombPlaceInterval)
+                    clearInterval(screensaversInterval)
+                    win(3, 0);
+                }
+                break;
+            }
+        }
+    }
+}
+function placeBomb(){
+    var bomb = document.createElement("img");
+    bomb.classList = "bombScreensaver"
+    bomb.style.left = String((mouseX - parseInt(window.innerHeight)*0.025)) + "px"
+    bomb.style.top = String((mouseY - parseInt(window.innerHeight)*0.025)) + "px"
+    bomb.src="images/random/bomb.png"
+    document.body.appendChild(bomb)
+}
+function createScreensaverEnemy(){
+    var screensaver = document.createElement("img");
+    screensaver.classList = "screensaverBouncing";
+    
+    // 1. Randomize the horizontal duration (e.g., between 4.0s and 7.0s)
+    var durationX = (getRandomNumber(30) + 40) / 10; 
+    // 2. Randomize the vertical duration (e.g., between 2.5s and 5.5s)
+    var durationY = (getRandomNumber(30) + 25) / 10; 
+    // 3. Randomize the delay based on a maximum 7-second cycle
+    var randomDelay = -(getRandomNumber(70) / 10); 
+
+    // Pass all three values as CSS custom properties
+    screensaver.style.setProperty("--durX", durationX + "s");
+    screensaver.style.setProperty("--durY", durationY + "s");
+    screensaver.style.setProperty("--randomDelay", randomDelay + "s");
+    
+    screensaver.src = "images/gameModes/screensaver.png";
+    document.body.appendChild(screensaver);
+}
+window.addEventListener("mousemove", function(event){mouseX = event.clientX; mouseY = event.clientY;})
 function startTowerDefense(){
-    var amount = getRandomNumber(30) + 20;
+    var amount = getRandomNumber(500) + 250;
     for (var i = 0; i < amount; i++){
-        setTimeout((currentId) => createEnemy(currentId), 2500 * i, i);
+        setTimeout((currentId) => createEnemy(currentId), (2500 * i)-(2*i), i);
     }
     setInterval(updateEnemies, 1000 / 60);
 }
@@ -248,6 +338,9 @@ function createEnemy(enemyId){
     enemy.style.left = "0px"; 
     
     document.body.appendChild(enemy);
+}
+function startDoors(){
+    gebid("doorsPopup").classList = "showDoorsPopup"
 }
 function openFile(id){
     if(!activeTree) return;
