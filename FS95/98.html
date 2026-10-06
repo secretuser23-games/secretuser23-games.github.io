@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>File System V98 - SecretUser23.gaming</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="index.css">
+        <link rel="icon" type="image/png" href="./images/favicons/98.png">
+    </head>
+    <body>
+        <div id="BSOD">
+        <img src="./images/BSODs/95-user.svg" title="Game Over!" class="closedMenu" id="BSODImg"></div>
+        <p id="inGameVersion" class="closedMenu">2</p>
+        <div id="countdownForSpeedrun" class="closedMenu"><progress id="countdownForSpeedrunProgress" value="2000" max="2000"></progress></div>
+        <div id="timerForSpeedrun" class="closedMenu">0 Seconds Left</div>
+        <div id="mainGameContent" onclick="closeAllMenus(event)">
+            <img src="images/statsMenus/98.png" id="statsMenu">
+            <div id="taskbar" onclick="closeAllMenus(event)">
+                <img src="images/StartMenus/98.png" id="startMenu">
+                <div id="gameModeInTaskbar" class="closedMenu">Game Mode: Normal-Easy</div>
+                <p id="clock">XX:XX:XX XM</p>
+            </div>
+            <div id="fileExplorer" class="closedMenu">
+                <table id="fileShower">
+                    <thead><td>File Options: </td><td>Name:</td><td>File Size:</td><td>Openable?</td><td>Is Helpful?</td><td>ID: </td></thead>
+                </table>
+                <progress id="progressToWin" value="0" max="100"></progress>
+            </div>
+            <div id="gameMenu" class="closedMenu">
+                <img src="images/sharedMenuImages/x.png" class="closeMenusX">
+                <table>
+                    <caption>Game Choices</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">File Finder games:</th>
+                            <th scope="col">Speedrun games: </th>
+                            <th scope="col">Virus games: </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><button class="inTable" onclick="startGame(1)">File Finder (easy):<br/><img src="images/gameModes/NormalEasy.png" class="imageGameModes"></button></td>
+                            <td><button class="inTable" onclick="startGame(2)">File Finder Speedrun (easy):<br/><img src="images/gameModes/SpeedEasy.png" class="imageGameModes"></button></td>
+                            <td><button class="inTable" onclick="startGame(3)">Screensaver (type easy)<br/><img src="images/gameModes/screensaver.png" class="imageGameModes"></button></td>
+                        </tr>
+                        <tr>
+                            <td><button class="inTable" onclick="startGame(4)">File Finder (medium):<br/><img src="images/gameModes/NormalMed.png" class="imageGameModes"></button></td>
+                            <td><button class="inTable" onclick="startGame(5)">File Finder Speedrun (medium):<br/><img src="images/gameModes/SpeedNormal.png" class="imageGameModes"></button></td>
+                            <td><button class="inTable" onclick="startGame(6)">Tower Defense (type medium):<br/><img src="images/gameModes/TD.png" class="imageGameModes"></button></td>
+                        </tr>
+                        <tr>
+                            <td><button class="inTable" onclick="startGame(7)">File Finder (hard):<br/><img src="images/gameModes/NormalHard.png" class="imageGameModes"></button></td>
+                            <td><button class="inTable" onclick="startGame(8)">File Finder Speedrun (hard):<br/><img src="images/gameModes/SpeedHard.png" class="imageGameModes"></button></td>
+                            <td><button class="inTable" onclick="startGame(9)">Random Folder Search (type hard):<br/><img src="images/gameModes/doors.png" class="imageGameModes"></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="logs" class="closedMenu">Logs: </div>
+
+            <div id="systemMenu" class="closedMenu">
+                <table id="SystemTable">
+                    <tbody>
+                        <tr><td><button class="inTable" onclick="showGameOptions()">Play Game</button></td></tr>
+                        <tr><td><button class="inTable" onclick="showPowerOptions()">Power Options</button></td></tr>
+                        <tr><td><button class="inTable" onclick="openSettings()">Settings</button></td></tr>
+                        <tr><td><button class="inTable" onclick="openStats()">Specs</button></td></tr>
+                        <tr><td><button class="inTable" onclick="openHelpMenu()">Help</button></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="levelTableDiv" class="closedMenu">
+                <img src="images/sharedMenuImages/x.png" class="closeMenusX">
+            </div>
+
+            <div id="statsPopup" class="closedMenu">
+                <img src="images/sharedMenuImages/whiteX.png" class="closeMenusX">
+                <p id="currentLevel">Current Level: 0.</p>
+                <p id="currentSpecs">Specs loading...</p>
+            </div>
+
+            <div id="powerMenu" class="closedMenu">
+                <img src="images/sharedMenuImages/x.png" class="closeMenusX">
+                <table id="powerOptionsTable">
+                    <tbody>
+                        <tr><td><button class="inTable"><img src="images/powerOptions/off.png" class="powImages" title="Shut Down..." onclick="off();"></button></td></tr>
+                        <tr><td><button class="inTable"><img src="images/powerOptions/restart.png" class="powImages" title="Restart..." onclick="restart();"></button></td></tr>
+                        <tr><td><button class="inTable"><img src="images/powerOptions/sleep.png" class="powImages" title="Sleep..." onclick="sleep()"></button></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="doorsPopup" class="closedMenu"><img src="images/random/greenDoor.png" onclick="pickGreenDoor()" class="doors"><img src="images/random/blueDoor.png" onclick="pickBlueDoor()" class="doors"><img src="images/random/redDoor.png" onclick="pickRedDoor()" class="doors"><br/><br/><p id="doorsInfoP">Floor 6. 5 floors remaining.</p></div>
+            <div id="helpMenu" class="closedMenu">
+                <h1>Game Modes:</h1>
+                <h2>File Finder:</h2>
+                <p>Find 3 files marked "Correct" and open them to complete the level. Collectiong "Incorrect" will kill you, and "?" files... Well, they are random, and may both be good and bad. Easy requires 2 files, and hard requires 4.</p>
+                <h2>Speedrun:</h2>
+                <p>Find the correct file, but you have a timer and must find the file before the minute is up. Easy is 2 minutes, and Hard is 30 seconds.</p>
+                <h2>Special Gamemodes: </h2>
+                <p>1. Screensaver: Instead of a file system, there are little DVD logos bouncing around the screen. Place bombs to blow up the DVD logos. Blow them all up to win!</p>
+                <p>2. Tower Defense: The error.exe files are trying to rush towards your "base". Click on all of them to win! but, if one makes it to the base, you lose!</p>
+                <p>3. Doors: You see three doors. One is green, one is red, and one is blue. One helps you win, one kills you, and the other does... Actually, I don't remember. You have to pass through 5 floors to escape. Opening the correct door brings you down a floor, and the random effect one also lets you through, but something else happens. If you get the random door, you can choose to swap it for another one if you want, but after you switch, you CANNOT go back through the random door. See you at the end... If you survive...</p>
+            </div>
+            <div id="settingsMenu" class="closedMenu"><img src="images/sharedMenuImages/x.png" class="closeMenusX">test</div>
+        </div>
+        <div id="winPopup" class="closedMenu"><p id="centerNormal">You Won! Points Earned: </p></div>
+        <script src="index.js"></script>
+    </body>
+</html>

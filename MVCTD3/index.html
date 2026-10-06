@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MVCTD 3</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div id="background"></div>
+    <div id="leftPart"><p class="top">Bought Towers/Upgrades:</p></div>
+    <canvas height="1000px" width="1000px" id="mainGameCanvas"></canvas>
+    <div id="rightPart"><p class="top">Towers: </p></div>
+    <div id="loading"><h1>Loading...</h1><progress id="loadingBar" value="0" max="100"></progress></div>
+    <div id="logs" class="hideLogs"><p class="top">Logs: </p><p id="fpsCounter">FPS: 0.</div>
+    <script src="main.js" defer></script>
+</body>
+</html>
