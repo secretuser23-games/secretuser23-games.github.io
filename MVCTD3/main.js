@@ -101,11 +101,25 @@ function drawTrack(){
 }
 function updateEnemyStats(){
     if(enemyStats){
-        for(var i=0; i<enemyStats.length; i++){
-            if(enemyStats[i]["direction"] == Math.PI){enemyStats[i]["x"] += enemyStats[i]["type"]["speed"];}
-            else if(enemyStats[i]["direction"] == Math.PI*0.5){enemyStats[i]["y"] -= enemyStats[i]["type"]["speed"];}
-            else if(enemyStats[i]["direction"] == Math.PI*1.5){enemyStats[i]["y"] += enemyStats[i]["type"]["speed"]}
-            else if(enemyStats[i]["direction"] == 0 || enemyStats[i]["direction"] == Math.PI*2){enemyStats[i]["x"] -= enemyStats[i]["type"]["speed"]}
+        // Loop backwards to safely delete items while iterating
+        for(var i = enemyStats.length - 1; i >= 0; i--){
+            
+            // Movement logic
+            if(enemyStats[i]["direction"] == Math.PI){ enemyStats[i]["x"] += enemyStats[i]["type"]["speed"]; }
+            else if(enemyStats[i]["direction"] == Math.PI*0.5){ enemyStats[i]["y"] -= enemyStats[i]["type"]["speed"]; }
+            else if(enemyStats[i]["direction"] == Math.PI*1.5){ enemyStats[i]["y"] += enemyStats[i]["type"]["speed"]; }
+            else if(enemyStats[i]["direction"] == 0 || enemyStats[i]["direction"] == Math.PI*2){ enemyStats[i]["x"] -= enemyStats[i]["type"]["speed"]; }
+            
+            // Checkpoint collision logic
+            if((Math.abs(enemyStats[i]["x"]-path[enemyStats[i]["pathAmount"]+1]["x"]))<=enemyStats[i]["type"]["speed"] && (Math.abs(enemyStats[i]["y"]-path[enemyStats[i]["pathAmount"]+1]["y"]))<=enemyStats[i]["type"]["speed"]){
+                enemyStats[i]["direction"] = path[enemyStats[i]["pathAmount"]+1]["direction"];
+                enemyStats[i]["pathAmount"]++;
+                
+                // If there are no more path steps left, safely remove THIS enemy using index i
+                if(!path[enemyStats[i]["pathAmount"]+1]){
+                    enemyStats.splice(i, 1); 
+                }
+            }
         }
     }
 }
