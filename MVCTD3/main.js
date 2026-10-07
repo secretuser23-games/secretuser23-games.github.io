@@ -107,28 +107,17 @@ function drawTrack(){
 function updateEnemyStats(){
     if(enemyStats){
         for(var i = enemyStats.length - 1; i >= 0; i--){
-            log(i);
-            
-            // 1. Move the enemy based on direction
             if(enemyStats[i]["direction"] == Math.PI){ enemyStats[i]["x"] += enemyStats[i]["type"]["speed"]; }
             else if(enemyStats[i]["direction"] == Math.PI*0.5){ enemyStats[i]["y"] -= enemyStats[i]["type"]["speed"]; }
             else if(enemyStats[i]["direction"] == Math.PI*1.5){ enemyStats[i]["y"] += enemyStats[i]["type"]["speed"]; }
             else if(enemyStats[i]["direction"] == 0 || enemyStats[i]["direction"] == Math.PI*2){ enemyStats[i]["x"] -= enemyStats[i]["type"]["speed"]; }
-            
-            // 2. SAFE CHECK: Define the next target waypoint
             var nextWaypoint = path[enemyStats[i]["pathAmount"] + 1];
-            
-            // 3. If there is no next waypoint, the enemy reached the end of the map!
             if (!nextWaypoint) {
                 enemyStats.splice(i, 1); 
-                continue; // Skip directly to the next enemy in the loop
+                continue;
             }
-            
-            // 4. Safely check distance using our verified waypoint variables
             if ((Math.abs(enemyStats[i]["x"] - nextWaypoint["x"])) <= enemyStats[i]["type"]["speed"] && 
                 (Math.abs(enemyStats[i]["y"] - nextWaypoint["y"])) <= enemyStats[i]["type"]["speed"]) {
-                
-                // Update the direction to match the new waypoint instructions
                 enemyStats[i]["direction"] = nextWaypoint["direction"];
                 enemyStats[i]["pathAmount"]++;
             }
