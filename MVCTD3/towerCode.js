@@ -1,0 +1,1 @@
+var towerLists = [{type: "basic", image: initImage("towers/tower.png"), speed:1, damage: 1}]

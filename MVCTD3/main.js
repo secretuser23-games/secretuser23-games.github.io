@@ -214,7 +214,7 @@ window.initImage = function(src){
     out.onerror = function() {
         loading++; 
         error("Failed to load image at destination path: images/" + src);
-        alert("Could not fing image: " + src + ".")
+        alert("Could not find image: images/" + src + ".")
     };
     out.src = "images/" + src; 
     return out;
@@ -225,6 +225,7 @@ if(canvas && ctx) {
 
 addNewScript("track1.js");
 addNewScript("enemyCode.js")
+addNewScript("towerCode.js")
 var gridImg = window.initImage("gridSystemImage.png");
 var testImage = window.initImage("ExitIndicator.png");
 gebid("speedButton").addEventListener("contextmenu", function(event) {
