@@ -16,8 +16,8 @@ var waterCover = initImage("waterCover.png")
 var lightWaterCover = initImage("lightWaterCover.png")
 var entrance = {x: -31.25, y: 31.25}
 var exit = {x:-88, y:-88}
-var path = {0: {x: 31.25, y: 31.25, direction: Math.PI}, 1: {x: 968.5, y: 31.25, direction: 1.5*Math.PI}, 2: {x: 968.5, y: 968.5, direction: 2*Math.PI}, 3: {x: 31.25, y: 968.5, direction: 0.5*Math.PI}, 4: {x: 31.25, y: 153.75, direction: Math.PI}, 5: {x: 827.75, y: 153.75, direction: 1.5*Math.PI}}
-var trackInfo = [
+var path = {0: {x: 31.25, y: 31.25, direction: Math.PI}, 1: {x: 968.5, y: 31.25, direction: 1.5*Math.PI}//, 2: {x: 968.5, y: 968.5, direction: 2*Math.PI}, 3: {x: 31.25, y: 968.5, direction: 0.5*Math.PI}, 4: {x: 31.25, y: 153.75, direction: Math.PI}, 5: {x: 827.75, y: 153.75, direction: 1.5*Math.PI}}
+};var trackInfo = [
 //Row 1
 [{track:true, x:0, y:0, tower:false, typeTrack:roadLR, trackDetails: entranceIndicator}, 
 {track:true, x:1, y:0, tower:false, typeTrack:roadLR},

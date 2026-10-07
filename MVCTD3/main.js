@@ -106,24 +106,31 @@ function drawTrack(){
 }
 function updateEnemyStats(){
     if(enemyStats){
-        // Loop backwards to safely delete items while iterating
         for(var i = enemyStats.length - 1; i >= 0; i--){
+            log(i);
             
-            // Movement logic
+            // 1. Move the enemy based on direction
             if(enemyStats[i]["direction"] == Math.PI){ enemyStats[i]["x"] += enemyStats[i]["type"]["speed"]; }
             else if(enemyStats[i]["direction"] == Math.PI*0.5){ enemyStats[i]["y"] -= enemyStats[i]["type"]["speed"]; }
             else if(enemyStats[i]["direction"] == Math.PI*1.5){ enemyStats[i]["y"] += enemyStats[i]["type"]["speed"]; }
             else if(enemyStats[i]["direction"] == 0 || enemyStats[i]["direction"] == Math.PI*2){ enemyStats[i]["x"] -= enemyStats[i]["type"]["speed"]; }
             
-            // Checkpoint collision logic
-            if((Math.abs(enemyStats[i]["x"]-path[enemyStats[i]["pathAmount"]+1]["x"]))<=enemyStats[i]["type"]["speed"] && (Math.abs(enemyStats[i]["y"]-path[enemyStats[i]["pathAmount"]+1]["y"]))<=enemyStats[i]["type"]["speed"]){
-                enemyStats[i]["direction"] = path[enemyStats[i]["pathAmount"]+1]["direction"];
-                enemyStats[i]["pathAmount"]++;
+            // 2. SAFE CHECK: Define the next target waypoint
+            var nextWaypoint = path[enemyStats[i]["pathAmount"] + 1];
+            
+            // 3. If there is no next waypoint, the enemy reached the end of the map!
+            if (!nextWaypoint) {
+                enemyStats.splice(i, 1); 
+                continue; // Skip directly to the next enemy in the loop
+            }
+            
+            // 4. Safely check distance using our verified waypoint variables
+            if ((Math.abs(enemyStats[i]["x"] - nextWaypoint["x"])) <= enemyStats[i]["type"]["speed"] && 
+                (Math.abs(enemyStats[i]["y"] - nextWaypoint["y"])) <= enemyStats[i]["type"]["speed"]) {
                 
-                // If there are no more path steps left, safely remove THIS enemy using index i
-                if(!path[enemyStats[i]["pathAmount"]+1]){
-                    enemyStats.splice(i, 1); 
-                }
+                // Update the direction to match the new waypoint instructions
+                enemyStats[i]["direction"] = nextWaypoint["direction"];
+                enemyStats[i]["pathAmount"]++;
             }
         }
     }
@@ -161,20 +168,50 @@ function updateEnemySpawning() {
     }
     framesToSpawn++;
 }
+function getAngleToTarget(imgX, imgY, targetX, targetY) {
+    const dx = targetX - imgX;
+    const dy = targetY - imgY;
+    return Math.atan2(dy, dx);
+  }
+function drawTowers(){}
+function findTargetToFireAt(targetPriority, towerX, towerY){if(enemyStats[0]!= undefined){return [getAngleToTarget(towerX*62.5, towerY*62.5, enemyStats[0]["x"]*62.5, enemyStats[0]["y"]*62.5)];}}
+function updateTowerStats(){
+    for(var i=0;i<towerArray.length;i++){
+        drawImg(towerArray[i]["type"]["image"], towerArray[i]["x"]*62.5-31.25, towerArray[i]["y"]*62.5-31.25, 62.5, 62.5, towerArray[i]["direction"])
+        towerArray[i]["reloadTime"]--;
+        var target = findTargetToFireAt("first", towerArray[i]["x"]*62.5, towerArray[i]["y"]*62.5);
+            towerArray[i]["direction"] = (target)
+        if(towerArray[i]["reloadTime"] == 0){
+            towerArray[i]["reloadTime"] = towerArray[i]["type"]["speed"]
+        }
+    }
+}
 function frame(){
+    var framePart = 0;
     frameCount++;
     totalFramesRendered++; 
     if (!ctx) return;
     
     try {
+        framePart++
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        framePart++
         updateEnemySpawning();
+        framePart++
         drawGrid(16);
+        framePart++
         drawTrack();
+        framePart++
         updateEnemyStats();
+        framePart++
         drawEnemies();
+        framePart++
+        updateTowerStats();
+        framePart++
+        drawTowers();
+        framePart++
     } catch (err) {
-        log("Loop crashed on frame component execution: " + err.message);
+        log("Loop crashed on frame component execution: " + err.message + " at frame part " + framePart);
     }
 }
 
@@ -229,14 +266,9 @@ addNewScript("towerCode.js")
 var gridImg = window.initImage("gridSystemImage.png");
 var testImage = window.initImage("ExitIndicator.png");
 gebid("speedButton").addEventListener("contextmenu", function(event) {
-    // Prevent the default browser right-click menu from popping up
     event.preventDefault(); 
-    
     var gameSpeedPrompt = prompt("How fast (1 is normal speed) do you want the game to be? Note, going above 10x may lag the computer or the game.");
-    
-    // Removed quotes so it checks the actual variable value
     if (gameSpeedPrompt !== null && gameSpeedPrompt.trim() !== "" && Number.isFinite(Number(gameSpeedPrompt))) {
-      // Use parseFloat so players can do 1.5x or 0.5x speed
       currentSpeed = parseFloat(gameSpeedPrompt); 
       console.log("Game speed changed to: " + currentSpeed);
       clearInterval(gameInterval)
