@@ -31,6 +31,11 @@ function error(message){
     }
 }
 var loading = 0;
+var enemySpawnedIDs = 0;
+var currentWave = 0;
+var gameInterval = null;
+var framesToSpawn = 0;
+var currentSpeed = 1;
 var loadingMax = 0;
 var frameCount = 0;
 var totalFramesRendered = 0;
@@ -123,12 +128,38 @@ function updateEnemyStats(){
         }
     }
 }
+function toggleSpeed(){
+    if(currentSpeed == 1){
+        currentSpeed = 2;
+    }
+    else{
+        currentSpeed = 1;
+    }
+    clearInterval(gameInterval)
+    gameInterval = setInterval(frame, 1000/(60*currentSpeed))
+}
 function drawEnemies(){
     if(enemyStats){
     for(var i=0; i<enemyStats.length; i++){
         drawImg(enemyStats[i]["type"]["src"], enemyStats[i]["x"], enemyStats[i]["y"], 62.5, 62.5, enemyStats[i]["direction"])
     }
 }
+}
+function updateEnemySpawning() {
+    if(framesToSpawn >= enemySpawnArray[0][0]["inBetweenTime"] && enemySpawnArray[0][0]["amount"] != 0){
+        enemyStats.push({
+            type:enemySpawnArray[0][0]["type"],
+            x: entrance["x"],
+            y: entrance["y"],
+            pathAmount:0,
+            distanceTraveled:0,
+            id:3,
+            direction:Math.PI
+        })
+        framesToSpawn = 0;
+        enemySpawnArray[0][0]["amount"] -= 1;
+    }
+    framesToSpawn++;
 }
 function frame(){
     frameCount++;
@@ -137,6 +168,7 @@ function frame(){
     
     try {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        updateEnemySpawning();
         drawGrid(16);
         drawTrack();
         updateEnemyStats();
@@ -195,6 +227,23 @@ addNewScript("track1.js");
 addNewScript("enemyCode.js")
 var gridImg = window.initImage("gridSystemImage.png");
 var testImage = window.initImage("ExitIndicator.png");
+gebid("speedButton").addEventListener("contextmenu", function(event) {
+    // Prevent the default browser right-click menu from popping up
+    event.preventDefault(); 
+    
+    var gameSpeedPrompt = prompt("How fast (1 is normal speed) do you want the game to be? Note, going above 10x may lag the computer or the game.");
+    
+    // Removed quotes so it checks the actual variable value
+    if (gameSpeedPrompt !== null && gameSpeedPrompt.trim() !== "" && Number.isFinite(Number(gameSpeedPrompt))) {
+      // Use parseFloat so players can do 1.5x or 0.5x speed
+      currentSpeed = parseFloat(gameSpeedPrompt); 
+      console.log("Game speed changed to: " + currentSpeed);
+      clearInterval(gameInterval)
+      gameInterval = setInterval(frame, 1000/(60*currentSpeed))
+    } else if (gameSpeedPrompt !== null) {
+      alert("Please enter a valid number!");
+    }
+  });
 document.addEventListener("keydown", function(event) {
     if (event.key === "d") {
         var logs = gebid("logs");
@@ -222,7 +271,8 @@ setTimeout(() => {
             if (!isGameLoopRunning) {
                 isGameLoopRunning = true;
                 log("All components loaded successfully. Starting core engine loop...");
-                setInterval(frame, 1000 / 60);
+                if(gameInterval){clearInterval(gameInterval)}
+                gameInterval = setInterval(frame, 1000 / 60);
             }
         }
         else if (loadingMax > 0 && loadingBar) {
