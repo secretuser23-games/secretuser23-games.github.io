@@ -30,7 +30,13 @@ function error(message){
         logsDiv.appendChild(logEntry);
     }
 }
+function clearLogs(){
+    gebid("logs").innerHTML = "<p class='top'></p><p id='fpsCounter'>FPS: 0."
+}
 var loading = 0;
+var isSpawningFinished = false; 
+var preSpaceSpeed = 1;
+var isSpaceHeldDown = false;
 var enemySpawnedIDs = 0;
 var currentWave = 0;
 var gameInterval = null;
@@ -107,20 +113,21 @@ function drawTrack(){
 function updateEnemyStats(){
     if(enemyStats){
         for(var i = enemyStats.length - 1; i >= 0; i--){
-            if(enemyStats[i]["direction"] == Math.PI){ enemyStats[i]["x"] += enemyStats[i]["type"]["speed"]; }
-            else if(enemyStats[i]["direction"] == Math.PI*0.5){ enemyStats[i]["y"] -= enemyStats[i]["type"]["speed"]; }
-            else if(enemyStats[i]["direction"] == Math.PI*1.5){ enemyStats[i]["y"] += enemyStats[i]["type"]["speed"]; }
-            else if(enemyStats[i]["direction"] == 0 || enemyStats[i]["direction"] == Math.PI*2){ enemyStats[i]["x"] -= enemyStats[i]["type"]["speed"]; }
-            var nextWaypoint = path[enemyStats[i]["pathAmount"] + 1];
+            var enemy = enemyStats[i]
+            var nextWaypoint = path[enemy["pathAmount"] + 1];
             if (!nextWaypoint) {
                 enemyStats.splice(i, 1); 
                 continue;
             }
-            if ((Math.abs(enemyStats[i]["x"] - nextWaypoint["x"])) <= enemyStats[i]["type"]["speed"] && 
-                (Math.abs(enemyStats[i]["y"] - nextWaypoint["y"])) <= enemyStats[i]["type"]["speed"]) {
-                enemyStats[i]["direction"] = nextWaypoint["direction"];
-                enemyStats[i]["pathAmount"]++;
+            if ((Math.abs(enemy["x"] - nextWaypoint["x"])) <= enemy["type"]["speed"] && 
+                (Math.abs(enemy["y"] - nextWaypoint["y"])) <= enemy["type"]["speed"]) {
+                enemy["direction"] = nextWaypoint["direction"];
+                enemy["pathAmount"]++;
             }
+            if(enemy["direction"] == Math.PI){ enemy["x"] += enemy["type"]["speed"]; }
+            else if(enemy["direction"] == Math.PI*0.5){ enemy["y"] -= enemy["type"]["speed"]; }
+            else if(enemy["direction"] == Math.PI*1.5){ enemy["y"] += enemy["type"]["speed"]; }
+            else if(enemy["direction"] == 0 || enemy["direction"] == Math.PI*2){ enemy["x"] -= enemy["type"]["speed"]; }
         }
     }
 }
@@ -131,29 +138,99 @@ function toggleSpeed(){
     else{
         currentSpeed = 1;
     }
+    preSpaceSpeed = currentSpeed;
     clearInterval(gameInterval)
     gameInterval = setInterval(frame, 1000/(60*currentSpeed))
 }
 function drawEnemies(){
     if(enemyStats){
-    for(var i=0; i<enemyStats.length; i++){
-        drawImg(enemyStats[i]["type"]["src"], enemyStats[i]["x"], enemyStats[i]["y"], 62.5, 62.5, enemyStats[i]["direction"])
+        for(var i=0; i<enemyStats.length; i++){
+            drawImg(enemyStats[i]["type"]["src"], enemyStats[i]["x"], enemyStats[i]["y"], 62.5, 62.5, enemyStats[i]["direction"])
+        }
     }
 }
+function findDist(x1, y1, x2, y2){return Math.hypot(x2 - x1, y2 - y1);}
+function startNextRound() {
+    if (!enemySpawnArray || enemySpawnArray.length === 0) {
+        error("Engine Configuration Error: enemySpawnArray database is missing or empty.");
+        alert("Cannot start game: No rounds found!");
+        return; 
+    }
+
+    var noEnemiesOnScreen = (!enemyStats || enemyStats.length === 0);
+    if (noEnemiesOnScreen && isSpawningFinished) {
+        if (window.activeRoundWaves !== undefined) {
+            var nextRoundIndex = currentRound + 1;
+            if (nextRoundIndex >= enemySpawnArray.length) {
+                warn("Game completed! No further rounds are defined inside the spawn tracking index.");
+                alert("🎉 Victory! You have conquered every single round configuration!");
+                return; 
+            }
+            
+            currentRound = nextRoundIndex;
+        }
+
+        try {
+            var currentRoundConfigOrigin = enemySpawnArray[currentRound];
+            
+            if (!currentRoundConfigOrigin || !Array.isArray(currentRoundConfigOrigin)) {
+                throw new Error("Target round dataset is structurally corrupt or undefined.");
+            }
+            window.activeRoundWaves = currentRoundConfigOrigin.map(wave => {
+                return {
+                    type: wave.type,               
+                    inBetweenTime: wave.inBetweenTime,
+                    amount: wave.amount
+                };
+            });
+            isSpawningFinished = false;
+            framesToSpawn = 0;
+            var roundLabel = gebid("roundDisplay");
+            if (roundLabel) {
+                roundLabel.textContent = "Round: " + (currentRound + 1);
+            }
+
+            log("Successfully loaded index criteria parameters. Round " + (currentRound + 1) + " started!");
+        } catch (structureException) {
+            error("Engine Intercepted Fault Initialization: " + structureException.message);
+            isSpawningFinished = true; 
+        }
+
+    } else {
+        warn("Action Prevented: You must clear remaining field elements before initiating standard loop sequence transitions!");
+    }
+}
+if (gebid("nextRoundButton")) {
+    gebid("nextRoundButton").addEventListener("click", startNextRound);
 }
 function updateEnemySpawning() {
-    if(framesToSpawn >= enemySpawnArray[0][0]["inBetweenTime"] && enemySpawnArray[0][0]["amount"] != 0){
+    if (isSpawningFinished || !window.activeRoundWaves) {
+        isSpawningFinished = true;
+        return;
+    }
+    var activeWaves = window.activeRoundWaves;
+
+    if (activeWaves.length > 0 && activeWaves[0]["amount"] === 0) {
+        activeWaves.splice(0, 1);
+        framesToSpawn = 0; 
+    }
+
+    if (activeWaves.length === 0) {
+        isSpawningFinished = true;
+        return;
+    }
+    if (framesToSpawn >= activeWaves[0]["inBetweenTime"] && activeWaves[0]["amount"] > 0) {
         enemyStats.push({
-            type:enemySpawnArray[0][0]["type"],
+            type: activeWaves[0]["type"],
             x: entrance["x"],
             y: entrance["y"],
-            pathAmount:0,
-            distanceTraveled:0,
-            id:3,
-            direction:Math.PI
-        })
+            pathAmount: 0,
+            distanceTraveled: 0,
+            id: ++enemySpawnedIDs,
+            direction: Math.PI
+        });
         framesToSpawn = 0;
-        enemySpawnArray[0][0]["amount"] -= 1;
+        activeWaves[0]["amount"] -= 1;
     }
     framesToSpawn++;
 }
@@ -162,20 +239,61 @@ function getAngleToTarget(imgX, imgY, targetX, targetY) {
     const dy = targetY - imgY;
     return Math.atan2(dy, dx);
   }
-function drawTowers(){}
-function findTargetToFireAt(targetPriority, towerX, towerY){if(enemyStats[0]!= undefined){return [getAngleToTarget(towerX*62.5, towerY*62.5, enemyStats[0]["x"]*62.5, enemyStats[0]["y"]*62.5)];}}
+function drawProjectiles(){}
+function createProjectile(x,y,direction,type){}
+function checkForTargetedEnemy(towerX, towerY, targetPriority, range){
+    var out = null; 
+    var tPx = towerX * 62.5;
+    var tPy = towerY * 62.5;
+
+    for(var i = 0; i < enemyStats.length; i++){
+        if(findDist(tPx, tPy, enemyStats[i]["x"], enemyStats[i]["y"]) <= range){
+            out = i;
+            break;
+        }
+    }
+    return out;
+}
+function findTargetToFireAt(targetPriority, towerPixelX, towerPixelY, enemyID){
+    if(enemyStats[enemyID] != undefined){
+        return getAngleToTarget(towerPixelX, towerPixelY, enemyStats[enemyID]["x"], enemyStats[enemyID]["y"]);
+    } else {
+        return null;
+    }
+}
 function updateTowerStats(){
-    for(var i=0;i<towerArray.length;i++){
-        drawImg(towerArray[i]["type"]["image"], towerArray[i]["x"]*62.5-31.25, towerArray[i]["y"]*62.5-31.25, 62.5, 62.5, towerArray[i]["direction"])
-        towerArray[i]["reloadTime"]--;
-        var target = findTargetToFireAt("first", towerArray[i]["x"]*62.5, towerArray[i]["y"]*62.5);
-            towerArray[i]["direction"] = (target)
-        if(towerArray[i]["reloadTime"] == 0){
-            towerArray[i]["reloadTime"] = towerArray[i]["type"]["speed"]
+    for(var i = 0; i < towerArray.length; i++){
+        var tower = towerArray[i];
+        drawImg(tower["type"]["image"], tower["x"]*62.5-31.25, tower["y"]*62.5-31.25, 62.5, 62.5, tower["direction"]);
+        if (tower["reloadTime"] > 0) {
+            tower["reloadTime"]--;
+        }
+        
+        var targetedEnemy = null;
+        if(enemyStats && enemyStats.length > 0){
+            targetedEnemy = checkForTargetedEnemy(tower["x"], tower["y"], "first", 300);
+        }
+        if(targetedEnemy === null || targetedEnemy === undefined) {
+            if(tower["reloadTime"] <= 0) {
+                tower["reloadTime"] = 1;
+            }
+            continue;
+        }
+        var towerPixelX = tower["x"] * 62.5;
+        var towerPixelY = tower["y"] * 62.5;
+        var target = findTargetToFireAt("first", towerPixelX, towerPixelY, targetedEnemy);
+        
+        if(target !== null){
+            tower["direction"] = target;
+            if(tower["reloadTime"] <= 0){
+                tower["reloadTime"] = tower["type"]["speed"];
+                createProjectile(tower["x"], tower["y"], tower["direction"], "Normal000");
+            }
         }
     }
 }
 function frame(){
+    for(var l=0; l<currentSpeed; l++){
     var framePart = 0;
     frameCount++;
     totalFramesRendered++; 
@@ -197,10 +315,11 @@ function frame(){
         framePart++
         updateTowerStats();
         framePart++
-        drawTowers();
+        drawProjectiles();
         framePart++
     } catch (err) {
         log("Loop crashed on frame component execution: " + err.message + " at frame part " + framePart);
+    }
     }
 }
 
@@ -255,17 +374,26 @@ addNewScript("towerCode.js")
 var gridImg = window.initImage("gridSystemImage.png");
 var testImage = window.initImage("ExitIndicator.png");
 gebid("speedButton").addEventListener("contextmenu", function(event) {
+    preSpaceSpeed = currentSpeed; 
     event.preventDefault(); 
-    var gameSpeedPrompt = prompt("How fast (1 is normal speed) do you want the game to be? Note, going above 10x may lag the computer or the game.");
+    var gameSpeedPrompt = prompt("How fast (1 is normal speed) do you want the game to be? Max allowed speed is 20x.");
+    
     if (gameSpeedPrompt !== null && gameSpeedPrompt.trim() !== "" && Number.isFinite(Number(gameSpeedPrompt))) {
-      currentSpeed = parseFloat(gameSpeedPrompt); 
-      console.log("Game speed changed to: " + currentSpeed);
-      clearInterval(gameInterval)
-      gameInterval = setInterval(frame, 1000/(60*currentSpeed))
+      var requestedSpeed = parseFloat(gameSpeedPrompt);
+      if (requestedSpeed <= 0) {
+          alert("Speed must be greater than 0!");
+          return;
+      }
+      
+      currentSpeed = Math.min(requestedSpeed, 20); 
+      console.log("Game speed changed to: " + currentSpeed + "x");
+      
+      clearInterval(gameInterval);
+      gameInterval = setInterval(frame, 1000 / 60);
     } else if (gameSpeedPrompt !== null) {
       alert("Please enter a valid number!");
     }
-  });
+});
 document.addEventListener("keydown", function(event) {
     if (event.key === "d") {
         var logs = gebid("logs");
@@ -302,3 +430,31 @@ setTimeout(() => {
         }
     }, 1000 / 60);
 }, 250);
+document.addEventListener("keydown", function(event) {
+    if (event.key === " " || event.code === "Space") {
+        event.preventDefault(); 
+        
+        if (!isSpaceHeldDown) {
+            isSpaceHeldDown = true;
+            preSpaceSpeed = currentSpeed;
+            currentSpeed = 2;
+            
+            console.log("Space held: Speed forced to 2x");
+            clearInterval(gameInterval);
+            gameInterval = setInterval(frame, 1000 / 60);
+        }
+    }
+});
+
+document.addEventListener("keyup", function(event) {
+    if (event.key === " " || event.code === "Space") {
+        if (isSpaceHeldDown) {
+            isSpaceHeldDown = false;
+            currentSpeed = preSpaceSpeed;
+            
+            console.log("Space released: Speed restored to " + currentSpeed + "x");
+            clearInterval(gameInterval);
+            gameInterval = setInterval(frame, 1000 / 60);
+        }
+    }
+});

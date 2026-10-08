@@ -10,9 +10,16 @@
     <div id="background"></div>
     <div id="leftPart"><p class="top">Bought Towers/Upgrades:</p></div>
     <canvas height="1000px" width="1000px" id="mainGameCanvas"></canvas>
-    <div id="rightPart"><p class="top">Towers: </p><button onclick="toggleSpeed()" id="speedButton">Toggle Double Speed</button></div>
+    <div id="rightPart"><p class="top">Towers: </p><button onclick="toggleSpeed()" id="speedButton" style="padding: 10px 20px; width:100%; font-size: 16px; font-weight: bold; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Toggle Double Speed</button><div id="roundControlPanel" style="margin: 10px 0; font-family: sans-serif;">
+        <button id="nextRoundButton" style="padding: 10px 20px; width:100%; font-size: 16px; font-weight: bold; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            Start Next Round
+        </button>
+        <span id="roundDisplay" style="margin-left: 15px; font-size: 16px; font-weight: bold; color: #333;">
+            Round: 1
+        </span>
+    </div></div>
     <div id="loading"><h1>Loading...</h1><progress id="loadingBar" value="0" max="100"></progress></div>
-    <div id="logs" class="hideLogs"><p class="top">Logs: </p><p id="fpsCounter">FPS: 0.</div>
+    <div id="logs" class="hideLogs"><p class="top"></p><p id="fpsCounter">FPS: 0.</div>
     <script src="main.js" defer></script>
 </body>
 </html>
