@@ -1,0 +1,2 @@
+var projectileData = {Normal: {t00: {Type: "Normal-00", projSpeed: 20, image: initImage("projectiles/normal/t00.png")}}}
+var projectileList = [{Type: projectileData["Normal"]["t00"], x: 800, y: 300, direction: Math.PI}]

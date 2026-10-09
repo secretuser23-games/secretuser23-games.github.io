@@ -68,7 +68,7 @@ function drawImg(image, x, y, width, height, rotation = 0) {
 
     if (rotation === 0) {
         ctx.setTransform(1, 0, 0, 1, scaledX, scaledY);
-        ctx.drawImage(image, 0, 0, scaledW, scaledH);
+        ctx.drawImage(image, -scaledW / 2, -scaledH / 2, scaledW, scaledH); 
     } else {
         const cos = Math.cos(rotation);
         const sin = Math.sin(rotation);
@@ -79,9 +79,10 @@ function drawImg(image, x, y, width, height, rotation = 0) {
 }
 
 function drawGrid(size){
+    var halfTile = (1000 / size) / 2;
     for(var i=0; i<size; i++){
         for(var j=0; j<size; j++){
-            drawImg(gridImg, i * 1000 / size, j * 1000 / size, 1000 / size, 1000 / size);
+            drawImg(gridImg, (i * 1000 / size) + halfTile, (j * 1000 / size) + halfTile, 1000 / size, 1000 / size);
         }
     }
 }
@@ -95,6 +96,7 @@ function drawTrack(){
 
     const tileWidth = 62.5; 
     const tileHeight = 62.5;
+    const halfWidth = 31.25;
 
     for(var i=0; i<trackInfo.length; i++){
         if (!trackInfo[i]) continue; 
@@ -102,9 +104,9 @@ function drawTrack(){
         for(var j=0; j<trackInfo[i].length; j++){
             var tile = trackInfo[i][j];
             if(tile && tile["typeTrack"] != null){
-                drawImg(tile["typeTrack"], j * tileWidth, i * tileHeight, tileWidth, tileHeight);
+                drawImg(tile["typeTrack"], (j * tileWidth) + halfWidth, (i * tileHeight) + halfWidth, tileWidth, tileHeight);
                 if(tile["trackDetails"]){
-                    drawImg(tile["trackDetails"], j*tileWidth, i*tileHeight, tileWidth, tileHeight)
+                    drawImg(tile["trackDetails"], (j * tileWidth) + halfWidth, (i * tileHeight) + halfWidth, tileWidth, tileHeight);
                 }
             }
         }
@@ -163,7 +165,7 @@ function startNextRound() {
             var nextRoundIndex = currentRound + 1;
             if (nextRoundIndex >= enemySpawnArray.length) {
                 warn("Game completed! No further rounds are defined inside the spawn tracking index.");
-                alert("🎉 Victory! You have conquered every single round configuration!");
+                alert("You won! Reload the page to retry the demo again.");
                 return; 
             }
             
@@ -239,8 +241,30 @@ function getAngleToTarget(imgX, imgY, targetX, targetY) {
     const dy = targetY - imgY;
     return Math.atan2(dy, dx);
   }
-function drawProjectiles(){}
-function createProjectile(x,y,direction,type){}
+function drawProjectiles(){
+    if(typeof projectileList !== 'undefined' && projectileList){
+        for (var i = projectileList.length - 1; i >= 0; i--) {
+            var proj = projectileList[i];
+            var speed = (proj["Type"] && proj["Type"]["projSpeed"]) ? proj["Type"]["projSpeed"] : 10;
+            proj["x"] += Math.cos(proj["direction"]) * speed;
+            proj["y"] += Math.sin(proj["direction"]) * speed;
+            if (proj["x"] < -100 || proj["x"] > 1100 || proj["y"] < -100 || proj["y"] > 1100) {
+                projectileList.splice(i, 1);
+            }
+        }
+        for(var i=0;i<projectileList.length;i++){
+            drawImg(projectileList[i]["Type"]["image"], projectileList[i]["x"], projectileList[i]["y"], 62.5,62.5, projectileList[i]["direction"])
+        }
+    }
+}
+function createProjectile(x,y,direction,towType, level){
+projectileList.push({
+    Type: projectileData[towType][level],
+    x: x*62.5,
+    y: y*62.5,
+    direction: direction
+}
+)}
 function checkForTargetedEnemy(towerX, towerY, targetPriority, range){
     var out = null; 
     var tPx = towerX * 62.5;
@@ -264,7 +288,7 @@ function findTargetToFireAt(targetPriority, towerPixelX, towerPixelY, enemyID){
 function updateTowerStats(){
     for(var i = 0; i < towerArray.length; i++){
         var tower = towerArray[i];
-        drawImg(tower["type"]["image"], tower["x"]*62.5-31.25, tower["y"]*62.5-31.25, 62.5, 62.5, tower["direction"]);
+        drawImg(tower["type"]["image"], tower["x"] * 62.5-31.25, tower["y"] * 62.5-31.25, 62.5, 62.5, tower["direction"]);
         if (tower["reloadTime"] > 0) {
             tower["reloadTime"]--;
         }
@@ -287,7 +311,7 @@ function updateTowerStats(){
             tower["direction"] = target;
             if(tower["reloadTime"] <= 0){
                 tower["reloadTime"] = tower["type"]["speed"];
-                createProjectile(tower["x"], tower["y"], tower["direction"], "Normal000");
+                createProjectile(tower["x"]-0.5, tower["y"]-0.5, tower["direction"], "Normal", "t00");
             }
         }
     }
@@ -311,11 +335,11 @@ function frame(){
         framePart++
         updateEnemyStats();
         framePart++
+        drawProjectiles();
+        framePart++
         drawEnemies();
         framePart++
         updateTowerStats();
-        framePart++
-        drawProjectiles();
         framePart++
     } catch (err) {
         log("Loop crashed on frame component execution: " + err.message + " at frame part " + framePart);
@@ -371,6 +395,7 @@ if(canvas && ctx) {
 addNewScript("track1.js");
 addNewScript("enemyCode.js")
 addNewScript("towerCode.js")
+addNewScript("projectiles.js")
 var gridImg = window.initImage("gridSystemImage.png");
 var testImage = window.initImage("ExitIndicator.png");
 gebid("speedButton").addEventListener("contextmenu", function(event) {
