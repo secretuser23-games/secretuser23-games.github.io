@@ -17,6 +17,7 @@ function warn(message){
         var logEntry = document.createElement("p");
         logEntry.textContent = message;
         logEntry.style.color = "yellow";
+        logEntry.style.backgroundColor = "black"
         logsDiv.appendChild(logEntry);
     }
 }
@@ -27,6 +28,7 @@ function error(message){
         var logEntry = document.createElement("p");
         logEntry.textContent = message;
         logEntry.style.color = "red";
+        logEntry.style.backgroundColor = "black"
         logsDiv.appendChild(logEntry);
     }
 }
@@ -34,6 +36,9 @@ function clearLogs(){
     gebid("logs").innerHTML = "<p class='top'></p><p id='fpsCounter'>FPS: 0."
 }
 var loading = 0;
+var isPlacingTower = false;
+var placementX = 0;
+var placementY = 0;
 var isSpawningFinished = false; 
 var preSpaceSpeed = 1;
 var isSpaceHeldDown = false;
@@ -130,6 +135,16 @@ function updateEnemyStats(){
             else if(enemy["direction"] == Math.PI*0.5){ enemy["y"] -= enemy["type"]["speed"]; }
             else if(enemy["direction"] == Math.PI*1.5){ enemy["y"] += enemy["type"]["speed"]; }
             else if(enemy["direction"] == 0 || enemy["direction"] == Math.PI*2){ enemy["x"] -= enemy["type"]["speed"]; }
+            if(enemy["damageTaken"] >= 1){
+                for(var j=0;j<Math.floor(enemy["damageTaken"]); j++){
+                    enemy["currentHP"]--; 
+                    if(enemy["currentHP"] <= 0){
+                        if(enemy["type"] == enemyArray["red"]){
+                            enemyStats.splice(i,1)
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -224,8 +239,10 @@ function updateEnemySpawning() {
     if (framesToSpawn >= activeWaves[0]["inBetweenTime"] && activeWaves[0]["amount"] > 0) {
         enemyStats.push({
             type: activeWaves[0]["type"],
+            currentHP:1,
             x: entrance["x"],
             y: entrance["y"],
+            damageTaken:0,
             pathAmount: 0,
             distanceTraveled: 0,
             id: ++enemySpawnedIDs,
@@ -241,7 +258,7 @@ function getAngleToTarget(imgX, imgY, targetX, targetY) {
     const dy = targetY - imgY;
     return Math.atan2(dy, dx);
   }
-function drawProjectiles(){
+  function drawProjectiles(){
     if(typeof projectileList !== 'undefined' && projectileList){
         for (var i = projectileList.length - 1; i >= 0; i--) {
             var proj = projectileList[i];
@@ -252,8 +269,20 @@ function drawProjectiles(){
                 projectileList.splice(i, 1);
             }
         }
-        for(var i=0;i<projectileList.length;i++){
-            drawImg(projectileList[i]["Type"]["image"], projectileList[i]["x"], projectileList[i]["y"], 62.5,62.5, projectileList[i]["direction"])
+        for(var i = 0; i < projectileList.length; i++){
+            drawImg(projectileList[i]["Type"]["image"], projectileList[i]["x"], projectileList[i]["y"], 62.5, 62.5, projectileList[i]["direction"]);
+        }
+        for (var i = projectileList.length - 1; i >= 0; i--) {
+            for (var j = enemyStats.length - 1; j >= 0; j--) {
+                var distance = findDist(projectileList[i]["x"], projectileList[i]["y"], enemyStats[j]["x"], enemyStats[j]["y"]);
+                
+                if (distance <= 20) {
+                    var dmg = projectileList[i]["Type"]["damage"] ? projectileList[i]["Type"]["damage"] : 1;
+                    enemyStats[j]["damageTaken"] += dmg;
+                    projectileList.splice(i, 1);
+                    break; 
+                }
+            }
         }
     }
 }
@@ -288,7 +317,7 @@ function findTargetToFireAt(targetPriority, towerPixelX, towerPixelY, enemyID){
 function updateTowerStats(){
     for(var i = 0; i < towerArray.length; i++){
         var tower = towerArray[i];
-        drawImg(tower["type"]["image"], tower["x"] * 62.5-31.25, tower["y"] * 62.5-31.25, 62.5, 62.5, tower["direction"]);
+        drawImg(tower["type"]["image"], tower["x"] * 62.5+31.25, tower["y"] * 62.5+31.25, 62.5, 62.5, tower["direction"]);
         if (tower["reloadTime"] > 0) {
             tower["reloadTime"]--;
         }
@@ -340,6 +369,13 @@ function frame(){
         drawEnemies();
         framePart++
         updateTowerStats();
+        framePart++;
+        if (isPlacingTower) {
+            // Use your default tower icon at a semi-transparent opacity or draw a distinct color frame
+            ctx.globalAlpha = 0.6; // Soft overlay mode
+            drawImg(towerLists["basic"]["image"], placementX * 62.5-31.25, placementY * 62.5-31.25, 62.5, 62.5, Math.PI);
+            ctx.globalAlpha = 1.0; // Reset canvas layout profile back to solid
+        }
         framePart++
     } catch (err) {
         log("Loop crashed on frame component execution: " + err.message + " at frame part " + framePart);
@@ -482,4 +518,132 @@ document.addEventListener("keyup", function(event) {
             gameInterval = setInterval(frame, 1000 / 60);
         }
     }
+});document.addEventListener("keydown", function(event) {
+    // Press 'T' to toggle or enter tower placement mode
+    if (event.key.toLowerCase() === "t") {
+        isPlacingTower = !isPlacingTower;
+        if (isPlacingTower) {
+            placementX = 8; // Default to center of your 16x16 grid
+            placementY = 8;
+            log("Tower placement mode active! Use Arrow keys to move, Enter to place.");
+        } else {
+            log("Tower placement mode cancelled.");
+        }
+    }
+
+    // Move placement cursor with arrow keys (confined strictly to 16x16 grid bounds)
+    if (isPlacingTower) {
+        if (event.key === "ArrowLeft") {
+            event.preventDefault();
+            if (placementX > 0) placementX--;
+        }
+        if (event.key === "ArrowRight") {
+            event.preventDefault();
+            if (placementX < 15) placementX++;
+        }
+        if (event.key === "ArrowUp") {
+            event.preventDefault();
+            if (placementY > 0) placementY--;
+        }
+        if (event.key === "ArrowDown") {
+            event.preventDefault();
+            if (placementY < 15) placementY++;
+        }
+
+        // Press 'Enter' to build the tower at the active cursor cell
+        if (event.key === "Enter") {
+            event.preventDefault();
+            
+            // Check if the tile is a road/track element
+            var tile = trackInfo[placementY][placementX];
+            log(JSON.stringify(tile))
+            if (tile && tile.track) {
+                warn("Cannot build tower: Selected grid tile contains road path elements!");
+                return;
+            }
+
+            // Push the new basic tower directly into your existing array layout
+            towerArray.push({
+                type: towerLists["basic"],
+                x: placementX,
+                y: placementY,
+                direction: Math.PI,
+                reloadTime: towerLists["basic"]["speed"]
+            });
+
+            log("Tower placed successfully at grid column: " + placementX + ", row: " + placementY);
+            isPlacingTower = false; // Exit placement mode
+        }
+    }
 });
+function getGridCoordsFromEvent(event) {
+    if (!canvas) return { x: 0, y: 0 };
+    
+    const rect = canvas.getBoundingClientRect();
+    
+    // Support both desktop mouse and mobile touch inputs safely
+    const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+    const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+    
+    // Calculate raw mouse position scale relative to canvas dimensions
+    const relativeX = (clientX - rect.left) / rect.width * 1000;
+    const relativeY = (clientY - rect.top) / rect.height * 1000;
+    
+    // Translate down to your 16x16 grid tile index boundaries (0-15)
+    const gridX = Math.max(0, Math.min(15, Math.floor(relativeX / 62.5)));
+    const gridY = Math.max(0, Math.min(15, Math.floor(relativeY / 62.5)));
+    
+    return { x: gridX, y: gridY };
+}
+
+// 2. Track Mouse Movement over the Canvas to Update Placement Previews
+if (canvas) {
+    canvas.addEventListener('mousemove', function(event) {
+        if (isPlacingTower) {
+            const coords = getGridCoordsFromEvent(event);
+            placementX = coords.x;
+            placementY = coords.y;
+        }
+    });
+
+    // Support Mobile Touch Dragging to preview towers smoothly
+    canvas.addEventListener('touchmove', function(event) {
+        if (isPlacingTower) {
+            event.preventDefault(); // Stop mobile screen scrolling during placement
+            const coords = getGridCoordsFromEvent(event);
+            placementX = coords.x;
+            placementY = coords.y;
+        }
+    }, { passive: false });
+
+    // 3. Confirm Placement with a Canvas Click / Touch End
+    const confirmPlacement = function(event) {
+        if (!isPlacingTower) return;
+        event.preventDefault();
+    
+        // ADD THIS PROTECTION ROW LAYER:
+        if (placementY < 0 || placementY >= trackInfo.length || placementX < 0 || placementX >= trackInfo[0].length) {
+            warn("Cannot build tower: Cursor is completely off the map grid boundaries!");
+            return;
+        }
+    
+        // Now this check will look up rows safely without crashing
+        var tile = trackInfo[placementY][placementX];
+        if (tile && tile.track) {
+            warn("Cannot build tower: Selected grid tile contains road path elements!");
+            return;
+        }
+    
+        // Build the tower
+        towerArray.push({
+            type: towerLists["basic"],
+            x: placementX,
+            y: placementY,
+            direction: Math.PI,
+            reloadTime: towerLists["basic"]["speed"]
+        });
+    
+        log("Tower placed successfully via pointer at column: " + placementX + ", row: " + placementY);
+        isPlacingTower = false; 
+    };
+}

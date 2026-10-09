@@ -17,6 +17,12 @@
         <span id="roundDisplay" style="margin-left: 15px; font-size: 16px; font-weight: bold; color: #333;">
             Round: 1
         </span>
+        <table style="width:100%;"><thead><tr><td>Row 1</td><td>Row 2</td></tr></thead><tbody><tr><td><img src="images/towers/Normal.png" style="height:10vh" onclick="isPlacingTower = !isPlacingTower;
+            if (isPlacingTower) {
+                placementX = 8;
+                placementY = 8;
+                log('Mouse tower placement active! Move cursor over map and left-click to place.');
+            }"></td><td></td></tr></tbody></table>
     </div></div>
     <div id="loading"><h1>Loading...</h1><progress id="loadingBar" value="0" max="100"></progress></div>
     <div id="logs" class="hideLogs"><p class="top"></p><p id="fpsCounter">FPS: 0.</div>
