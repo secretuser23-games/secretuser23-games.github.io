@@ -561,10 +561,24 @@ if(canvas){canvas.addEventListener("click", function(event){
     attemptPlaceTower();
 })}
 function attemptPlaceTower(){
-    if(trackInfo[placementY][placementX]["tower"] == true){
+    var location = trackInfo[placementY][placementX]
+    if(location["tower"] == true){
         alert("There is already a tower there! Please pick another location.")
     }
-    else if(trackInfo[placementY][placementY]["typeTrack"] == grassRock){
+    else if(location["typeTrack"] == grassRock){
         alert("Cannot place on top of rocks!")
+    }
+    else if(location["typeTrack"] == water || location["typeTrack"] == deepWater){
+        alert("Cannot place tower in water (yet)!")
+    }
+    else{
+        location["tower"] = true;
+        towerArray.push({
+            type: towerLists["basic"], 
+            x:placementX, 
+            y:placementY, 
+            direction: Math.PI, 
+            reloadTime: towerLists["basic"]["speed"]})
+            isPlacingTower = false;
     }
 }
