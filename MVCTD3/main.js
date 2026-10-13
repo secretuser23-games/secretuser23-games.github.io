@@ -371,12 +371,9 @@ function frame(){
         updateTowerStats();
         framePart++;
         if (isPlacingTower) {
-            // Use your default tower icon at a semi-transparent opacity or draw a distinct color frame
-            ctx.globalAlpha = 0.6; // Soft overlay mode
-            clearLogs();
-            log(placementX + " " + placementY)
+            ctx.globalAlpha = 0.6;
             drawImg(towerLists["basic"]["image"], placementX * 62.5+31.25, placementY * 62.5+31.25, 62.5, 62.5, Math.PI);
-            ctx.globalAlpha = 1.0; // Reset canvas layout profile back to solid
+            ctx.globalAlpha = 1.0;
         }
         framePart++
     } catch (err) {
@@ -525,6 +522,9 @@ document.addEventListener("keydown", function(event) {
     else if(event.key === "T"){
         isPlacingTower = false;
     }
+    else if(event.key === "enter"){
+        attemptPlaceTower();
+    }
 });
 
 document.addEventListener("keyup", function(event) {
@@ -542,17 +542,11 @@ document.addEventListener("keyup", function(event) {
 if (canvas) {
     canvas.addEventListener('mousemove', function(event) {
         var rect = canvas.getBoundingClientRect();
-        
-        // 1. Get the raw mouse position relative to the canvas bounding box
         const rawX = event.clientX - rect.left;
         const rawY = event.clientY - rect.top;
-        
-        // 2. Scale coordinates based on the internal height rule (1000 units high)
         const scaleFactor = 1000 / rect.height;
         const x = rawX * scaleFactor;
         const y = rawY * scaleFactor;
-        
-        // 3. Apply your game's grid placement logic
         placementX = Math.floor(x / 62.5);
         placementY = Math.floor(y / 62.5);
     });
@@ -561,17 +555,21 @@ if(canvas){canvas.addEventListener("click", function(event){
     attemptPlaceTower();
 })}
 function attemptPlaceTower(){
-    var location = trackInfo[placementY][placementX]
-    if(location["tower"] == true){
-        alert("There is already a tower there! Please pick another location.")
-    }
-    else if(location["typeTrack"] == grassRock){
-        alert("Cannot place on top of rocks!")
-    }
-    else if(location["typeTrack"] == water || location["typeTrack"] == deepWater){
-        alert("Cannot place tower in water (yet)!")
-    }
-    else{
+    if(isPlacingTower){
+        var location = trackInfo[placementY][placementX]
+        if(location["tower"] == true){
+            alert("There is already a tower there! Please pick another location.")
+        }
+        else if(location["typeTrack"] == grassRock){
+            alert("Cannot place on top of rocks!")
+        }
+        else if(location["typeTrack"] == water || location["typeTrack"] == deepWater){
+            alert("Cannot place tower in water (yet)!")
+        }
+        else if(location["track"] == true){
+            alert("This is a road part, you cannot place here!")
+        }
+        else{
         location["tower"] = true;
         towerArray.push({
             type: towerLists["basic"], 
@@ -580,5 +578,6 @@ function attemptPlaceTower(){
             direction: Math.PI, 
             reloadTime: towerLists["basic"]["speed"]})
             isPlacingTower = false;
+        }
     }
 }
