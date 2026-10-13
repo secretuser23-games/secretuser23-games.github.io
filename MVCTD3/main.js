@@ -373,7 +373,9 @@ function frame(){
         if (isPlacingTower) {
             // Use your default tower icon at a semi-transparent opacity or draw a distinct color frame
             ctx.globalAlpha = 0.6; // Soft overlay mode
-            drawImg(towerLists["basic"]["image"], placementX * 62.5-31.25, placementY * 62.5-31.25, 62.5, 62.5, Math.PI);
+            clearLogs();
+            log(placementX + " " + placementY)
+            drawImg(towerLists["basic"]["image"], placementX * 62.5+31.25, placementY * 62.5+31.25, 62.5, 62.5, Math.PI);
             ctx.globalAlpha = 1.0; // Reset canvas layout profile back to solid
         }
         framePart++
@@ -505,6 +507,24 @@ document.addEventListener("keydown", function(event) {
             gameInterval = setInterval(frame, 1000 / 60);
         }
     }
+    else if(event.key === "ArrowUp"){
+        if(placementY>0){placementY--;}
+    }
+    else if(event.key === "ArrowDown"){
+        if(placementY<15){placementY++;}
+    }
+    else if(event.key === "ArrowLeft"){
+        if(placementX>0){placementX--;}
+    }
+    else if(event.key === "ArrowRight"){
+        if(placementX<15){placementX++;}
+    }
+    else if(event.key === "t"){
+        isPlacingTower = true;
+    }
+    else if(event.key === "T"){
+        isPlacingTower = false;
+    }
 });
 
 document.addEventListener("keyup", function(event) {
@@ -518,132 +538,33 @@ document.addEventListener("keyup", function(event) {
             gameInterval = setInterval(frame, 1000 / 60);
         }
     }
-});document.addEventListener("keydown", function(event) {
-    // Press 'T' to toggle or enter tower placement mode
-    if (event.key.toLowerCase() === "t") {
-        isPlacingTower = !isPlacingTower;
-        if (isPlacingTower) {
-            placementX = 8; // Default to center of your 16x16 grid
-            placementY = 8;
-            log("Tower placement mode active! Use Arrow keys to move, Enter to place.");
-        } else {
-            log("Tower placement mode cancelled.");
-        }
-    }
-
-    // Move placement cursor with arrow keys (confined strictly to 16x16 grid bounds)
-    if (isPlacingTower) {
-        if (event.key === "ArrowLeft") {
-            event.preventDefault();
-            if (placementX > 0) placementX--;
-        }
-        if (event.key === "ArrowRight") {
-            event.preventDefault();
-            if (placementX < 15) placementX++;
-        }
-        if (event.key === "ArrowUp") {
-            event.preventDefault();
-            if (placementY > 0) placementY--;
-        }
-        if (event.key === "ArrowDown") {
-            event.preventDefault();
-            if (placementY < 15) placementY++;
-        }
-
-        // Press 'Enter' to build the tower at the active cursor cell
-        if (event.key === "Enter") {
-            event.preventDefault();
-            
-            // Check if the tile is a road/track element
-            var tile = trackInfo[placementY][placementX];
-            log(JSON.stringify(tile))
-            if (tile && tile.track) {
-                warn("Cannot build tower: Selected grid tile contains road path elements!");
-                return;
-            }
-
-            // Push the new basic tower directly into your existing array layout
-            towerArray.push({
-                type: towerLists["basic"],
-                x: placementX,
-                y: placementY,
-                direction: Math.PI,
-                reloadTime: towerLists["basic"]["speed"]
-            });
-
-            log("Tower placed successfully at grid column: " + placementX + ", row: " + placementY);
-            isPlacingTower = false; // Exit placement mode
-        }
-    }
 });
-function getGridCoordsFromEvent(event) {
-    if (!canvas) return { x: 0, y: 0 };
-    
-    const rect = canvas.getBoundingClientRect();
-    
-    // Support both desktop mouse and mobile touch inputs safely
-    const clientX = event.touches ? event.touches[0].clientX : event.clientX;
-    const clientY = event.touches ? event.touches[0].clientY : event.clientY;
-    
-    // Calculate raw mouse position scale relative to canvas dimensions
-    const relativeX = (clientX - rect.left) / rect.width * 1000;
-    const relativeY = (clientY - rect.top) / rect.height * 1000;
-    
-    // Translate down to your 16x16 grid tile index boundaries (0-15)
-    const gridX = Math.max(0, Math.min(15, Math.floor(relativeX / 62.5)));
-    const gridY = Math.max(0, Math.min(15, Math.floor(relativeY / 62.5)));
-    
-    return { x: gridX, y: gridY };
-}
-
-// 2. Track Mouse Movement over the Canvas to Update Placement Previews
 if (canvas) {
     canvas.addEventListener('mousemove', function(event) {
-        if (isPlacingTower) {
-            const coords = getGridCoordsFromEvent(event);
-            placementX = coords.x;
-            placementY = coords.y;
-        }
+        var rect = canvas.getBoundingClientRect();
+        
+        // 1. Get the raw mouse position relative to the canvas bounding box
+        const rawX = event.clientX - rect.left;
+        const rawY = event.clientY - rect.top;
+        
+        // 2. Scale coordinates based on the internal height rule (1000 units high)
+        const scaleFactor = 1000 / rect.height;
+        const x = rawX * scaleFactor;
+        const y = rawY * scaleFactor;
+        
+        // 3. Apply your game's grid placement logic
+        placementX = Math.floor(x / 62.5);
+        placementY = Math.floor(y / 62.5);
     });
-
-    // Support Mobile Touch Dragging to preview towers smoothly
-    canvas.addEventListener('touchmove', function(event) {
-        if (isPlacingTower) {
-            event.preventDefault(); // Stop mobile screen scrolling during placement
-            const coords = getGridCoordsFromEvent(event);
-            placementX = coords.x;
-            placementY = coords.y;
-        }
-    }, { passive: false });
-
-    // 3. Confirm Placement with a Canvas Click / Touch End
-    const confirmPlacement = function(event) {
-        if (!isPlacingTower) return;
-        event.preventDefault();
-    
-        // ADD THIS PROTECTION ROW LAYER:
-        if (placementY < 0 || placementY >= trackInfo.length || placementX < 0 || placementX >= trackInfo[0].length) {
-            warn("Cannot build tower: Cursor is completely off the map grid boundaries!");
-            return;
-        }
-    
-        // Now this check will look up rows safely without crashing
-        var tile = trackInfo[placementY][placementX];
-        if (tile && tile.track) {
-            warn("Cannot build tower: Selected grid tile contains road path elements!");
-            return;
-        }
-    
-        // Build the tower
-        towerArray.push({
-            type: towerLists["basic"],
-            x: placementX,
-            y: placementY,
-            direction: Math.PI,
-            reloadTime: towerLists["basic"]["speed"]
-        });
-    
-        log("Tower placed successfully via pointer at column: " + placementX + ", row: " + placementY);
-        isPlacingTower = false; 
-    };
+}
+if(canvas){canvas.addEventListener("click", function(event){
+    attemptPlaceTower();
+})}
+function attemptPlaceTower(){
+    if(trackInfo[placementY][placementX]["tower"] == true){
+        alert("There is already a tower there! Please pick another location.")
+    }
+    else if(trackInfo[placementY][placementY]["typeTrack"] == grassRock){
+        alert("Cannot place on top of rocks!")
+    }
 }
