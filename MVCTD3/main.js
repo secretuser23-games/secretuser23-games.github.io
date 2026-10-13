@@ -129,8 +129,10 @@ function updateEnemyStats(){
                 enemyStats.splice(i, 1); 
                 continue;
             }
-            if ((Math.abs(enemy["x"] - nextWaypoint["x"])) <= enemy["type"]["speed"] && 
-                (Math.abs(enemy["y"] - nextWaypoint["y"])) <= enemy["type"]["speed"]) {
+            if ((Math.abs(enemy["x"] - nextWaypoint["x"])) <= Math.ceil(enemy["type"]["speed"]) && 
+                (Math.abs(enemy["y"] - nextWaypoint["y"])) <= Math.ceil(enemy["type"]["speed"])) {
+                enemy["x"] = nextWaypoint["x"];
+                enemy["y"] = nextWaypoint["y"];
                 enemy["direction"] = nextWaypoint["direction"];
                 enemy["pathAmount"]++;
             }
@@ -149,6 +151,29 @@ function updateEnemyStats(){
                     }
                     else if(enemy["type"] == enemyArray["yellow"]){
                         enemy["type"] = enemyArray["orange"]
+                        enemy["currentHP"] = 1;
+                    }
+                    else if(enemy["type"] == enemyArray["green"]){
+                        enemy["type"] = enemyArray["yellow"]
+                        enemy["currentHP"] = 1;
+                    }
+                    else if(enemy["type"] == enemyArray["lBlue"]){
+                        enemy["type"] = enemyArray["green"]
+                        enemy["currentHP"] = 1;
+                    }
+                    else if(enemy["type"] == enemyArray["dBlue"]){
+                        enemy["type"] = enemyArray["lBlue"];
+                        enemyStats.push({
+                            type: enemyArray["lBlue"],
+                            currentHP: 1,
+                            x: enemy["x"],
+                            y: enemy["y"],
+                            damageTaken:0,
+                            pathAmount: enemy["pathAmount"],
+                            distanceTraveled: enemy["distanceTraveled"],
+                            id: ++enemySpawnedIDs,
+                            direction: enemyDirection
+                        })
                         enemy["currentHP"] = 1;
                     }
                     else{
@@ -250,7 +275,8 @@ function updateEnemySpawning() {
         if(activeWaves[0]["type"] == enemyArray.orange && hasSeenEachEnemy[1] == false){hasSeenEachEnemy[1] = true; alert("Orange Enemy: \n This is the best time to tell you about an important topic: \n NESTING. \n In this case, dealing damage to an orange enemy does not kill it, but instead spawns a red enemy in its place.\n This will become more prominent during the later rounds, as some enemies may have more than one enemy inside them (hint hint).")}
         if(activeWaves[0]["type"] == enemyArray.yellow && hasSeenEachEnemy[2] == false){hasSeenEachEnemy[2] = true; alert("Yellow Enemy: \n This is just like the orange enemy in that it has the enemy below it (in this case an orange enemy). \n Also, the enemies become a little faster the stronger they are (up to a point, where it becomes almost random).")}
         if(activeWaves[0]["type"] == enemyArray.green && hasSeenEachEnemy[3] == false){hasSeenEachEnemy[3] = true; alert("Green Enemy: \n Yep, it's this again. This guy is even faster and has a yellow enemy inside. \n Yes, there is some differences later on, so be quiet.")}
-        if(activeWaves[0]["type"] == enemyArray.lBlue && hasSeenEachEnemy[4] == false){hasSeenEachEnemy[4] = true; alert("Light Blue enemy \n Yeah, what did you thing was gonna happen? \n At least the next one is somewhat different... \n Also, this implies there is a dark blue enemy, so stay tuned!")}
+        if(activeWaves[0]["type"] == enemyArray.lBlue && hasSeenEachEnemy[4] == false){hasSeenEachEnemy[4] = true; alert("Light Blue enemy: \n Yeah, what did you thing was gonna happen? \n At least the next one is somewhat different... \n Also, this implies there is a dark blue enemy, so stay tuned!")}
+        if(activeWaves[0]["type"] == enemyArray.dBlue && hasSeenEachEnemy[5] == false){hasSeenEachEnemy[5] = true; alert("Dark Blue Enemy: \n Yay! Something different! \n In this case, this Dark Blue enemy has not one, but two light blue enemies inside it! \n This makes it way more damgerous than anything else you've seen yet!\n Get ready!")}
         enemyStats.push({
             type: activeWaves[0]["type"],
             currentHP:1,
@@ -461,6 +487,18 @@ addNewScript("towerCode.js")
 addNewScript("projectiles.js")
 var gridImg = window.initImage("gridSystemImage.png");
 var testImage = window.initImage("ExitIndicator.png");
+gebid("nextRoundButton").addEventListener("contextmenu", function(event){
+    event.preventDefault();
+    var skipAmount = prompt("How many rounds to skip? (Will be removed in prebeta 0.1)");
+    if (skipAmount !== null && skipAmount.trim() !== "" && Number.isFinite(Number(skipAmount))) {
+        for(var i=0; i< skipAmount; i++){
+            currentRound++;
+            isSpawningFinished = true;
+            enemyStats = [];
+            enemySpawnArray.splice(0,1);
+        }
+    }
+})
 gebid("speedButton").addEventListener("contextmenu", function(event) {
     preSpaceSpeed = currentSpeed; 
     event.preventDefault(); 
