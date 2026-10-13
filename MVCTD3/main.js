@@ -143,7 +143,16 @@ function updateEnemyStats(){
                 enemy["damageTaken"] = 0;
                 
                 if(enemy["currentHP"] <= 0){
-                    enemyStats.splice(i, 1);
+                    if(enemy["type"] == enemyArray["orange"]){
+                        enemy["type"] = enemyArray["red"]
+                        enemy["currentHP"] = 1;
+                    }
+                    else if(enemy["type"] == enemyArray["yellow"]){
+                        enemy["type"] = enemyArray["orange"]
+                        enemy["currentHP"] = 1;
+                    }
+                    else{
+                    enemyStats.splice(i, 1);}
                     continue;
                 }
             }
@@ -237,6 +246,11 @@ function updateEnemySpawning() {
         return;
     }
     if (framesToSpawn >= activeWaves[0]["inBetweenTime"] && activeWaves[0]["amount"] > 0) {
+        if(activeWaves[0]["type"] == enemyArray.red && hasSeenEachEnemy[0] == false){ hasSeenEachEnemy[0] = true; alert("Red Enemy: \n This is the basic enemy you will see throught the game. Place a tower down to defend off the enemies. \n You can do this by pressing lowercase t on your keyboard or clicking the cat image in the right menu. Happy playing! \n -The MVCTD3 Dev Team")}
+        if(activeWaves[0]["type"] == enemyArray.orange && hasSeenEachEnemy[1] == false){hasSeenEachEnemy[1] = true; alert("Orange Enemy: \n This is the best time to tell you about an important topic: \n NESTING. \n In this case, dealing damage to an orange enemy does not kill it, but instead spawns a red enemy in its place.\n This will become more prominent during the later rounds, as some enemies may have more than one enemy inside them (hint hint).")}
+        if(activeWaves[0]["type"] == enemyArray.yellow && hasSeenEachEnemy[2] == false){hasSeenEachEnemy[2] = true; alert("Yellow Enemy: \n This is just like the orange enemy in that it has the enemy below it (in this case an orange enemy). \n Also, the enemies become a little faster the stronger they are (up to a point, where it becomes almost random).")}
+        if(activeWaves[0]["type"] == enemyArray.green && hasSeenEachEnemy[3] == false){hasSeenEachEnemy[3] = true; alert("Green Enemy: \n Yep, it's this again. This guy is even faster and has a yellow enemy inside. \n Yes, there is some differences later on, so be quiet.")}
+        if(activeWaves[0]["type"] == enemyArray.lBlue && hasSeenEachEnemy[4] == false){hasSeenEachEnemy[4] = true; alert("Light Blue enemy \n Yeah, what did you thing was gonna happen? \n At least the next one is somewhat different... \n Also, this implies there is a dark blue enemy, so stay tuned!")}
         enemyStats.push({
             type: activeWaves[0]["type"],
             currentHP:1,
@@ -635,7 +649,8 @@ function attemptBuyDamageUpgrade(){
     if(towerArray[towerOpenedID]["level"][2] != 3){
     towerArray[towerOpenedID]["level"][2]++;}
     else{alert("Max level reached!")}
-}function updateSidebarUI(tower) {
+}
+function updateSidebarUI(tower) {
     var sidebar = gebid("towerSidebar");
     if (sidebar) sidebar.style.display = "block";
     var speedVal = ((tower.type.speed / 60) * Math.pow(0.8, tower.level[0])).toFixed(2);
@@ -647,7 +662,6 @@ function attemptBuyDamageUpgrade(){
     if (gebid("sidebarRangeStat")) gebid("sidebarRangeStat").textContent = "Tile Range: " + rangeVal + " (Lv. " + tower.level[1] + ")";
     if (gebid("sidebarDamageStat")) gebid("sidebarDamageStat").textContent = "Max Damage: " + damageVal + " (Lv. " + tower.level[2] + ")";
 }
-
 function hideSidebarUI() {
     var sidebar = gebid("towerSidebar");
     if (sidebar) sidebar.style.display = "none";
