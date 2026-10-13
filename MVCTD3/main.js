@@ -665,4 +665,8 @@ function updateSidebarUI(tower) {
 function hideSidebarUI() {
     var sidebar = gebid("towerSidebar");
     if (sidebar) sidebar.style.display = "none";
+}function resetEnemies(){
+    isSpawningFinished = true;
+    enemyStats = [];
+    currentRound--;
 }
