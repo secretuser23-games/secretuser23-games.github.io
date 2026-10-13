@@ -36,6 +36,9 @@ function clearLogs(){
     gebid("logs").innerHTML = "<p class='top'></p><p id='fpsCounter'>FPS: 0."
 }
 var loading = 0;
+var selectedTower = null;
+var towerOpenedID = 0;
+var globalTowerID = 0;
 var isPlacingTower = false;
 var placementX = 0;
 var placementY = 0;
@@ -136,13 +139,12 @@ function updateEnemyStats(){
             else if(enemy["direction"] == Math.PI*1.5){ enemy["y"] += enemy["type"]["speed"]; }
             else if(enemy["direction"] == 0 || enemy["direction"] == Math.PI*2){ enemy["x"] -= enemy["type"]["speed"]; }
             if(enemy["damageTaken"] >= 1){
-                for(var j=0;j<Math.floor(enemy["damageTaken"]); j++){
-                    enemy["currentHP"]--; 
-                    if(enemy["currentHP"] <= 0){
-                        if(enemy["type"] == enemyArray["red"]){
-                            enemyStats.splice(i,1)
-                        }
-                    }
+                enemy["currentHP"] -= Math.floor(enemy["damageTaken"]);
+                enemy["damageTaken"] = 0;
+                
+                if(enemy["currentHP"] <= 0){
+                    enemyStats.splice(i, 1);
+                    continue;
                 }
             }
         }
@@ -206,8 +208,6 @@ function startNextRound() {
             if (roundLabel) {
                 roundLabel.textContent = "Round: " + (currentRound + 1);
             }
-
-            log("Successfully loaded index criteria parameters. Round " + (currentRound + 1) + " started!");
         } catch (structureException) {
             error("Engine Intercepted Fault Initialization: " + structureException.message);
             isSpawningFinished = true; 
@@ -257,41 +257,41 @@ function getAngleToTarget(imgX, imgY, targetX, targetY) {
     const dx = targetX - imgX;
     const dy = targetY - imgY;
     return Math.atan2(dy, dx);
-  }
-  function drawProjectiles(){
-    if(typeof projectileList !== 'undefined' && projectileList){
-        for (var i = projectileList.length - 1; i >= 0; i--) {
-            var proj = projectileList[i];
-            var speed = (proj["Type"] && proj["Type"]["projSpeed"]) ? proj["Type"]["projSpeed"] : 10;
-            proj["x"] += Math.cos(proj["direction"]) * speed;
-            proj["y"] += Math.sin(proj["direction"]) * speed;
-            if (proj["x"] < -100 || proj["x"] > 1100 || proj["y"] < -100 || proj["y"] > 1100) {
+}
+function drawProjectiles(){
+    if(typeof projectileList === 'undefined' || !projectileList) return;
+    
+    for (var i = projectileList.length - 1; i >= 0; i--) {
+        var proj = projectileList[i];
+        proj["x"] += Math.cos(proj["direction"]) * proj["Type"]["projSpeed"];
+        proj["y"] += Math.sin(proj["direction"]) * proj["Type"]["projSpeed"];
+        if (proj["x"] < -100 || proj["x"] > 1100 || proj["y"] < -100 || proj["y"] > 1100) {
+            projectileList.splice(i, 1);
+            continue;
+        }
+        drawImg(proj["Type"]["image"], proj["x"], proj["y"], 62.5, 62.5, proj["direction"]);
+        var hitEnemy = false;
+        for (var j = enemyStats.length - 1; j >= 0; j--) {
+            var distance = findDist(proj["x"], proj["y"], enemyStats[j]["x"], enemyStats[j]["y"]);
+            
+            if (distance <= 62.5) {
+                var dmg = proj["damage"] ? proj["damage"] : 1;
+                enemyStats[j]["damageTaken"] += dmg;
                 projectileList.splice(i, 1);
+                hitEnemy = true;
+                break;
             }
         }
-        for(var i = 0; i < projectileList.length; i++){
-            drawImg(projectileList[i]["Type"]["image"], projectileList[i]["x"], projectileList[i]["y"], 62.5, 62.5, projectileList[i]["direction"]);
-        }
-        for (var i = projectileList.length - 1; i >= 0; i--) {
-            for (var j = enemyStats.length - 1; j >= 0; j--) {
-                var distance = findDist(projectileList[i]["x"], projectileList[i]["y"], enemyStats[j]["x"], enemyStats[j]["y"]);
-                
-                if (distance <= 20) {
-                    var dmg = projectileList[i]["Type"]["damage"] ? projectileList[i]["Type"]["damage"] : 1;
-                    enemyStats[j]["damageTaken"] += dmg;
-                    projectileList.splice(i, 1);
-                    break; 
-                }
-            }
-        }
+        if (hitEnemy) continue;
     }
 }
-function createProjectile(x,y,direction,towType, level){
+function createProjectile(x,y,direction,towType, level, calculatedDamage){
 projectileList.push({
     Type: projectileData[towType][level],
     x: x*62.5,
     y: y*62.5,
-    direction: direction
+    direction: direction,
+    damage: calculatedDamage
 }
 )}
 function checkForTargetedEnemy(towerX, towerY, targetPriority, range){
@@ -324,7 +324,7 @@ function updateTowerStats(){
         
         var targetedEnemy = null;
         if(enemyStats && enemyStats.length > 0){
-            targetedEnemy = checkForTargetedEnemy(tower["x"], tower["y"], "first", 300);
+            targetedEnemy = checkForTargetedEnemy(tower["x"], tower["y"], "first", (tower["type"]["range"] *1.25 ** tower["level"][1]));
         }
         if(targetedEnemy === null || targetedEnemy === undefined) {
             if(tower["reloadTime"] <= 0) {
@@ -339,8 +339,8 @@ function updateTowerStats(){
         if(target !== null){
             tower["direction"] = target;
             if(tower["reloadTime"] <= 0){
-                tower["reloadTime"] = tower["type"]["speed"];
-                createProjectile(tower["x"]-0.5, tower["y"]-0.5, tower["direction"], "Normal", "t00");
+                tower["reloadTime"] = tower["type"]["speed"]*0.8**tower["level"][0];
+                createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1);
             }
         }
     }
@@ -369,6 +369,20 @@ function frame(){
         drawEnemies();
         framePart++
         updateTowerStats();
+        if (selectedTower) {
+            ctx.beginPath();
+            var centerX = (selectedTower.x * 62.5 + 31.25) * canvas.width / 1000;
+            var centerY = (selectedTower.y * 62.5 + 31.25) * canvas.height / 1000;
+            var rangeValue = selectedTower.type.range * (1.25 ** selectedTower.level[1]);
+            var scaledRange = rangeValue * canvas.width / 1000;
+
+            ctx.arc(centerX, centerY, scaledRange, 0, 2 * Math.PI);
+            ctx.fillStyle = "rgba(0, 150, 255, 0.2)";
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "rgba(0, 150, 255, 0.6)";
+            ctx.stroke();
+        }
         framePart++;
         if (isPlacingTower) {
             ctx.globalAlpha = 0.6;
@@ -480,7 +494,6 @@ setTimeout(() => {
             }
             if (!isGameLoopRunning) {
                 isGameLoopRunning = true;
-                log("All components loaded successfully. Starting core engine loop...");
                 if(gameInterval){clearInterval(gameInterval)}
                 gameInterval = setInterval(frame, 1000 / 60);
             }
@@ -522,7 +535,7 @@ document.addEventListener("keydown", function(event) {
     else if(event.key === "T"){
         isPlacingTower = false;
     }
-    else if(event.key === "enter"){
+    else if(event.key === "Enter"){
         attemptPlaceTower();
     }
 });
@@ -552,7 +565,24 @@ if (canvas) {
     });
 }
 if(canvas){canvas.addEventListener("click", function(event){
-    attemptPlaceTower();
+    if (isPlacingTower) {
+        attemptPlaceTower();
+        return;
+    }
+    var foundTower = false;
+    for (var i = 0; i < towerArray.length; i++) {
+        if (towerArray[i].x === placementX && towerArray[i].y === placementY) {
+            selectedTower = towerArray[i];
+            towerOpenedID = i;
+            updateSidebarUI(selectedTower);
+            foundTower = true;
+            break;
+        }
+    }
+    if (!foundTower) {
+        selectedTower = null;
+        hideSidebarUI();
+    }
 })}
 function attemptPlaceTower(){
     if(isPlacingTower){
@@ -576,8 +606,49 @@ function attemptPlaceTower(){
             x:placementX, 
             y:placementY, 
             direction: Math.PI, 
-            reloadTime: towerLists["basic"]["speed"]})
-            isPlacingTower = false;
+            reloadTime: towerLists["basic"]["speed"],
+            level: [0,0,0, false],
+            ID: globalTowerID++})
+            isPlacingTower =  false
         }
     }
+}
+function openStatsMenu(){
+    var alertMessage = "Statistics for this tower: \n"
+    alertMessage += ("Speed (how long in between firing its attack in seconds): " + (towerArray[towerOpenedID]["type"]["speed"]/60)*0.8**towerArray[towerOpenedID]["level"][0] + "\n")
+    alertMessage += ("Range (each square is 1 in this case): " + towerArray[towerOpenedID]["type"]["range"]/62.5* 1.25 ** towerArray[towerOpenedID]["level"][1] + "\n")
+    alertMessage += ("Damage (maximum): " + (towerArray[towerOpenedID]["type"]["damage"] + towerArray[towerOpenedID]["level"][2]) + "\n")
+    alertMessage += ("Is Merged: No (will add later)")
+    alert(alertMessage)
+}
+function attemptBuySpeedUpgrade(){
+    if(towerArray[towerOpenedID]["level"][0] != 3){
+    towerArray[towerOpenedID]["level"][0]++;}
+    else{alert("Max level reached!")}
+}
+function attemptBuyRangeUpgrade(){
+    if(towerArray[towerOpenedID]["level"][1] != 3){
+    towerArray[towerOpenedID]["level"][1]++;}
+    else{alert("Max level reached!")}
+}
+function attemptBuyDamageUpgrade(){
+    if(towerArray[towerOpenedID]["level"][2] != 3){
+    towerArray[towerOpenedID]["level"][2]++;}
+    else{alert("Max level reached!")}
+}function updateSidebarUI(tower) {
+    var sidebar = gebid("towerSidebar");
+    if (sidebar) sidebar.style.display = "block";
+    var speedVal = ((tower.type.speed / 60) * Math.pow(0.8, tower.level[0])).toFixed(2);
+    var rangeVal = (tower.type.range / 62.5 * Math.pow(1.25, tower.level[1])).toFixed(1);
+    var damageVal = tower.type.damage + tower.level[2];
+    gebid("upgradeType").innerHTML = "Tower ID: " + tower.ID
+    if (gebid("sidebarTowerName")) gebid("sidebarTowerName").textContent = "Tower Type: " + tower.type.type.toUpperCase();
+    if (gebid("sidebarSpeedStat")) gebid("sidebarSpeedStat").textContent = "Attack Delay: " + speedVal + "s (Lv. " + tower.level[0] + ")";
+    if (gebid("sidebarRangeStat")) gebid("sidebarRangeStat").textContent = "Tile Range: " + rangeVal + " (Lv. " + tower.level[1] + ")";
+    if (gebid("sidebarDamageStat")) gebid("sidebarDamageStat").textContent = "Max Damage: " + damageVal + " (Lv. " + tower.level[2] + ")";
+}
+
+function hideSidebarUI() {
+    var sidebar = gebid("towerSidebar");
+    if (sidebar) sidebar.style.display = "none";
 }
