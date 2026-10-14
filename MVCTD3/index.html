@@ -11,18 +11,20 @@
     <div id="leftPart"><p class="top">Bought Towers/Upgrades:</p>
     <table id="towerSidebar" style="display:none; border:2px solid black; width:30vh; height:100vh; min-width:30vh;"><thead><tr><td>Upgrades:</td></tr></thead><tbody><tr><td><button clss="uiButton" onclick="openStatsMenu()" class="uiButton">Check Tower Stats</button></td></tr><tr><td id="upgradeType">Tower ID: </td></tr><tr><td><button onclick="attemptBuySpeedUpgrade()" title="Increses firing speed by 20 percent. Stacks multiplicatively." class="uiButton">Buy Speed Upgrade</button></td></tr><tr><td><p id="sidebarSpeedStat"></p></td></tr><tr><td><button onclick="attemptBuyRangeUpgrade()" title="Increses range by 20 percent. Stacks multiplicatively." class="uiButton">Buy Range Upgrade</button></td></tr><tr><td><p id="sidebarRangeStat"></p></td></tr><tr><td><button onclick="attemptBuyDamageUpgrade()" title="Increses max damage dealt by 1. Stacks additively." class="uiButton">Buy Damage Upgrade</button></td></tr><tr><td><p id="sidebarDamageStat"></p></td></tr></tbody></table></div>
     <canvas height="1000px" width="1000px" id="mainGameCanvas"></canvas>
-    <div id="rightPart"><p class="top">Towers: </p><button onclick="toggleSpeed()" id="speedButton" class="uiButton">Toggle Double Speed</button><div id="roundControlPanel" style="margin: 10px 0; font-family: sans-serif;">
-        <button id="nextRoundButton" class="uiButton">
-            Start Next Round
-        </button>
+    <div id="rightPart"><p id="moneyCounter">Money: 500</p><p class="top">Towers: </p><button onclick="toggleSpeed()" id="speedButton" class="uiButton">Toggle Double Speed</button><div id="roundControlPanel" style="margin: 10px 0; font-family: sans-serif;">
+        <button id="nextRoundButton" class="uiButton">Start Next Round</button>
         <span id="roundDisplay" style="margin-left: 15px; font-size: 16px; font-weight: bold; color: #333;">
             Round: 1
         </span>
-        <table style="width:100%;"><thead><tr><td>Row 1</td><td>Row 2</td></tr></thead><tbody><tr><td><img src="images/towers/Normal.png" style="height:10vh" onclick="isPlacingTower = !isPlacingTower;
+        <table style="width:100%;"><thead><tr><td>Row 1</td><td>Row 2</td></tr></thead><tbody><tr><td><img src="images/towers/Normal.png" style="height:10vh" onclick="isPlacingTower = !isPlacingTower; towerBeingPlacedType = 0;
             if (isPlacingTower) {
                 placementX = 7;
                 placementY = 7;
-            }"></td><td></td></tr></tbody></table>
+            }"></td><td><img src="images/towers/music.png" style="height:10vh" onclick="isPlacingTower = !isPlacingTower; towerBeingPlacedType = 1;
+            if (isPlacingTower) {
+                placementX = 7;
+                placementY = 7;
+            }"></td></tr></tbody></table>
     </div></div>
     <div id="loading"><h1>Loading...</h1><progress id="loadingBar" value="0" max="100"></progress></div>
     <div id="logs" class="hideLogs"><p class="top"></p><p id="fpsCounter">FPS: 0.</div>

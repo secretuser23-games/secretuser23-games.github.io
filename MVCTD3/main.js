@@ -36,6 +36,8 @@ function clearLogs(){
     gebid("logs").innerHTML = "<p class='top'></p><p id='fpsCounter'>FPS: 0."
 }
 var loading = 0;
+var towerBeingPlacedType = 0;
+var money = 500;
 var selectedTower = null;
 var towerOpenedID = 0;
 var globalTowerID = 0;
@@ -141,8 +143,9 @@ function updateEnemyStats(){
             else if(enemy["direction"] == Math.PI*1.5){ enemy["y"] += enemy["type"]["speed"]; }
             else if(enemy["direction"] == 0 || enemy["direction"] == Math.PI*2){ enemy["x"] -= enemy["type"]["speed"]; }
             if(enemy["damageTaken"] >= 1){
-                enemy["currentHP"] -= Math.floor(enemy["damageTaken"]);
-                enemy["damageTaken"] = 0;
+                for(var j=0; j< enemy["damageTaken"]; j++){
+                enemy["currentHP"] --;
+                enemy["damageTaken"]--;
                 
                 if(enemy["currentHP"] <= 0){
                     if(enemy["type"] == enemyArray["orange"]){
@@ -172,14 +175,71 @@ function updateEnemyStats(){
                             pathAmount: enemy["pathAmount"],
                             distanceTraveled: enemy["distanceTraveled"],
                             id: ++enemySpawnedIDs,
-                            direction: enemyDirection
+                            direction: enemy["direction"]
                         })
+                        enemy["currentHP"] = 1;
+                    }
+                    else if(enemy["type"] == enemyArray["purple"]){
+                        enemy["type"] = enemyArray["dBlue"];
+                        enemyStats.push({
+                            type: enemyArray["dBlue"],
+                            currentHP: 1,
+                            x: enemy["x"],
+                            y: enemy["y"],
+                            damageTaken:0,
+                            pathAmount: enemy["pathAmount"],
+                            distanceTraveled: enemy["distanceTraveled"],
+                            id: ++enemySpawnedIDs,
+                            direction: enemy["direction"]
+                        })
+                        enemy["currentHP"] = 1;
+                    }
+                    else if(enemy["type"] == enemyArray["pink"]){
+                        enemy["type"] = enemyArray["purple"];
+                        enemyStats.push({
+                            type: enemyArray["purple"],
+                            currentHP: 1,
+                            x: enemy["x"],
+                            y: enemy["y"],
+                            damageTaken:0,
+                            pathAmount: enemy["pathAmount"],
+                            distanceTraveled: enemy["distanceTraveled"],
+                            id: ++enemySpawnedIDs,
+                            direction: enemy["direction"]
+                        })
+                        enemy["currentHP"] = 1;
+                    }
+                    else if(enemy["type"] == enemyArray["white"]){
+                        enemy["type"] = enemyArray["pink"];
+                        enemyStats.push({
+                            type: enemyArray["green"],
+                            currentHP: 1,
+                            x: enemy["x"],
+                            y: enemy["y"],
+                            damageTaken:0,
+                            pathAmount: enemy["pathAmount"],
+                            distanceTraveled: enemy["distanceTraveled"],
+                            id: ++enemySpawnedIDs,
+                            direction: enemy["direction"]
+                        },{
+                            type: enemyArray["dBlue"],
+                            currentHP: 1,
+                            x: enemy["x"],
+                            y: enemy["y"],
+                            damageTaken:0,
+                            pathAmount: enemy["pathAmount"],
+                            distanceTraveled: enemy["distanceTraveled"],
+                            id: ++enemySpawnedIDs,
+                            direction: enemy["direction"]
+                        })
+                        
                         enemy["currentHP"] = 1;
                     }
                     else{
                     enemyStats.splice(i, 1);}
-                    continue;
-                }
+                    money++;
+                    break;
+                }}
             }
         }
     }
@@ -319,8 +379,7 @@ function drawProjectiles(){
         var hitEnemy = false;
         for (var j = enemyStats.length - 1; j >= 0; j--) {
             var distance = findDist(proj["x"], proj["y"], enemyStats[j]["x"], enemyStats[j]["y"]);
-            
-            if (distance <= 62.5) {
+            if (distance <= 31.25) {//62.5 is one unit in this case, so 31.25 is half a unit
                 var dmg = proj["damage"] ? proj["damage"] : 1;
                 enemyStats[j]["damageTaken"] += dmg;
                 projectileList.splice(i, 1);
@@ -354,8 +413,30 @@ function checkForTargetedEnemy(towerX, towerY, targetPriority, range){
     return out;
 }
 function findTargetToFireAt(targetPriority, towerPixelX, towerPixelY, enemyID){
-    if(enemyStats[enemyID] != undefined){
-        return getAngleToTarget(towerPixelX, towerPixelY, enemyStats[enemyID]["x"], enemyStats[enemyID]["y"]);
+    var enemy = enemyStats[enemyID];
+    if(enemy != undefined){
+        var offsetX = 0;
+        var offsetY = 0;
+        if(enemy["direction"] == Math.PI) {
+            offsetX = 15; 
+            offsetY = -15;
+        } else if(enemy["direction"] == Math.PI*0.5) {
+            offsetX = 15;
+            offsetY = 15;
+        } else if(enemy["direction"] == Math.PI*1.5) {
+            offsetX = -15;
+            offsetY = -15;
+        } else if(enemy["direction"] == 0 || enemy["direction"] == Math.PI*2) {
+            offsetX = -15;
+            offsetY = 15;
+        }
+
+        return getAngleToTarget(
+            towerPixelX, 
+            towerPixelY, 
+            enemy["x"] + offsetX, 
+            enemy["y"] + offsetY
+        );
     } else {
         return null;
     }
@@ -386,8 +467,19 @@ function updateTowerStats(){
             tower["direction"] = target;
             if(tower["reloadTime"] <= 0){
                 tower["reloadTime"] = tower["type"]["speed"]*0.8**tower["level"][0];
+                if(tower["type"] == towerLists.music){
+                    createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0, "Normal", "t00", tower["level"][2]+1);
+                    createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.25*Math.PI, "Normal", "t00", tower["level"][2]+1);
+                    createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.5*Math.PI , "Normal", "t00", tower["level"][2]+1);
+                    createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.75*Math.PI, "Normal", "t00", tower["level"][2]+1);
+                    createProjectile(tower["x"]+0.5, tower["y"]+0.5,      Math.PI, "Normal", "t00", tower["level"][2]+1);
+                    createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.25*Math.PI, "Normal", "t00", tower["level"][2]+1);
+                    createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.5*Math.PI , "Normal", "t00", tower["level"][2]+1);
+                    createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.75*Math.PI, "Normal", "t00", tower["level"][2]+1);
+                }
+                else{
                 createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1);
-            }
+            }}
         }
     }
 }
@@ -399,6 +491,8 @@ function frame(){
     if (!ctx) return;
     
     try {
+        framePart++;
+        gebid("moneyCounter").innerHTML = "Money: " + money;
         framePart++
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         framePart++
@@ -589,6 +683,11 @@ document.addEventListener("keydown", function(event) {
     }
     else if(event.key === "t"){
         isPlacingTower = true;
+        towerBeingPlacedType = 0;
+    }
+    else if(event.key === "s"){
+        isPlacingTower = true;
+        towerBeingPlacedType = 1;
     }
     else if(event.key === "T"){
         isPlacingTower = false;
@@ -657,9 +756,18 @@ function attemptPlaceTower(){
         else if(location["track"] == true){
             alert("This is a road part, you cannot place here!")
         }
+        else if(towerBeingPlacedType == 0 && money < 150){
+            alert("Not enough money to place down! Cost is 150 btw")
+        }
+        else if(towerBeingPlacedType == 1 && money < 300){
+            alert("Not enough money to place down! Cost is 300 btw")
+        }
         else{
         location["tower"] = true;
-        towerArray.push({
+        log(towerBeingPlacedType)
+        if(towerBeingPlacedType == 0){
+            money -= 150;
+            towerArray.push({
             type: towerLists["basic"], 
             x:placementX, 
             y:placementY, 
@@ -667,7 +775,20 @@ function attemptPlaceTower(){
             reloadTime: towerLists["basic"]["speed"],
             level: [0,0,0, false],
             ID: globalTowerID++})
-            isPlacingTower =  false
+            isPlacingTower =  false;
+            }
+            else if(towerBeingPlacedType == 1){
+                money -= 300;
+                towerArray.push({
+                type: towerLists["music"], 
+                x:placementX, 
+                y:placementY, 
+                direction: Math.PI, 
+                reloadTime: towerLists["music"]["speed"],
+                level: [0,0,0, false],
+                ID: globalTowerID++})
+                isPlacingTower =  false;
+                }
         }
     }
 }

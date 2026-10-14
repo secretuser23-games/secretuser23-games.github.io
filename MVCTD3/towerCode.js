@@ -1,2 +1,2 @@
-var towerLists = {basic: {type: "basic", image: initImage("towers/Normal.png"), speed:60, damage: 1, range: 200}}
+var towerLists = {basic: {type: "basic", image: initImage("towers/Normal.png"), speed:60, damage: 1, range: 250}, music: {type: "music", image: initImage("towers/music.png"), speed:240, damage: 1, range: 125}}
 var towerArray = []
