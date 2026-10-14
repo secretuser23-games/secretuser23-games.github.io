@@ -677,16 +677,19 @@ function attemptBuySpeedUpgrade(){
     if(towerArray[towerOpenedID]["level"][0] != 3){
     towerArray[towerOpenedID]["level"][0]++;}
     else{alert("Max level reached!")}
+    updateSidebarUI(towerArray[towerOpenedID])
 }
 function attemptBuyRangeUpgrade(){
     if(towerArray[towerOpenedID]["level"][1] != 3){
     towerArray[towerOpenedID]["level"][1]++;}
     else{alert("Max level reached!")}
+    updateSidebarUI(towerArray[towerOpenedID])
 }
 function attemptBuyDamageUpgrade(){
     if(towerArray[towerOpenedID]["level"][2] != 3){
     towerArray[towerOpenedID]["level"][2]++;}
     else{alert("Max level reached!")}
+    updateSidebarUI(towerArray[towerOpenedID])
 }
 function updateSidebarUI(tower) {
     var sidebar = gebid("towerSidebar");
