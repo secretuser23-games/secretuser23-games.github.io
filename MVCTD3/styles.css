@@ -62,7 +62,7 @@ body{
     right:0;
     width:100vw;
     height:10vh;
-    z-index:999999999999999999;
+    z-index:999999999;
     background-color:white;
     color:black;
     overflow:auto;
@@ -97,5 +97,5 @@ body{
 }
 td{
     width:100%;
-    height:10vh;
+    height:5vh;
 }
