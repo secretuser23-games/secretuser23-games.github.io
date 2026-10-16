@@ -1,16 +1,16 @@
 var enemyArray = {
-    red: { src: initImage("enemies/redMouse.png"), spawn: [null], speed: 1 },
-    orange: { src: initImage("enemies/orangeMouse.png"), spawn: [], speed: 1.25 },
-    yellow: { src: initImage("enemies/yellowMouse.png"), spawn: [], speed: 1.5 },
-    green: { src: initImage("enemies/greenMouse.png"), spawn: [], speed: 1.75 },
-    lBlue: { src: initImage("enemies/lBlueMouse.png"), spawn: [], speed: 2 },
-    dBlue: {src: initImage("enemies/dBlueMouse.png"), spawn: [], speed: 2.5},
-    purple: {src: initImage("enemies/purple.png"), spawn: [], speed: 2},
-    pink: {src: initImage("enemies/pinkMouse.png"), spawn: [], speed: 3},
-    white: {src: initImage("enemies/whiteMouse.png"), spawn: [], speed: 1.5},
-    grey: {src: initImage("enemies/greyMouse.png"), spawn: [], speed: 2},
-    rainbow: {src: initImage("enemies/rainbowMouse.png"), spawn: [], speed: 1.75},
-    brown: {src: initImage("enemies/brownMouse.png"), spawn: [], speed: 0.8}
+    red: { src: initImage("enemies/redMouse.png"), spawn: [null], speed: 1, hpToDrain: 1},
+    orange: { src: initImage("enemies/orangeMouse.png"), spawn: [], speed: 1.25, hpToDrain: 2},
+    yellow: { src: initImage("enemies/yellowMouse.png"), spawn: [], speed: 1.5,  hpToDrain: 3},
+    green: { src: initImage("enemies/greenMouse.png"), spawn: [], speed: 1.75,  hpToDrain: 4},
+    lBlue: { src: initImage("enemies/lBlueMouse.png"), spawn: [], speed: 2,  hpToDrain: 5},
+    dBlue: {src: initImage("enemies/dBlueMouse.png"), spawn: [], speed: 2.5,  hpToDrain: 11},
+    purple: {src: initImage("enemies/purple.png"), spawn: [], speed: 2,  hpToDrain: 23},
+    pink: {src: initImage("enemies/pinkMouse.png"), spawn: [], speed: 3,  hpToDrain: 25},
+    white: {src: initImage("enemies/whiteMouse.png"), spawn: [], speed: 1.5,  hpToDrain: 41},
+    grey: {src: initImage("enemies/greyMouse.png"), spawn: [], speed: 2,  hpToDrain: 124},
+    rainbow: {src: initImage("enemies/rainbowMouse.png"), spawn: [], speed: 1.75,  hpToDrain: 239},
+    brown: {src: initImage("enemies/brownMouse.png"), spawn: [], speed: 0.8, hpToDrain: 718}
 };
 enemyArray.orange.spawn = [enemyArray.red];
 enemyArray.yellow.spawn = [enemyArray.orange];
@@ -22,6 +22,7 @@ enemyArray.pink.spawn = [enemyArray.purple, enemyArray.red]
 enemyArray.white.spawn = [enemyArray.pink, enemyArray.green, enemyArray.dBlue]
 enemyArray.grey.spawn = [enemyArray.white, enemyArray.white, enemyArray.white]
 enemyArray.rainbow.spawn = [enemyArray.grey, enemyArray.white, enemyArray.pink, enemyArray.purple, enemyArray.dBlue, enemyArray.lBlue, enemyArray.green, enemyArray.yellow, enemyArray.orange, enemyArray.red]
+enemyArray.brown.spawn = [enemyArray.rainbow, enemyArray.rainbow, enemyArray.rainbow]
 var enemyStats = [];
 
 var enemySpawnArray = [

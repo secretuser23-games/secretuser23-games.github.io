@@ -31,15 +31,29 @@
         <span id="roundDisplay" style="margin-left: 15px; font-size: 16px; font-weight: bold; color: #333;">
             Round: 1
         </span>
-        <table style="width:100%;"><thead><tr><td>Row 1</td><td>Row 2</td></tr></thead><tbody><tr><td><img src="images/towers/Normal.png" style="height:10vh" onclick="isPlacingTower = !isPlacingTower; towerBeingPlacedType = 0;
-            if (isPlacingTower) {
-                placementX = 7;
-                placementY = 7;
-            }"></td><td><img src="images/towers/music.png" style="height:10vh" onclick="isPlacingTower = !isPlacingTower; towerBeingPlacedType = 1;
-            if (isPlacingTower) {
-                placementX = 7;
-                placementY = 7;
-            }"></td></tr></tbody></table>
+        <div class="progress-container">
+            <div id="my-progress-bar" style="width: 0%;"></div>
+          </div>
+        <table style="width:100%;">
+            <thead><tr><td>Row 1</td><td>Row 2</td></tr></thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <img src="images/towers/Normal.png" title="Normal Cat: Fires a claw at the enemy that has moved the farthest down the track. Cost 150." style="height:10vh" onclick="isPlacingTower = !isPlacingTower; towerBeingPlacedType = 0;if (isPlacingTower) {placementX = 7;placementY = 7;}">
+                    </td>
+                    <td>
+                        <img src="images/towers/music.png" title="Music Cat: Likes to spin in circles, so fires slower but shoots 8 claw sout in a ring. Cost 300." style="height:10vh" onclick="isPlacingTower = !isPlacingTower; towerBeingPlacedType = 1;if (isPlacingTower) {placementX = 7;placementY = 7;}">
+                    </td>
+                </tr>
+                <td>
+                    <img src="images/towers/boat.png" title="Boat: Can be placed on water. Acts like a Normal Cat with extra range. Has a second cannon, but cannot use it until it is upgraded. Cost 250." style="height:10vh" onclick="isPlacingTower = !isPlacingTower; towerBeingPlacedType = 2;if (isPlacingTower) {placementX = 7;placementY = 7;}">
+                </td>
+                <td>
+                    <img src="images/towers/super.png" title="Super Cat: Fires four times as fast as the Normal Cat, with basically the same upgrades. Cost 500." style="height:10vh" onclick="isPlacingTower = !isPlacingTower; towerBeingPlacedType = 3;if (isPlacingTower) {placementX = 7;placementY = 7;}">
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div></div>
     <div id="loading"><h1>Loading...</h1><progress id="loadingBar" value="0" max="100"></progress></div>
     <div id="logs" class="hideLogs"><p class="top"></p><p id="fpsCounter">FPS: 0.</div>

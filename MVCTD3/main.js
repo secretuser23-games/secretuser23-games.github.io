@@ -3,6 +3,7 @@ var loadingMax = 0;
 function gebid(id) {
     return document.getElementById(id);
 }
+
 window.initImage = function(src){
     loadingMax++;
     var out = new Image();
@@ -63,6 +64,28 @@ function error(message){
         logsDiv.appendChild(logEntry);
     }
 }
+function updateProgressBar(value) {
+    try{
+    const v = Math.max(0, Math.min(100, value));
+    let red, green;
+
+    if (v < 50) {
+        red = 255;
+        green = Math.round(255 * (v / 50));
+    } 
+    else {
+        red = Math.round(255 * (1 - (v - 50) / 50));
+        green = 255;
+    }
+    const blue = 0;
+    const progressBar = document.getElementById('my-progress-bar');
+    progressBar.style.width = `${v}%`;
+    progressBar.style.backgroundColor = `rgb(${red}, ${green}, ${blue})`;}
+    catch(error){
+        log("Error updating progress bar: " + error)
+    }
+}
+updateProgressBar(100)
 function clearLogs(){
     gebid("logs").innerHTML = "<p class='top'></p><p id='fpsCounter'>FPS: 0."
 }
@@ -70,6 +93,7 @@ var towerBeingPlacedType = 0;
 var effects = [];
 //effects require an initImage broken into frames (starts at 0), x pos, y pos, width, height, rotation, opacity, frame (current), and a max frame 
 var money = 500;
+var hp = 100; //Set to change with different game modes later...
 var selectedTower = null;
 var towerOpenedID = 0;
 var globalTowerID = 0;
@@ -160,6 +184,9 @@ function updateEnemyStats(){
             var enemy = enemyStats[i]
             var nextWaypoint = path[enemy["pathAmount"] + 1];
             if (!nextWaypoint) {
+                hp -= enemy["type"]["hpToDrain"]
+                updateProgressBar(hp)
+                if(hp <= 0){alert("Out of lives! Please reload the game or click OK to automatically reload the page."); window.location.reload();}
                 enemyStats.splice(i, 1); 
                 continue;
             }
@@ -602,7 +629,49 @@ function updateTowerStats(){
                         createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.05*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
                         createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
                     }
-            }}
+                }
+                else if(tower["type"] == towerLists.boat){
+                    log(tower["level"][3])
+                    if(tower["level"][3] == 0){
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1);
+                    }
+                    else if(tower["level"][3] == 1){
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]*Math.PI, "Normal", "t00", tower["level"][2]+1); 
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (tower["direction"]+1)*Math.PI, "Normal", "t00", tower["level"][2]+1);
+                    }
+                    else if(tower["level"][3] == 2){
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]*Math.PI, "Normal", "t00", tower["level"][2]+1, true); 
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (tower["direction"]+1)*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
+                    }
+                    else if(tower["level"][3] == 3){
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]*Math.PI, "Normal", "t00", tower["level"][2]+2, true); 
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (tower["direction"]+1)*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
+                    }
+                }
+                else if(tower["type"] == towerLists.super){
+                    log(tower["level"][3])
+                    if(tower["level"][3] == 0){
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1);
+                    }
+                    else if(tower["level"][3] == 1){
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.1*Math.PI, "Normal", "t00", tower["level"][2]+1); 
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1);
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.1*Math.PI, "Normal", "t00", tower["level"][2]+1);
+                    }
+                    else if(tower["level"][3] == 2){
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true); 
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1, true);
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
+                    }
+                    else if(tower["level"][3] == 3){
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.05*Math.PI, "Normal", "t00", tower["level"][2]+1, true); 
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1, true);
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.05*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
+                    }
+                }
+            }
         }
     }
 }
@@ -661,7 +730,9 @@ function frame(){
         framePart++;
         if (isPlacingTower) {
             ctx.globalAlpha = 0.6;
-            drawImg(towerLists["basic"]["image"], placementX * 62.5+31.25, placementY * 62.5+31.25, 62.5, 62.5, Math.PI);
+            var type = null;
+            if(towerBeingPlacedType == 0){type = towerLists["basic"]["image"]} else if(towerBeingPlacedType == 1){type = towerLists["music"]["image"]} else if(towerBeingPlacedType == 2){type = towerLists["boat"]["image"]} else if(towerBeingPlacedType == 3){type = towerLists["super"]["image"]}
+            drawImg(type, placementX * 62.5+31.25, placementY * 62.5+31.25, 62.5, 62.5, Math.PI);
             ctx.globalAlpha = 1.0;
         }
         framePart++
@@ -854,7 +925,24 @@ function attemptPlaceTower(){
             alert("Cannot place on top of rocks!")
         }
         else if(location["typeTrack"] == water || location["typeTrack"] == deepWater){
-            alert("Cannot place tower in water (yet)!")
+            if(towerBeingPlacedType == 2 && money >= 250){
+                money -= 250;
+                towerArray.push({
+                type: towerLists["boat"], 
+                x:placementX, 
+                y:placementY, 
+                direction: Math.PI, 
+                reloadTime: towerLists["boat"]["speed"],
+                level: [0,0,0,0,false],
+                ID: globalTowerID++})
+                isPlacingTower =  false;
+            }
+            else if(money < 250 && towerBeingPlacedType == 2){
+                alert("Not enough money to place! Cost is 250 btw")
+            }
+            else{
+                alert("Cannot place land type tower in water!")
+            }
         }
         else if(location["track"] == true){
             alert("This is a road part, you cannot place here!")
@@ -865,20 +953,26 @@ function attemptPlaceTower(){
         else if(towerBeingPlacedType == 1 && money < 300){
             alert("Not enough money to place down! Cost is 300 btw")
         }
+        else if(towerBeingPlacedType == 2 && money < 250){
+            alert("Not enough money to place down! Cost is 250 btw")
+        }
+        else if(towerBeingPlacedType == 3 && money < 500){
+            alert("Not enough money to place down! Cost is 500 btw")
+        }
         else{
-        location["tower"] = true;
-        if(towerBeingPlacedType == 0){
-            money -= 150;
-            towerArray.push({
-            type: towerLists["basic"], 
-            x:placementX, 
-            y:placementY, 
-            direction: Math.PI, 
-            reloadTime: towerLists["basic"]["speed"],
-            level: [0,0,0,0,false],
-            ID: globalTowerID++})
-            isPlacingTower =  false;
-            }
+            location["tower"] = true;
+            if(towerBeingPlacedType == 0){
+                money -= 150;
+                towerArray.push({
+                type: towerLists["basic"], 
+                x:placementX, 
+                y:placementY, 
+                direction: Math.PI, 
+                reloadTime: towerLists["basic"]["speed"],
+                level: [0,0,0,0,false],
+                ID: globalTowerID++})
+                isPlacingTower =  false;
+                }
             else if(towerBeingPlacedType == 1){
                 money -= 300;
                 towerArray.push({
@@ -891,6 +985,21 @@ function attemptPlaceTower(){
                 ID: globalTowerID++})
                 isPlacingTower =  false;
                 }
+            else if(towerBeingPlacedType == 2){
+                alert("This is a water tower, it cannot go on the land!")
+            }
+            else if(towerBeingPlacedType == 3){
+                money -= 500;
+                towerArray.push({
+                type: towerLists["super"], 
+                x:placementX, 
+                y:placementY, 
+                direction: Math.PI, 
+                reloadTime: towerLists["super"]["speed"],
+                level: [0,0,0,0,false],
+                ID: globalTowerID++})
+                isPlacingTower =  false;
+            }
         }
     }
 }
