@@ -53,7 +53,7 @@ function warn(message){
         logsDiv.appendChild(logEntry);
     }
 }
-
+log("version X.1.0 (test for logs)")
 function error(message){
     var logsDiv = gebid("logs");
     if(logsDiv) {
