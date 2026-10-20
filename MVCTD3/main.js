@@ -1,9 +1,12 @@
+//Setup variables
+
+var version = "X.2.0"
 var loading = 0;
 var loadingMax = 0;
 function gebid(id) {
     return document.getElementById(id);
 }
-
+//Setup image function
 window.initImage = function(src){
     loadingMax++;
     var out = new Image();
@@ -20,6 +23,8 @@ window.initImage = function(src){
     out.src = "images/" + src; 
     return out;
 };
+
+//Set logs info
 document.addEventListener("keydown", function(event) {
     if (event.key === "d") {
         var logs = gebid("logs");
@@ -34,6 +39,8 @@ document.addEventListener("keydown", function(event) {
         }
     }
 })
+
+//Logs messages (log, warn and error) and clearLogs() to flush info
 function log(message) {
     var logsDiv = gebid("logs");
     if(logsDiv) {
@@ -53,7 +60,6 @@ function warn(message){
         logsDiv.appendChild(logEntry);
     }
 }
-log("version X.1.0 (test for logs)")
 function error(message){
     var logsDiv = gebid("logs");
     if(logsDiv) {
@@ -64,6 +70,12 @@ function error(message){
         logsDiv.appendChild(logEntry);
     }
 }
+function clearLogs(){
+    gebid("logs").innerHTML = "<p class='top'></p><p id='fpsCounter'>FPS: 0."
+}
+
+
+//Update loading bar for loading popup
 function updateProgressBar(value) {
     try{
     const v = Math.max(0, Math.min(100, value));
@@ -86,35 +98,25 @@ function updateProgressBar(value) {
     }
 }
 updateProgressBar(100)
-function clearLogs(){
-    gebid("logs").innerHTML = "<p class='top'></p><p id='fpsCounter'>FPS: 0."
-}
-var towerBeingPlacedType = 0;
-var effects = [];
-//effects require an initImage broken into frames (starts at 0), x pos, y pos, width, height, rotation, opacity, frame (current), and a max frame 
-var money = 500;
-var hp = 100; //Set to change with different game modes later...
-var selectedTower = null;
-var towerOpenedID = 0;
-var globalTowerID = 0;
-var isPlacingTower = false;
-var placementX = 0;
-var placementY = 0;
-var isSpawningFinished = false; 
-var preSpaceSpeed = 1;
-var isSpaceHeldDown = false;
-var enemySpawnedIDs = 0;
-var currentWave = 0;
-var gameInterval = null;
-var framesToSpawn = 0;
-var currentSpeed = 1;
-var frameCount = 0;
-var totalFramesRendered = 0;
-var lastTime = performance.now();
-var currentRound = 0;
-var fps = 60;
-var isGameLoopRunning = false; 
 
+
+
+
+//Main define variables (basically the longest line in this whole thing)
+//effects require an initImage broken into frames (starts at 0), x pos, y pos, width, height, rotation, opacity, frame (current), and a max frame 
+var towerBeingPlacedType = 0, hasSeenEndlessModeAlert = false, effects = [], money = 50, farmsBuffExtraMoney = 0, hp = 100, selectedTower = null, towerOpenedID = 0, globalTowerID = 0, isPlacingTower = false, placementX = 0, mouseX = 0, mouseY = 0, placementY = 0, isSpawningFinished = false, preSpaceSpeed = 1, isSpaceHeldDown = false, enemySpawnedIDs = 0, currentWave = 0, gameInterval = null, framesToSpawn = 0, currentSpeed = 1, frameCount = 0, totalFramesRendered = 0, lastTime = performance.now(), currentRound = 0, fps = 60, isGameLoopRunning = false, eorMoney = 0; 
+
+
+
+//For me only: If I am editing, give me infinite money and hp for testing
+
+if(version.includes("dev")){money = 10000000000000000000; hp = 10000000000000000000}
+//Fuunction to get a random number
+function getRandomNumber(max){
+    return Math.round(Math.random()*max)
+}
+
+//Setup canvas for drawing information
 var canvas = gebid("mainGameCanvas");
 var ctx = canvas ? canvas.getContext("2d") : null;
 function scaleImage(wantedWidth, wantedHeight){
@@ -124,13 +126,14 @@ function scaleImage(wantedWidth, wantedHeight){
     return [width, height];
 }
 
+
+//Function to draw important images in canvas made above
 function drawImg(image, x, y, width, height, rotation = 0, opacity = 1) {
     if (!image || !ctx) return; 
     ctx.imageSmoothingEnabled = false;
-
     const [scaledW, scaledH] = scaleImage(width, height);
     const [scaledX, scaledY] = scaleImage(x, y);
-    if(!opacity == 1){ctx.globalAlpha = opacity}
+    if(opacity != 1){ctx.globalAlpha = opacity}
     if (rotation === 0) {
         ctx.setTransform(1, 0, 0, 1, scaledX, scaledY);
         ctx.drawImage(image, -scaledW / 2, -scaledH / 2, scaledW, scaledH); 
@@ -140,10 +143,11 @@ function drawImg(image, x, y, width, height, rotation = 0, opacity = 1) {
         ctx.setTransform(cos, sin, -sin, cos, scaledX, scaledY);
         ctx.drawImage(image, -scaledW / 2, -scaledH / 2, scaledW, scaledH);
     }
-    if(!opacity == 1){ctx.restore();}
+    ctx.globalAlpha = 1.0;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
 
+// Draw Grid (should remove soon as is deprecated)
 function drawGrid(size){
     var halfTile = (1000 / size) / 2;
     for(var i=0; i<size; i++){
@@ -153,10 +157,12 @@ function drawGrid(size){
     }
 }
 
+//also useless, should remove with above
 function createArrayForGrid(rows, cols, what){
     return Array.from({ length: rows }, () => Array(cols).fill(what));
 }
 
+//Draw each piece of the track from top left to bottom right
 function drawTrack(){
     if (typeof trackInfo === 'undefined' || !trackInfo) return; 
 
@@ -178,131 +184,8 @@ function drawTrack(){
         }
     }
 }
-function updateEnemyStats(){
-    if(enemyStats){
-        for(var i = enemyStats.length - 1; i >= 0; i--){
-            var enemy = enemyStats[i]
-            var nextWaypoint = path[enemy["pathAmount"] + 1];
-            if (!nextWaypoint) {
-                hp -= enemy["type"]["hpToDrain"]
-                updateProgressBar(hp)
-                if(hp <= 0){alert("Out of lives! Please reload the game or click OK to automatically reload the page."); window.location.reload();}
-                enemyStats.splice(i, 1); 
-                continue;
-            }
-            if ((Math.abs(enemy["x"] - nextWaypoint["x"])) <= Math.ceil(enemy["type"]["speed"]) && 
-                (Math.abs(enemy["y"] - nextWaypoint["y"])) <= Math.ceil(enemy["type"]["speed"])) {
-                enemy["x"] = nextWaypoint["x"];
-                enemy["y"] = nextWaypoint["y"];
-                enemy["direction"] = nextWaypoint["direction"];
-                enemy["pathAmount"]++;
-            }
-            if(enemy["direction"] == Math.PI){ enemy["x"] += enemy["type"]["speed"]; }
-            else if(enemy["direction"] == Math.PI*0.5){ enemy["y"] -= enemy["type"]["speed"]; }
-            else if(enemy["direction"] == Math.PI*1.5){ enemy["y"] += enemy["type"]["speed"]; }
-            else if(enemy["direction"] == 0 || enemy["direction"] == Math.PI*2){ enemy["x"] -= enemy["type"]["speed"]; }
-            if(enemy["damageTaken"] >= 1){
-                for(var j=0; j< enemy["damageTaken"]; j++){
-                enemy["currentHP"] --;
-                enemy["damageTaken"]--;
-                
-                if(enemy["currentHP"] <= 0){
-                    if(enemy["type"] == enemyArray["orange"]){
-                        enemy["type"] = enemyArray["red"]
-                        enemy["currentHP"] = 1;
-                    }
-                    else if(enemy["type"] == enemyArray["yellow"]){
-                        enemy["type"] = enemyArray["orange"]
-                        enemy["currentHP"] = 1;
-                    }
-                    else if(enemy["type"] == enemyArray["green"]){
-                        enemy["type"] = enemyArray["yellow"]
-                        enemy["currentHP"] = 1;
-                    }
-                    else if(enemy["type"] == enemyArray["lBlue"]){
-                        enemy["type"] = enemyArray["green"]
-                        enemy["currentHP"] = 1;
-                    }
-                    else if(enemy["type"] == enemyArray["dBlue"]){
-                        enemy["type"] = enemyArray["lBlue"];
-                        enemyStats.push({
-                            type: enemyArray["lBlue"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        })
-                        enemy["currentHP"] = 1;
-                    }
-                    else if(enemy["type"] == enemyArray["purple"]){
-                        enemy["type"] = enemyArray["dBlue"];
-                        enemyStats.push({
-                            type: enemyArray["dBlue"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        })
-                        enemy["currentHP"] = 1;
-                    }
-                    else if(enemy["type"] == enemyArray["pink"]){
-                        enemy["type"] = enemyArray["purple"];
-                        enemyStats.push({
-                            type: enemyArray["purple"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        })
-                        enemy["currentHP"] = 1;
-                    }
-                    else if(enemy["type"] == enemyArray["white"]){
-                        enemy["type"] = enemyArray["pink"];
-                        enemyStats.push({
-                            type: enemyArray["green"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        },{
-                            type: enemyArray["dBlue"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        })
-                        
-                        enemy["currentHP"] = 1;
-                    }
-                    else{
-                    enemyStats.splice(i, 1);}
-                    money++;
-                    break;
-                }}
-            }
-        }
-    }
-}
+
+//Function to change speed using [space] key
 function toggleSpeed(){
     if(currentSpeed == 1){
         currentSpeed = 2;
@@ -314,367 +197,44 @@ function toggleSpeed(){
     clearInterval(gameInterval)
     gameInterval = setInterval(frame, 1000/(60*currentSpeed))
 }
+
+//Draw the enemies
 function drawEnemies(){
     if(enemyStats){
         for(var i=0; i<enemyStats.length; i++){
-            drawImg(enemyStats[i]["type"]["src"], enemyStats[i]["x"], enemyStats[i]["y"], 62.5, 62.5, enemyStats[i]["direction"])
-        }
+            if(enemyStats[i]["type"] == "boss1"){
+                drawImg(enemyStats[i]["type"]["src"], enemyStats[i]["x"], enemyStats[i]["y"], 125, 125, 0)
+            }
+            else{
+                drawImg(enemyStats[i]["type"]["src"], enemyStats[i]["x"], enemyStats[i]["y"], 62.5, 62.5,enemyStats[i]["direction"])
+            }
+            }
     }
 }
+
+//Maths stuff
 function findDist(x1, y1, x2, y2){return Math.hypot(x2 - x1, y2 - y1);}
-function startNextRound() {
-    if (!enemySpawnArray || enemySpawnArray.length === 0) {
-        error("Engine Configuration Error: enemySpawnArray database is missing or empty.");
-        alert("Cannot start game: No rounds found!");
-        return; 
-    }
-
-    var noEnemiesOnScreen = (!enemyStats || enemyStats.length === 0);
-    if (noEnemiesOnScreen && isSpawningFinished) {
-        if (window.activeRoundWaves !== undefined) {
-            var nextRoundIndex = currentRound + 1;
-            if (nextRoundIndex >= enemySpawnArray.length) {
-                warn("Game completed! No further rounds are defined inside the spawn tracking index.");
-                alert("You won! Reload the page to retry the demo again.");
-                return; 
-            }
-            
-            currentRound = nextRoundIndex;
-        }
-
-        try {
-            var currentRoundConfigOrigin = enemySpawnArray[currentRound];
-            
-            if (!currentRoundConfigOrigin || !Array.isArray(currentRoundConfigOrigin)) {
-                throw new Error("Target round dataset is structurally corrupt or undefined.");
-            }
-            window.activeRoundWaves = currentRoundConfigOrigin.map(wave => {
-                return {
-                    type: wave.type,               
-                    inBetweenTime: wave.inBetweenTime,
-                    amount: wave.amount
-                };
-            });
-            isSpawningFinished = false;
-            framesToSpawn = 0;
-            var roundLabel = gebid("roundDisplay");
-            if (roundLabel) {
-                roundLabel.textContent = "Round: " + (currentRound + 1);
-            }
-        } catch (structureException) {
-            error("Engine Intercepted Fault Initialization: " + structureException.message);
-            isSpawningFinished = true; 
-        }
-
-    } else {
-        warn("Action Prevented: You must clear remaining field elements before initiating standard loop sequence transitions!");
-    }
-}
-if (gebid("nextRoundButton")) {
-    gebid("nextRoundButton").addEventListener("click", startNextRound);
-}
-function updateEnemySpawning() {
-    if (isSpawningFinished || !window.activeRoundWaves) {
-        isSpawningFinished = true;
-        return;
-    }
-    var activeWaves = window.activeRoundWaves;
-
-    if (activeWaves.length > 0 && activeWaves[0]["amount"] === 0) {
-        activeWaves.splice(0, 1);
-        framesToSpawn = 0; 
-    }
-
-    if (activeWaves.length === 0) {
-        isSpawningFinished = true;
-        return;
-    }
-    if (framesToSpawn >= activeWaves[0]["inBetweenTime"] && activeWaves[0]["amount"] > 0) {
-        if(activeWaves[0]["type"] == enemyArray.red && hasSeenEachEnemy[0] == false){ hasSeenEachEnemy[0] = true; alert("Red Enemy: \n This is the basic enemy you will see throught the game. Place a tower down to defend off the enemies. \n You can do this by pressing lowercase t on your keyboard or clicking the cat image in the right menu. Happy playing! \n -The MVCTD3 Dev Team")}
-        if(activeWaves[0]["type"] == enemyArray.orange && hasSeenEachEnemy[1] == false){hasSeenEachEnemy[1] = true; alert("Orange Enemy: \n This is the best time to tell you about an important topic: \n NESTING. \n In this case, dealing damage to an orange enemy does not kill it, but instead spawns a red enemy in its place.\n This will become more prominent during the later rounds, as some enemies may have more than one enemy inside them (hint hint).")}
-        if(activeWaves[0]["type"] == enemyArray.yellow && hasSeenEachEnemy[2] == false){hasSeenEachEnemy[2] = true; alert("Yellow Enemy: \n This is just like the orange enemy in that it has the enemy below it (in this case an orange enemy). \n Also, the enemies become a little faster the stronger they are (up to a point, where it becomes almost random).")}
-        if(activeWaves[0]["type"] == enemyArray.green && hasSeenEachEnemy[3] == false){hasSeenEachEnemy[3] = true; alert("Green Enemy: \n Yep, it's this again. This guy is even faster and has a yellow enemy inside. \n Yes, there is some differences later on, so be quiet.")}
-        if(activeWaves[0]["type"] == enemyArray.lBlue && hasSeenEachEnemy[4] == false){hasSeenEachEnemy[4] = true; alert("Light Blue enemy: \n Yeah, what did you thing was gonna happen? \n At least the next one is somewhat different... \n Also, this implies there is a dark blue enemy, so stay tuned!")}
-        if(activeWaves[0]["type"] == enemyArray.dBlue && hasSeenEachEnemy[5] == false){hasSeenEachEnemy[5] = true; alert("Dark Blue Enemy: \n Yay! Something different! \n In this case, this Dark Blue enemy has not one, but two light blue enemies inside it! \n This makes it way more damgerous than anything else you've seen yet!\n Get ready!")}
-        if(activeWaves[0]["type"] == enemyArray.purple && hasSeenEachEnemy[6] == false){ hasSeenEachEnemy[6] = true; alert("Purple Enemy: \n Yes, this has two dark bluies inside, but it is slower than the dark blue enemy for some reason.")}
-        if(activeWaves[0]["type"] == enemyArray.pink && hasSeenEachEnemy[7] == false){hasSeenEachEnemy[7] = true; alert("Pink Enemy: \n Also something different. It is way too fast for this game (I had to edit the code because it kept flying off the track),\n and this has a purple and a ... red enemy inside?\nYeah, I wanted to be different.")}
-        if(activeWaves[0]["type"] == enemyArray.white && hasSeenEachEnemy[8] == false){hasSeenEachEnemy[8] = true; alert("White Enemy: \n This has a pink, a green, and a dark blue inside for some random fun. Also this enemy cannot be stunned by light becaus eit is so bright itself. \n This currently does nothing, but evantually it will do something.")}
-        if(activeWaves[0]["type"] == enemyArray.grey && hasSeenEachEnemy[9] == false){hasSeenEachEnemy[9] = true; alert("After White comes...: \n Grey? Yeah, I don't know what I was thinking with this one. It has THREE whites inside it for some reason. \n Rampink in this game is insane fr fr.")}
-        if(activeWaves[0]["type"] == enemyArray.rainbow && hasSeenEachEnemy[10] == false){hasSeenEachEnemy[10] = true; alert("Rainbow Enemy: \n Yeah, this STILL is not the black one. \n But it has literally one of eveny enemy below it. Why? I don't know either! \n :)")}
-        if(activeWaves[0]["type"] == enemyArray.brown && hasSeenEachEnemy[11] == false){hasSeenEachEnemy[11] = true; alert("Brown Emeny: \n No, it is not made of what you think it is, it's just dirt and rocks. But this guy uses the power of those rocks and dirt to have a 5 HP shield, meaning you need to hit it 5 times to open the 2 rainbow mice inside.")}
-        enemyStats.push({
-            type: activeWaves[0]["type"],
-            currentHP:1,
-            x: entrance["x"],
-            y: entrance["y"],
-            damageTaken:0,
-            pathAmount: 0,
-            distanceTraveled: 0,
-            id: ++enemySpawnedIDs,
-            direction: Math.PI
-        });
-        framesToSpawn = 0;
-        activeWaves[0]["amount"] -= 1;
-    }
-    framesToSpawn++;
-}
 function getAngleToTarget(imgX, imgY, targetX, targetY) {
     const dx = targetX - imgX;
     const dy = targetY - imgY;
     return Math.atan2(dy, dx);
 }
-function drawProjectiles(){
-    if(typeof projectileList === 'undefined' || !projectileList) return;
-    
-    for (var i = projectileList.length - 1; i >= 0; i--) {
-        var proj = projectileList[i];
-        proj["x"] += Math.cos(proj["direction"]) * proj["Type"]["projSpeed"];
-        proj["y"] += Math.sin(proj["direction"]) * proj["Type"]["projSpeed"];
-        if (proj["x"] < -100 || proj["x"] > 1100 || proj["y"] < -100 || proj["y"] > 1100) {
-            projectileList.splice(i, 1);
-            continue;
-        }
-        drawImg(proj["Type"]["image"], proj["x"], proj["y"], 62.5, 62.5, proj["direction"]);
-        var hitEnemy = false;
-        for (var j = enemyStats.length - 1; j >= 0; j--) {
-            var distance = findDist(proj["x"], proj["y"], enemyStats[j]["x"], enemyStats[j]["y"]);
-            if (distance <= 31.25) {//62.5 is one unit in this case, so 31.25 is half a unit
-                var dmg = proj["damage"] ? proj["damage"] : 1;
-                enemyStats[j]["damageTaken"] += dmg;
-                if(proj["explosion"]){
-                    for(var k=0; k<enemyStats.length; k++){if(findDist(proj["x"], proj["y"], enemyStats[k]["x"], enemyStats[k]["y"]) <= 50){enemyStats[k]["damageTaken"]++;}}
-                    effects.push({
-                        image: [initImage("effects/clawExplosion/explosion1.png"), initImage("effects/clawExplosion/explosion1.png"), initImage("effects/clawExplosion/explosion1.png"), initImage("effects/clawExplosion/explosion1.png"), initImage("effects/clawExplosion/explosion2.png"), initImage("effects/clawExplosion/explosion2.png"), initImage("effects/clawExplosion/explosion2.png"), initImage("effects/clawExplosion/explosion3.png"), initImage("effects/clawExplosion/explosion3.png"), initImage("effects/clawExplosion/explosion3.png"), initImage("effects/clawExplosion/explosion4.png"), initImage("effects/clawExplosion/explosion4.png"), initImage("effects/clawExplosion/explosion4.png"), initImage("effects/clawExplosion/explosion5.png"), initImage("effects/clawExplosion/explosion5.png"), initImage("effects/clawExplosion/explosion5.png"), initImage("effects/clawExplosion/explosion6.png"), initImage("effects/clawExplosion/explosion6.png"), initImage("effects/clawExplosion/explosion6.png"), initImage("effects/clawExplosion/explosion7.png"),initImage("effects/clawExplosion/explosion7.png"), initImage("effects/clawExplosion/explosion7.png"), initImage("effects/clawExplosion/explosion8.png"), initImage("effects/clawExplosion/explosion8.png"), initImage("effects/clawExplosion/explosion8.png")],
-                        x: proj["x"], 
-                        y: proj["y"], 
-                        height: 62.5, 
-                        width: 62.5, 
-                        rotation: proj["rotation"], 
-                        opacity: 1, 
-                        frame: 0
 
-                    })
-                }
-                projectileList.splice(i, 1);
-                hitEnemy = true;
-                break;
-            }
-        }
-        if (hitEnemy) continue;
-    }
+//Nuke ability
+function activateNuke(){
+    var nukeEffect = initImage("effects/nukeImages/nukeEffect.png");
+    var nukeEffect2 = initImage("effects/nukeImages/nukeEffect2.png");
+    var nukeEffect3 = initImage("effects/nukeImages/nukeEffect3.png");
+    effects.push({
+        image: [nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect3, nukeEffect3, nukeEffect3, nukeEffect3, nukeEffect3, nukeEffect3, nukeEffect3, nukeEffect3, nukeEffect3, nukeEffect3, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect],
+        x: 500, y: 500, width:1000, height:1000, direction: 0, frame: 0, opacity: 0.75
+    })
+    for(var j=0; j<50; j++){
+    setTimeout(() => {for(var i=0; i< enemyStats.length; i++){enemyStats[i]["damageTaken"]++}}, (1000/60)*j)}
 }
-function createProjectile(x,y,direction,towType, level, calculatedDamage, explosionCheck = false){
-projectileList.push({
-    Type: projectileData[towType][level],
-    x: x*62.5,
-    y: y*62.5,
-    direction: direction,
-    damage: calculatedDamage,
-    explosion: explosionCheck
-}
-)}
-function checkForTargetedEnemy(towerX, towerY, targetPriority, range){
-    var out = null; 
-    var tPx = towerX * 62.5;
-    var tPy = towerY * 62.5;
 
-    for(var i = 0; i < enemyStats.length; i++){
-        if(findDist(tPx, tPy, enemyStats[i]["x"], enemyStats[i]["y"]) <= range){
-            out = i;
-            break;
-        }
-    }
-    return out;
-}
-function findTargetToFireAt(targetPriority, towerPixelX, towerPixelY, enemyID){
-    var enemy = enemyStats[enemyID];
-    if(enemy != undefined){
-        var offsetX = 0;
-        var offsetY = 0;
-        if(enemy["direction"] == Math.PI) {
-            offsetX = 15; 
-            offsetY = -15;
-        } else if(enemy["direction"] == Math.PI*0.5) {
-            offsetX = 15;
-            offsetY = 15;
-        } else if(enemy["direction"] == Math.PI*1.5) {
-            offsetX = -15;
-            offsetY = -15;
-        } else if(enemy["direction"] == 0 || enemy["direction"] == Math.PI*2) {
-            offsetX = -15;
-            offsetY = 15;
-        }
 
-        return getAngleToTarget(
-            towerPixelX, 
-            towerPixelY, 
-            enemy["x"] + offsetX, 
-            enemy["y"] + offsetY
-        );
-    } else {
-        return null;
-    }
-}
-function updateTowerStats(){
-    for(var i = 0; i < towerArray.length; i++){
-        var tower = towerArray[i];
-        drawImg(tower["type"]["image"], tower["x"] * 62.5+31.25, tower["y"] * 62.5+31.25, 62.5, 62.5, tower["direction"]);
-        if (tower["reloadTime"] > 0) {
-            tower["reloadTime"]--;
-        }
-        
-        var targetedEnemy = null;
-        if(enemyStats && enemyStats.length > 0){
-            targetedEnemy = checkForTargetedEnemy(tower["x"], tower["y"], "first", (tower["type"]["range"] *1.25 ** tower["level"][1]));
-        }
-        if(targetedEnemy === null || targetedEnemy === undefined) {
-            if(tower["reloadTime"] <= 0) {
-                tower["reloadTime"] = 1;
-            }
-            continue;
-        }
-        var towerPixelX = tower["x"] * 62.5;
-        var towerPixelY = tower["y"] * 62.5;
-        var target = findTargetToFireAt("first", towerPixelX, towerPixelY, targetedEnemy);
-        
-        if(target !== null){
-            tower["direction"] = target;
-            if(tower["reloadTime"] <= 0){
-                tower["reloadTime"] = tower["type"]["speed"]*0.8**tower["level"][0];
-                if(tower["type"] == towerLists.music){
-                    if(tower["level"][3] == 0){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.25*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.5*Math.PI , "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.75*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5,      Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.25*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.5*Math.PI , "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.75*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                    }
-                    else if(tower["level"][3] == 1){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (1/6)*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (1/3)*Math.PI , "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.5*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (2/3)*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (5/6)*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, Math.PI , "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (7/6)*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (4/3), "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.5*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (5/3)*Math.PI , "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (11/6)*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 2*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                    }
-                    else if(tower["level"][3] == 2){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.125*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.25 *Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.375*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.5  *Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.625*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.75 *Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.875*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5,       Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.125*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.25 *Math.PI , "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.375*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.5  *Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.625*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.75 *Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.875*Math.PI, "Normal", "t00", tower["level"][2]+1);
-
-                    }
-                    else if(tower["level"][3] == 3){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.125*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.25 *Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.375*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.5  *Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.625*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.75 *Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.875*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5,       Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.125*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.25 *Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.375*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.5  *Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.625*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.75 *Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.875*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-
-                    }
-
-                }
-                else if(tower["type"] == towerLists.basic){
-                    log(tower["level"][3])
-                    if(tower["level"][3] == 0){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1);
-                    }
-                    else if(tower["level"][3] == 1){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.1*Math.PI, "Normal", "t00", tower["level"][2]+1); 
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.1*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                    }
-                    else if(tower["level"][3] == 2){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true); 
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                    }
-                    else if(tower["level"][3] == 3){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.05*Math.PI, "Normal", "t00", tower["level"][2]+1, true); 
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.05*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                    }
-                }
-                else if(tower["type"] == towerLists.boat){
-                    log(tower["level"][3])
-                    if(tower["level"][3] == 0){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1);
-                    }
-                    else if(tower["level"][3] == 1){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]*Math.PI, "Normal", "t00", tower["level"][2]+1); 
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (tower["direction"]+1)*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                    }
-                    else if(tower["level"][3] == 2){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]*Math.PI, "Normal", "t00", tower["level"][2]+1, true); 
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (tower["direction"]+1)*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                    }
-                    else if(tower["level"][3] == 3){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]*Math.PI, "Normal", "t00", tower["level"][2]+2, true); 
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (tower["direction"]+1)*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                    }
-                }
-                else if(tower["type"] == towerLists.super){
-                    log(tower["level"][3])
-                    if(tower["level"][3] == 0){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1);
-                    }
-                    else if(tower["level"][3] == 1){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.1*Math.PI, "Normal", "t00", tower["level"][2]+1); 
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.1*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                    }
-                    else if(tower["level"][3] == 2){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true); 
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                    }
-                    else if(tower["level"][3] == 3){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.05*Math.PI, "Normal", "t00", tower["level"][2]+1, true); 
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.05*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                    }
-                }
-            }
-        }
-    }
-}
+//Draw effects to screen, with rotation, opacity and other info
 function drawEffects(){
     for(var i=0; i < effects.length; i++){
         var frame = effects[i]["frame"]
@@ -685,6 +245,8 @@ function drawEffects(){
         }
     }
 }
+
+//Main game loop
 function frame(){
     for(var l=0; l<currentSpeed; l++){
     var framePart = 0;
@@ -706,11 +268,11 @@ function frame(){
         framePart++
         updateEnemyStats();
         framePart++
-        drawProjectiles();
-        framePart++
         drawEffects();
         framePart++
         drawEnemies();
+        framePart++
+        drawProjectiles();
         framePart++
         updateTowerStats();
         if (selectedTower) {
@@ -731,8 +293,8 @@ function frame(){
         if (isPlacingTower) {
             ctx.globalAlpha = 0.6;
             var type = null;
-            if(towerBeingPlacedType == 0){type = towerLists["basic"]["image"]} else if(towerBeingPlacedType == 1){type = towerLists["music"]["image"]} else if(towerBeingPlacedType == 2){type = towerLists["boat"]["image"]} else if(towerBeingPlacedType == 3){type = towerLists["super"]["image"]}
-            drawImg(type, placementX * 62.5+31.25, placementY * 62.5+31.25, 62.5, 62.5, Math.PI);
+            if(towerBeingPlacedType == 0){type = towerLists["basic"]["image"]} else if(towerBeingPlacedType == 1){type = towerLists["music"]["image"]} else if(towerBeingPlacedType == 2){type = towerLists["boat"]["image"]} else if(towerBeingPlacedType == 3){type = towerLists["super"]["image"]} else if(towerBeingPlacedType == 4){type = towerLists["farm"]["image"]}
+            drawImg(type, placementX * 62.5+31.25, placementY * 62.5+31.25, 62.5, 62.5, 0);
             ctx.globalAlpha = 1.0;
         }
         framePart++
@@ -741,6 +303,8 @@ function frame(){
     }
     }
 }
+
+//Report the FPS (frames per second) to the log to help
 function reportFPS() {
     const now = performance.now();
     const duration = now - lastTime;
@@ -752,6 +316,8 @@ function reportFPS() {
     setTimeout(reportFPS, 1000);
 }
 
+
+//Adds a new script to the main page
 function addNewScript(src){
     loadingMax++;
     var newScript = document.createElement("script");
@@ -770,23 +336,32 @@ if(canvas && ctx) {
     reportFPS();
 }
 
+
+//Adds new scripts
 addNewScript("track1.js");
-addNewScript("enemyCode.js")
-addNewScript("towerCode.js")
-addNewScript("projectiles.js")
+addNewScript("enemyCode.js");
+addNewScript("towerCode.js");
+addNewScript("projectiles.js");
+
+//Important images, of which both are basically useless now.
 var gridImg = window.initImage("gridSystemImage.png");
 var testImage = window.initImage("ExitIndicator.png");
+
+
+//Gets next round button to add a function to it.
 gebid("nextRoundButton").addEventListener("contextmenu", function(event){
     event.preventDefault();
     var skipAmount = prompt("How many rounds to skip? (Will be removed in prebeta 0.1)");
     if (skipAmount !== null && skipAmount.trim() !== "" && Number.isFinite(Number(skipAmount))) {
-        for(var i=0; i< skipAmount; i++){
+        for(var i=0; i < skipAmount; i++){
             currentRound++;
             isSpawningFinished = true;
             enemyStats = [];
         }
     }
 })
+
+//Gets speed button right click to set up to 20x speed.
 gebid("speedButton").addEventListener("contextmenu", function(event) {
     preSpaceSpeed = currentSpeed; 
     event.preventDefault(); 
@@ -808,6 +383,8 @@ gebid("speedButton").addEventListener("contextmenu", function(event) {
       alert("Please enter a valid number!");
     }
 });
+
+//sets timeout to wait 250 seconds and then 60 times a second check loading to check if should open the game for playing
 setTimeout(() => {
     const loadingTracker = setInterval(() => {
         var loadingBar = gebid("loadingBar");
@@ -829,6 +406,8 @@ setTimeout(() => {
         }
     }, 1000 / 60);
 }, 250);
+
+//Keyboard uses
 document.addEventListener("keydown", function(event) {
     if (event.key === " " || event.code === "Space") {
         event.preventDefault(); 
@@ -883,11 +462,15 @@ document.addEventListener("keyup", function(event) {
         }
     }
 });
+
+
+//Uses canvas mouse location for info and click info for placing/upgrading towers
 if (canvas) {
     canvas.addEventListener('mousemove', function(event) {
         var rect = canvas.getBoundingClientRect();
         const rawX = event.clientX - rect.left;
         const rawY = event.clientY - rect.top;
+        mouseX = rawX*1000/window.innerHeight, mouseY = rawY*1000/window.innerHeight;
         const scaleFactor = 1000 / rect.height;
         const x = rawX * scaleFactor;
         const y = rawY * scaleFactor;
@@ -915,155 +498,12 @@ if(canvas){canvas.addEventListener("click", function(event){
         hideSidebarUI();
     }
 })}
-function attemptPlaceTower(){
-    if(isPlacingTower){
-        var location = trackInfo[placementY][placementX]
-        if(location["tower"] == true){
-            alert("There is already a tower there! Please pick another location.")
-        }
-        else if(location["typeTrack"] == grassRock){
-            alert("Cannot place on top of rocks!")
-        }
-        else if(location["typeTrack"] == water || location["typeTrack"] == deepWater){
-            if(towerBeingPlacedType == 2 && money >= 250){
-                money -= 250;
-                towerArray.push({
-                type: towerLists["boat"], 
-                x:placementX, 
-                y:placementY, 
-                direction: Math.PI, 
-                reloadTime: towerLists["boat"]["speed"],
-                level: [0,0,0,0,false],
-                ID: globalTowerID++})
-                isPlacingTower =  false;
-            }
-            else if(money < 250 && towerBeingPlacedType == 2){
-                alert("Not enough money to place! Cost is 250 btw")
-            }
-            else{
-                alert("Cannot place land type tower in water!")
-            }
-        }
-        else if(location["track"] == true){
-            alert("This is a road part, you cannot place here!")
-        }
-        else if(towerBeingPlacedType == 0 && money < 150){
-            alert("Not enough money to place down! Cost is 150 btw")
-        }
-        else if(towerBeingPlacedType == 1 && money < 300){
-            alert("Not enough money to place down! Cost is 300 btw")
-        }
-        else if(towerBeingPlacedType == 2 && money < 250){
-            alert("Not enough money to place down! Cost is 250 btw")
-        }
-        else if(towerBeingPlacedType == 3 && money < 500){
-            alert("Not enough money to place down! Cost is 500 btw")
-        }
-        else{
-            location["tower"] = true;
-            if(towerBeingPlacedType == 0){
-                money -= 150;
-                towerArray.push({
-                type: towerLists["basic"], 
-                x:placementX, 
-                y:placementY, 
-                direction: Math.PI, 
-                reloadTime: towerLists["basic"]["speed"],
-                level: [0,0,0,0,false],
-                ID: globalTowerID++})
-                isPlacingTower =  false;
-                }
-            else if(towerBeingPlacedType == 1){
-                money -= 300;
-                towerArray.push({
-                type: towerLists["music"], 
-                x:placementX, 
-                y:placementY, 
-                direction: Math.PI, 
-                reloadTime: towerLists["music"]["speed"],
-                level: [0,0,0,0,false],
-                ID: globalTowerID++})
-                isPlacingTower =  false;
-                }
-            else if(towerBeingPlacedType == 2){
-                alert("This is a water tower, it cannot go on the land!")
-            }
-            else if(towerBeingPlacedType == 3){
-                money -= 500;
-                towerArray.push({
-                type: towerLists["super"], 
-                x:placementX, 
-                y:placementY, 
-                direction: Math.PI, 
-                reloadTime: towerLists["super"]["speed"],
-                level: [0,0,0,0,false],
-                ID: globalTowerID++})
-                isPlacingTower =  false;
-            }
-        }
-    }
-}
-function openStatsMenu(){
-    var alertMessage = "Statistics for this tower: \n"
-    alertMessage += ("Speed (how long in between firing its attack in seconds): " + (towerArray[towerOpenedID]["type"]["speed"]/60)*0.8**towerArray[towerOpenedID]["level"][0] + "\n")
-    alertMessage += ("Range (each square is 1 in this case): " + towerArray[towerOpenedID]["type"]["range"]/62.5* 1.25 ** towerArray[towerOpenedID]["level"][1] + "\n")
-    alertMessage += ("Damage (maximum): " + (towerArray[towerOpenedID]["type"]["damage"] + towerArray[towerOpenedID]["level"][2]) + "\n")
-    alertMessage += ("Special Level: " + (towerArray[towerOpenedID]["level"][3] + "\n"))
-    alertMessage += ("Is Merged: No (will add later)")
-    alert(alertMessage)
-}
-function attemptBuySpeedUpgrade(){
-    if(towerArray[towerOpenedID]["level"][0] != 3 && money >= Math.floor(towerArray[towerOpenedID].type.baseCost* 1.5 ** (towerArray[towerOpenedID]["level"][0]+1))){
-        money -= Math.floor(towerArray[towerOpenedID].type.baseCost* 1.5 ** towerArray[towerOpenedID]["level"][0]);
-    towerArray[towerOpenedID]["level"][0]++;}
-    else if(money < Math.floor(towerArray[towerOpenedID].type.baseCost* 1.5 ** (towerArray[towerOpenedID]["level"][0]+1))){alert("Not enough money: Cost is " + Math.floor(towerArray[towerOpenedID].type.baseCost* 1.5 ** (towerArray[towerOpenedID]["level"][0]+1)))}
-    else{alert("Max level reached!")}
-    updateSidebarUI(towerArray[towerOpenedID])
-}
-function attemptBuyRangeUpgrade(){
-    if(towerArray[towerOpenedID]["level"][1] != 3 && money >= Math.floor(towerArray[towerOpenedID].type.baseCost* 1.1 ** (towerArray[towerOpenedID]["level"][1]+1))){
-        money -= Math.floor(towerArray[towerOpenedID].type.baseCost* 1.1 ** towerArray[towerOpenedID]["level"][1]);
-    towerArray[towerOpenedID]["level"][1]++;}
-    else if(money < Math.floor(towerArray[towerOpenedID].type.baseCost* 1.1 ** (towerArray[towerOpenedID]["level"][1]+1))){alert("Not enough money: Cost is " + Math.floor(towerArray[towerOpenedID].type.baseCost* 1.1 ** (towerArray[towerOpenedID]["level"][1]+1)))}
-    else{alert("Max level reached!")}
-    updateSidebarUI(towerArray[towerOpenedID])
-}
-function attemptBuyDamageUpgrade(){
-    if(towerArray[towerOpenedID]["level"][2] != 3 && money >= towerArray[towerOpenedID].type.baseCost* 2 ** (towerArray[towerOpenedID]["level"][2]+1)){
-        money -= towerArray[towerOpenedID].type.baseCost* 2 ** towerArray[towerOpenedID]["level"][2];
-    towerArray[towerOpenedID]["level"][2]++;}
-    else if(money < towerArray[towerOpenedID].type.baseCost* 2 ** (towerArray[towerOpenedID]["level"][2]+1)){alert("Not enough money: Cost is " + towerArray[towerOpenedID].type.baseCost* 2 ** (towerArray[towerOpenedID]["level"][2]+1))}
-    else{alert("Max level reached!")}
-    updateSidebarUI(towerArray[towerOpenedID])
-}
-function attemptBuySpecialUpgrade(){
-    log(JSON.stringify(towerArray[towerOpenedID].type.specialCosts[towerArray[towerOpenedID]["level"][3]]))
-    if(towerArray[towerOpenedID]["level"][3] != 3 && money >= towerArray[towerOpenedID].type.specialCosts[towerArray[towerOpenedID]["level"][3]]){
-    towerArray[towerOpenedID]["level"][3]++;}
-    else if(money < towerArray[towerOpenedID].type.specialCosts[towerArray[towerOpenedID]["level"][3]]){alert("Not enough money: Cost is " + towerArray[towerOpenedID].type.specialCosts[towerArray[towerOpenedID]["level"][3]])}
-    else{alert("Max level reached!")}
-    updateSidebarUI(towerArray[towerOpenedID])
-}
-function updateSidebarUI(tower) {
-    var sidebar = gebid("towerSidebar");
-    gebid("specialButton").title = tower.type["specialUpgrades"][tower.level[3]]
-    if (sidebar) sidebar.style.display = "block";
-    var speedVal = ((tower.type.speed / 60) * Math.pow(0.8, tower.level[0])).toFixed(2);
-    var rangeVal = (tower.type.range / 62.5 * Math.pow(1.25, tower.level[1])).toFixed(1);
-    var damageVal = tower.type.damage + tower.level[2];
-    gebid("upgradeType").innerHTML = "Tower ID: " + tower.ID
-    if (gebid("sidebarTowerName")) gebid("sidebarTowerName").textContent = "Tower Type: " + tower.type.type.toUpperCase();
-    if (gebid("sidebarSpeedStat")) gebid("sidebarSpeedStat").textContent = "Attack Delay: " + speedVal + "s (Lv. " + tower.level[0] + ") \n Cost is " + towerArray[towerOpenedID].type.baseCost* 2 ** (towerArray[towerOpenedID]["level"][0]+1);
-    if (gebid("sidebarRangeStat")) gebid("sidebarRangeStat").textContent = "Tile Range: " + rangeVal + " (Lv. " + tower.level[1] + ")\n Cost is " + towerArray[towerOpenedID].type.baseCost* 2 ** (towerArray[towerOpenedID]["level"][1]+1);
-    if (gebid("sidebarDamageStat")) gebid("sidebarDamageStat").textContent = "Max Damage: " + damageVal + " (Lv. " + tower.level[2] + ")\n Cost is " + towerArray[towerOpenedID].type.baseCost* 2 ** (towerArray[towerOpenedID]["level"][2]+1);
-    if (gebid("sidebarSpecialStat")) gebid("sidebarSpecialStat").textContent = "Special: (Lv. " + tower.level[3] + ")\n Cost is " + towerArray[towerOpenedID].type.specialCosts[towerArray[towerOpenedID]["level"][3]];
-}
-function hideSidebarUI() {
-    var sidebar = gebid("towerSidebar");
-    if (sidebar) sidebar.style.display = "none";
-}
+
+
+//Resets enemies using the mini button (remove later)
 function resetEnemies(){
     isSpawningFinished = true;
     enemyStats = [];
     currentRound--;
 }
+//Just added to get to 500 lines
