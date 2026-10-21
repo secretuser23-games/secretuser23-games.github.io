@@ -1,3 +1,7 @@
+//Looping Through The Grass (Map 1-1)
+
+
+
 //Order is L, then R, then U, then D.  Any modifiers(entrance/exit/etc) comes afterward.
 var roadLD = initImage("RoadLD.png")
 var roadLR = initImage("RoadLR.jpg")

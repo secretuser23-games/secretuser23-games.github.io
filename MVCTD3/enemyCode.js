@@ -122,6 +122,21 @@ var enemySpawnArray = [
     ],
     [//25
         {type: enemyArray["purple"], inBetweenTime: 30, amount: 50}
+    ],
+    [//26
+        {type: enemyArray["white"], inBetweenTime: 60, amount: 20}
+    ],
+    [//27
+        {type: enemyArray["red"], inBetweenTime: 60, amount: 50},
+        {type: enemyArray["orange"], inBetweenTime: 60, amount: 45},
+        {type: enemyArray["yellow"], inBetweenTime: 60, amount: 40},
+        {type: enemyArray["green"], inBetweenTime: 60, amount: 35},
+        {type: enemyArray["lBlue"], inBetweenTime: 60, amount: 30},
+        {type: enemyArray["dBlue"], inBetweenTime: 60, amount: 25},
+        {type: enemyArray["purple"], inBetweenTime: 60, amount: 20},
+        {type: enemyArray["pink"], inBetweenTime: 60, amount: 15},
+        {type: enemyArray["white"], inBetweenTime: 60, amount: 10},
+        {type: enemyArray["red"], inBetweenTime: 5, amount: 500}
     ]
 ];
 
@@ -541,7 +556,7 @@ function updateEnemySpawning() {
         if(activeWaves[0]["type"] == enemyArray.white && hasSeenEachEnemy[8] == false){hasSeenEachEnemy[8] = true; alert("White Enemy: \n This has a pink, a green, and a dark blue inside for some random fun. Also this enemy cannot be stunned by light becaus eit is so bright itself. \n This currently does nothing, but evantually it will do something.")}
         if(activeWaves[0]["type"] == enemyArray.grey && hasSeenEachEnemy[9] == false){hasSeenEachEnemy[9] = true; alert("After White comes...: \n Grey? Yeah, I don't know what I was thinking with this one. It has THREE whites inside it for some reason. \n Rampink in this game is insane fr fr.")}
         if(activeWaves[0]["type"] == enemyArray.rainbow && hasSeenEachEnemy[10] == false){hasSeenEachEnemy[10] = true; alert("Rainbow Enemy: \n Yeah, this STILL is not the black one. \n But it has literally one of eveny enemy below it. Why? I don't know either! \n :)")}
-        if(activeWaves[0]["type"] == enemyArray.rainbow && hasSeenEachEnemy[11] == false){hasSeenEachEnemy[10] = true; alert("Brown Enemy: \n No, it is not made of what you think it is, it's just dirt and rocks. But this gives it a 5 hp shield. This is nowhere from the hardest, so keep watching...")}
+        if(activeWaves[0]["type"] == enemyArray.rainbow && hasSeenEachEnemy[11] == false){hasSeenEachEnemy[11] = true; alert("Brown Enemy: \n No, it is not made of what you think it is, it's just dirt and rocks. But this gives it a 5 hp shield. This is nowhere from the hardest, so keep watching...")}
         if(activeWaves[0]["type"] == enemyArray.boss1 && hasSeenEachEnemy[12] == false){hasSeenEachEnemy[12] = true; alert("Boss One: \n A HUGE spike in difficulty. \n It has 256 hp and spawns 5 browns when defeated. You'd better have your defenses ready...")}
         var currentHP = 1;
         if(activeWaves[0]["type"] == enemyArray.brown){currentHP = 5;}
@@ -556,7 +571,7 @@ function updateEnemySpawning() {
             pathAmount: 0,
             distanceTraveled: 0,
             id: ++enemySpawnedIDs,
-            direction: Math.PI
+            direction: path["0"]["direction"]
         });
         framesToSpawn = 0;
         activeWaves[0]["amount"] -= 1;

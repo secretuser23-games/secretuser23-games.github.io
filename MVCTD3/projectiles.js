@@ -20,7 +20,7 @@ function drawProjectiles(){
         var hitEnemy = false;
         for (var j = enemyStats.length - 1; j >= 0; j--) {
             var distance = findDist(proj["x"], proj["y"], enemyStats[j]["x"], enemyStats[j]["y"]);
-            if (distance <= 31.25) {//62.5 is one unit in this case, so 31.25 is half a unit
+            if (distance <= 31.25) {
                 var dmg = proj["damage"] ? proj["damage"] : 1;
                 enemyStats[j]["damageTaken"] += dmg;
                 if(proj["explosion"]){

@@ -1,6 +1,23 @@
-//Setup variables
+//NOTES:
+//62.5 is one unit
+//31.25 is half a unit
+//1000*1000 is main canvas size
+//Split into 5 parts: This, projectiles.js, towerCode.js, enemyCode.js, and track#.js (currently just track1.js).
+//when using initImage, /images/ is auto applied
+//WHEN RELEASING, remove "dev" from start to help
 
-var version = "X.2.0"
+
+var mapChoicePrompt = prompt("Please choose a map number (max 2):")
+if (mapChoicePrompt == null || mapChoicePrompt.trim() === "" || Number.isFinite(Number(mapChoicePrompt)) != true) {
+    alert("Not an applicable map choice! Will be set to map one instead! Please reload to pick a diffrent map if you want.")
+    mapChoicePrompt = 2;
+}
+mapChoicePrompt = Math.max(mapChoicePrompt,1)
+
+
+//Setup variables
+//qwertyuiopasdfghjklzxcvbnm
+var version = "X.4.0"
 var loading = 0;
 var loadingMax = 0;
 function gebid(id) {
@@ -71,7 +88,7 @@ function error(message){
     }
 }
 function clearLogs(){
-    gebid("logs").innerHTML = "<p class='top'></p><p id='fpsCounter'>FPS: 0."
+    gebid("logs").innerHTML = "<p class='top'></p><p id='fpsCounter'>FPS: waiting..."
 }
 
 
@@ -89,10 +106,9 @@ function updateProgressBar(value) {
         red = Math.round(255 * (1 - (v - 50) / 50));
         green = 255;
     }
-    const blue = 0;
     const progressBar = document.getElementById('my-progress-bar');
     progressBar.style.width = `${v}%`;
-    progressBar.style.backgroundColor = `rgb(${red}, ${green}, ${blue})`;}
+    progressBar.style.backgroundColor = `rgb(${red}, ${green}, 0)`;}
     catch(error){
         log("Error updating progress bar: " + error)
     }
@@ -104,13 +120,14 @@ updateProgressBar(100)
 
 //Main define variables (basically the longest line in this whole thing)
 //effects require an initImage broken into frames (starts at 0), x pos, y pos, width, height, rotation, opacity, frame (current), and a max frame 
-var towerBeingPlacedType = 0, hasSeenEndlessModeAlert = false, effects = [], money = 50, farmsBuffExtraMoney = 0, hp = 100, selectedTower = null, towerOpenedID = 0, globalTowerID = 0, isPlacingTower = false, placementX = 0, mouseX = 0, mouseY = 0, placementY = 0, isSpawningFinished = false, preSpaceSpeed = 1, isSpaceHeldDown = false, enemySpawnedIDs = 0, currentWave = 0, gameInterval = null, framesToSpawn = 0, currentSpeed = 1, frameCount = 0, totalFramesRendered = 0, lastTime = performance.now(), currentRound = 0, fps = 60, isGameLoopRunning = false, eorMoney = 0; 
+var towerBeingPlacedType = 0, hasSeenEndlessModeAlert = false, effects = [], money = 500, farmsBuffExtraMoney = 0, hp = 100, selectedTower = null, towerOpenedID = 0, globalTowerID = 0, isPlacingTower = false, placementX = 0, mouseX = 0, mouseY = 0, placementY = 0, isSpawningFinished = false, preSpaceSpeed = 1, isSpaceHeldDown = false, enemySpawnedIDs = 0, currentWave = 0, gameInterval = null, framesToSpawn = 0, currentSpeed = 1, frameCount = 0, totalFramesRendered = 0, lastTime = performance.now(), currentRound = 0, fps = 60, isGameLoopRunning = false, eorMoney = 0; 
 
 
 
 //For me only: If I am editing, give me infinite money and hp for testing
 
 if(version.includes("dev")){money = 10000000000000000000; hp = 10000000000000000000}
+
 //Fuunction to get a random number
 function getRandomNumber(max){
     return Math.round(Math.random()*max)
@@ -147,17 +164,7 @@ function drawImg(image, x, y, width, height, rotation = 0, opacity = 1) {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
 
-// Draw Grid (should remove soon as is deprecated)
-function drawGrid(size){
-    var halfTile = (1000 / size) / 2;
-    for(var i=0; i<size; i++){
-        for(var j=0; j<size; j++){
-            drawImg(gridImg, (i * 1000 / size) + halfTile, (j * 1000 / size) + halfTile, 1000 / size, 1000 / size);
-        }
-    }
-}
-
-//also useless, should remove with above
+//Almost useless, but still necessary
 function createArrayForGrid(rows, cols, what){
     return Array.from({ length: rows }, () => Array(cols).fill(what));
 }
@@ -206,7 +213,7 @@ function drawEnemies(){
                 drawImg(enemyStats[i]["type"]["src"], enemyStats[i]["x"], enemyStats[i]["y"], 125, 125, 0)
             }
             else{
-                drawImg(enemyStats[i]["type"]["src"], enemyStats[i]["x"], enemyStats[i]["y"], 62.5, 62.5,enemyStats[i]["direction"])
+                drawImg(enemyStats[i]["type"]["src"], enemyStats[i]["x"], enemyStats[i]["y"], 62.5, 62.5, enemyStats[i]["direction"])
             }
             }
     }
@@ -261,8 +268,6 @@ function frame(){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         framePart++
         updateEnemySpawning();
-        framePart++
-        drawGrid(16);
         framePart++
         drawTrack();
         framePart++
@@ -338,14 +343,10 @@ if(canvas && ctx) {
 
 
 //Adds new scripts
-addNewScript("track1.js");
+addNewScript("track" + mapChoicePrompt + ".js");
 addNewScript("enemyCode.js");
 addNewScript("towerCode.js");
 addNewScript("projectiles.js");
-
-//Important images, of which both are basically useless now.
-var gridImg = window.initImage("gridSystemImage.png");
-var testImage = window.initImage("ExitIndicator.png");
 
 
 //Gets next round button to add a function to it.
@@ -498,12 +499,3 @@ if(canvas){canvas.addEventListener("click", function(event){
         hideSidebarUI();
     }
 })}
-
-
-//Resets enemies using the mini button (remove later)
-function resetEnemies(){
-    isSpawningFinished = true;
-    enemyStats = [];
-    currentRound--;
-}
-//Just added to get to 500 lines
