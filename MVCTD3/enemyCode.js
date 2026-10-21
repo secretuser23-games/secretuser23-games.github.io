@@ -1,18 +1,18 @@
 //Enemy array for spawning
 var enemyArray = {
-    red: { src: initImage("enemies/redMouse.png"), spawn: [null], speed: 1, hpToDrain: 1},
-    orange: { src: initImage("enemies/orangeMouse.png"), spawn: [], speed: 1.25, hpToDrain: 2},
-    yellow: { src: initImage("enemies/yellowMouse.png"), spawn: [], speed: 1.5,  hpToDrain: 3},
-    green: { src: initImage("enemies/greenMouse.png"), spawn: [], speed: 1.75,  hpToDrain: 4},
-    lBlue: { src: initImage("enemies/lBlueMouse.png"), spawn: [], speed: 2,  hpToDrain: 5},
-    dBlue: {src: initImage("enemies/dBlueMouse.png"), spawn: [], speed: 2.5,  hpToDrain: 11},
-    purple: {src: initImage("enemies/purple.png"), spawn: [], speed: 2,  hpToDrain: 23},
-    pink: {src: initImage("enemies/pinkMouse.png"), spawn: [], speed: 3,  hpToDrain: 25},
-    white: {src: initImage("enemies/whiteMouse.png"), spawn: [], speed: 1.5,  hpToDrain: 41},
-    grey: {src: initImage("enemies/greyMouse.png"), spawn: [], speed: 2,  hpToDrain: 124},
-    rainbow: {src: initImage("enemies/rainbowMouse.png"), spawn: [], speed: 1.75,  hpToDrain: 239},
-    brown: {src: initImage("enemies/brownMouse.png"), spawn: [], speed: 0.8, hpToDrain: 718},
-    boss1: {src: initImage("enemies/normalBoss.png"), spawn: [], speed: 0.25, hpToDrain: 3946}
+    red: { src: initImage("enemies/redMouse.png"), spawn: [null], speed: 1, hpToDrain: 1, type: "red"},
+    orange: { src: initImage("enemies/orangeMouse.png"), spawn: [], speed: 1.25, hpToDrain: 2, type: "orange"},
+    yellow: { src: initImage("enemies/yellowMouse.png"), spawn: [], speed: 1.5,  hpToDrain: 3, type: "yellow"},
+    green: { src: initImage("enemies/greenMouse.png"), spawn: [], speed: 1.75,  hpToDrain: 4, type: "green"},
+    lBlue: { src: initImage("enemies/lBlueMouse.png"), spawn: [], speed: 2,  hpToDrain: 5, type: "lBlue"},
+    dBlue: {src: initImage("enemies/dBlueMouse.png"), spawn: [], speed: 2.5,  hpToDrain: 11, type: "dBlue"},
+    purple: {src: initImage("enemies/purple.png"), spawn: [], speed: 2,  hpToDrain: 23, type: "purple"},
+    pink: {src: initImage("enemies/pinkMouse.png"), spawn: [], speed: 3,  hpToDrain: 25, type: "pink"},
+    white: {src: initImage("enemies/whiteMouse.png"), spawn: [], speed: 1.5,  hpToDrain: 41, type: "white"},
+    grey: {src: initImage("enemies/greyMouse.png"), spawn: [], speed: 2,  hpToDrain: 124, type: "grey"},
+    rainbow: {src: initImage("enemies/rainbowMouse.png"), spawn: [], speed: 1.75,  hpToDrain: 239, type: "rainbow"},
+    brown: {src: initImage("enemies/brownMouse.png"), spawn: [], speed: 0.8, hpToDrain: 718, type: "brown"},
+    boss1: {src: initImage("enemies/normalBoss.png"), spawn: [], speed: 0.25, hpToDrain: 3946, type: "boss1"}
 };
 
 //Setup nesting info
@@ -190,267 +190,58 @@ function updateEnemyStats(){
                     }
                     else if(enemy["type"] == enemyArray["dBlue"]){
                         enemy["type"] = enemyArray["lBlue"];
-                        enemyStats.push({
-                            type: enemyArray["lBlue"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        })
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"lBlue", 1)
                         enemy["currentHP"] = 1;
                     }
                     else if(enemy["type"] == enemyArray["purple"]){
                         enemy["type"] = enemyArray["dBlue"];
-                        enemyStats.push({
-                            type: enemyArray["dBlue"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        })
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"dBlue", 1)
                         enemy["currentHP"] = 1;
                     }
                     else if(enemy["type"] == enemyArray["pink"]){
                         enemy["type"] = enemyArray["purple"];
-                        enemyStats.push({
-                            type: enemyArray["purple"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        })
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"purple", 1)
                         enemy["currentHP"] = 1;
                     }
                     else if(enemy["type"] == enemyArray["white"]){
                         enemy["type"] = enemyArray["pink"];
-                        enemyStats.push({
-                            type: enemyArray["green"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        },{
-                            type: enemyArray["dBlue"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        })
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"dBlue", 1)
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"green", 1)
                         
                         enemy["currentHP"] = 1;
                     }
                     else if(enemy["type"] == enemyArray["grey"]){
                         enemy["type"] = enemyArray["white"];
-                        enemyStats.push({
-                            type: enemyArray["white"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        },{
-                            type: enemyArray["white"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        })
-                        
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"white", 1)
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"white", 1)
                         enemy["currentHP"] = 1;
                     }
                     else if(enemy["type"] == enemyArray["rainbow"]){
                         enemy["type"] = enemyArray["grey"];
-                        enemyStats.push({
-                            type: enemyArray["white"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        },{
-                            type: enemyArray["purple"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        },{
-                            type: enemyArray["pink"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        },{
-                            type: enemyArray["dBlue"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        },{
-                            type: enemyArray["lBlue"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        },{
-                            type: enemyArray["green"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        },{
-                            type: enemyArray["yellow"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        },{
-                            type: enemyArray["orange"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        },{
-                            type: enemyArray["red"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        })
-                        
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"white", 1)
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"pink", 1)
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"purple", 1)
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"dBlue", 1)
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"lBlue", 1)
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"green", 1)
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"yellow", 1)
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"orange", 1)
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"red", 1)
                         enemy["currentHP"] = 1;
                     }
                     else if(enemy["type"] == enemyArray["brown"]){
                         enemy["type"] = enemyArray["rainbow"];
-                        enemyStats.push({
-                            type: enemyArray["rainbow"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        },{
-                            type: enemyArray["rainbow"],
-                            currentHP: 1,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        })
-                        
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"rainbow", 1)
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"rainbow", 1)
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"rainbow", 1)
                         enemy["currentHP"] = 1;
                     }
                     else if(enemy["type"] == enemyArray["boss1"]){
                         enemy["type"] = enemyArray["brown"];
-                        enemyStats.push({
-                            type: enemyArray["brown"],
-                            currentHP: 5,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        },{
-                            type: enemyArray["brown"],
-                            currentHP: 5,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        },{
-                            type: enemyArray["brown"],
-                            currentHP: 5,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        },{
-                            type: enemyArray["brown"],
-                            currentHP: 5,
-                            x: enemy["x"],
-                            y: enemy["y"],
-                            damageTaken:0,
-                            pathAmount: enemy["pathAmount"],
-                            distanceTraveled: enemy["distanceTraveled"],
-                            id: ++enemySpawnedIDs,
-                            direction: enemy["direction"]
-                        })
-                        
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"brown", 5)
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"brown", 5)
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"brown", 5)
+                        spawnEnemy(enemy["x"],enemy["y"], enemy["direction"],"brown", 5)
                         enemy["currentHP"] = 5;
                     }
                     else{
@@ -558,23 +349,30 @@ function updateEnemySpawning() {
         if(activeWaves[0]["type"] == enemyArray.rainbow && hasSeenEachEnemy[10] == false){hasSeenEachEnemy[10] = true; alert("Rainbow Enemy: \n Yeah, this STILL is not the black one. \n But it has literally one of eveny enemy below it. Why? I don't know either! \n :)")}
         if(activeWaves[0]["type"] == enemyArray.rainbow && hasSeenEachEnemy[11] == false){hasSeenEachEnemy[11] = true; alert("Brown Enemy: \n No, it is not made of what you think it is, it's just dirt and rocks. But this gives it a 5 hp shield. This is nowhere from the hardest, so keep watching...")}
         if(activeWaves[0]["type"] == enemyArray.boss1 && hasSeenEachEnemy[12] == false){hasSeenEachEnemy[12] = true; alert("Boss One: \n A HUGE spike in difficulty. \n It has 256 hp and spawns 5 browns when defeated. You'd better have your defenses ready...")}
+        //Set up natural HP
         var currentHP = 1;
         if(activeWaves[0]["type"] == enemyArray.brown){currentHP = 5;}
         else if(activeWaves[0]["type"] == enemyArray.boss1){currentHP = 256;}
-        
-        enemyStats.push({
-            type: activeWaves[0]["type"],
-            currentHP:currentHP,
-            x: entrance["x"],
-            y: entrance["y"],
-            damageTaken:0,
-            pathAmount: 0,
-            distanceTraveled: 0,
-            id: ++enemySpawnedIDs,
-            direction: path["0"]["direction"]
-        });
+        log(JSON.stringify(activeWaves[0]["type"]["type"]))
+        spawnEnemy(entrance["x"], entrance["y"], path[0]["direction"], activeWaves[0]["type"]["type"], currentHP)
         framesToSpawn = 0;
         activeWaves[0]["amount"] -= 1;
     }
     framesToSpawn++;
+}
+
+//Spawn an enemy function
+function spawnEnemy(x,y,direction,type, currentHP){
+    enemyStats.push({
+        type: enemyArray[type],
+            currentHP:currentHP,
+            x: x,
+            y: y,
+            damageTaken:0,
+            pathAmount: 0,
+            distanceTraveled: 0,
+            id: ++enemySpawnedIDs,
+            direction: direction
+        
+    })
 }

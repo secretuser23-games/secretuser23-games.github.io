@@ -157,68 +157,21 @@ function updateTowerStats(){
                 tower["reloadTime"] = tower["type"]["speed"]*0.8**tower["level"][0];
                 if(tower["type"] == towerLists.music){
                     if(tower["level"][3] == 0){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.25*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.5*Math.PI , "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.75*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5,      Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.25*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.5*Math.PI , "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.75*Math.PI, "Normal", "t00", tower["level"][2]+1);
+                        for(var j=0; j<8; j++){
+                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.25*Math.PI*j, "Normal", "t00", tower["level"][2]+1);}
                     }
                     else if(tower["level"][3] == 1){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (1/6)*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (1/3)*Math.PI , "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.5*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (2/3)*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (5/6)*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, Math.PI , "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (7/6)*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (4/3), "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.5*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (5/3)*Math.PI , "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, (11/6)*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 2*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                    }
+                        for(var j=0; j<12; j++){
+                            createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1/6*Math.PI*j, "Normal", "t00", tower["level"][2]+1);}
+                        }
                     else if(tower["level"][3] == 2){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.125*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.25 *Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.375*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.5  *Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.625*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.75 *Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.875*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5,       Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.125*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.25 *Math.PI , "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.375*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.5  *Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.625*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.75 *Math.PI, "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.875*Math.PI, "Normal", "t00", tower["level"][2]+1);
-
-                    }
+                        for(var j=0; j<16; j++){
+                            createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.125*Math.PI*j, "Normal", "t00", tower["level"][2]+1);}
+                        }
                     else if(tower["level"][3] == 3){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.125*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.25 *Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.375*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.5  *Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.625*Math.PI, "Normal", "t00", tower["level"][2]+1, true);//bruh
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.75 *Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.875*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5,       Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.125*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.25 *Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.375*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.5  *Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.625*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.75 *Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, 1.875*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-
-                    }
+                        for(var j=0; j<16; j++){
+                            createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0.125*Math.PI*j, "Normal", "t00", tower["level"][2]+1, true);}
+                        }
 
                 }
                 else if(tower["type"] == towerLists.basic){
@@ -226,22 +179,17 @@ function updateTowerStats(){
                         createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1);
                     }
                     else if(tower["level"][3] == 1){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.1*Math.PI, "Normal", "t00", tower["level"][2]+1); 
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.1*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                    }
+                        for(var j=0; j<3; j++){
+                            createProjectile(tower["x"]+0.5, tower["y"]+0.5, -0.1+tower["direction"]+0.1*j, "Normal", "t00", tower["level"][2]+1);}
+                        }
                     else if(tower["level"][3] == 2){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true); 
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                    }
+                        for(var j=0; j<3; j++){
+                            createProjectile(tower["x"]+0.5, tower["y"]+0.5, -0.1+tower["direction"]+0.1*j, "Normal", "t00", tower["level"][2]+1, true);}
+                        }
                     else if(tower["level"][3] == 3){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.05*Math.PI, "Normal", "t00", tower["level"][2]+1, true); 
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.05*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                    }
+                        for(var j=0; j<5; j++){
+                            createProjectile(tower["x"]+0.5, tower["y"]+0.5, -0.1+tower["direction"]+0.05*j, "Normal", "t00", tower["level"][2]+1, true);}
+                        }
                 }
                 else if(tower["type"] == towerLists.boat){
                     if(tower["level"][3] == 0){
@@ -265,24 +213,18 @@ function updateTowerStats(){
                         createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1);
                     }
                     else if(tower["level"][3] == 1){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.1*Math.PI, "Normal", "t00", tower["level"][2]+1); 
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.1*Math.PI, "Normal", "t00", tower["level"][2]+1);
-                    }
+                        for(var j=0; j<3; j++){
+                            createProjectile(tower["x"]+0.5, tower["y"]+0.5, -0.1+tower["direction"]+0.1*j, "Normal", "t00", tower["level"][2]+1);}
+                        }
                     else if(tower["level"][3] == 2){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true); 
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                    }
+                        for(var j=0; j<3; j++){
+                            createProjectile(tower["x"]+0.5, tower["y"]+0.5, -0.1+tower["direction"]+0.1*j, "Normal", "t00", tower["level"][2]+1, true);}
+                        }
                     else if(tower["level"][3] == 3){
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]+0.05*Math.PI, "Normal", "t00", tower["level"][2]+1, true); 
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"], "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.05*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
-                        createProjectile(tower["x"]+0.5, tower["y"]+0.5, tower["direction"]-0.1*Math.PI, "Normal", "t00", tower["level"][2]+1, true);
+                        for(var j=0; j<5; j++){
+                            createProjectile(tower["x"]+0.5, tower["y"]+0.5, -0.1+tower["direction"]+0.05*j, "Normal", "t00", tower["level"][2]+1, true);}
+                        }
                     }
-
-                }
                 else if(tower["type"] == towerLists.farm){//Odd one out
                     if(tower["level"][3] == 0){
                         createProjectile(tower["x"]+0.5, tower["y"]+0.5, 0, "farm", 0, (tower["level"][2]+1)*5+(farmsBuffExtraMoney*5))
