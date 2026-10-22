@@ -17,7 +17,7 @@ mapChoicePrompt = Math.max(mapChoicePrompt,1)
 
 //Setup variables
 //qwertyuiopasdfghjklzxcvbnm
-var version = "X.4.0"
+var version = "X.4.1"
 var loading = 0;
 var loadingMax = 0;
 function gebid(id) {
@@ -229,6 +229,7 @@ function getAngleToTarget(imgX, imgY, targetX, targetY) {
 
 //Nuke ability
 function activateNuke(){
+    if(money >= 1000){
     var nukeEffect = initImage("effects/nukeImages/nukeEffect.png");
     var nukeEffect2 = initImage("effects/nukeImages/nukeEffect2.png");
     var nukeEffect3 = initImage("effects/nukeImages/nukeEffect3.png");
@@ -237,7 +238,8 @@ function activateNuke(){
         x: 500, y: 500, width:1000, height:1000, direction: 0, frame: 0, opacity: 0.75
     })
     for(var j=0; j<50; j++){
-    setTimeout(() => {for(var i=0; i< enemyStats.length; i++){enemyStats[i]["damageTaken"]++}}, (1000/60)*j)}
+    setTimeout(() => {for(var i=0; i< enemyStats.length; i++){enemyStats[i]["damageTaken"]++}}, (1000/60)*j)}}
+    else{alert("Not enough money to activate nuke!")}
 }
 
 
