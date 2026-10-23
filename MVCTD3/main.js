@@ -6,6 +6,13 @@
 //when using initImage, /images/ is auto applied
 //WHEN RELEASING, remove "dev" from start to help
 
+
+//map choice prompt from main page
+var mapChoicePrompt = 1;
+if(localStorage.getItem("mvctd3-mapChoice")){mapChoicePrompt = localStorage.getItem("mvctd3-mapChoice")}else{alert("no map chosen, will reset to 1")}
+localStorage.setItem("mvctd3-mapChoice", 1)
+
+
 //Setup variables
 //qwertyuiopasdfghjklzxcvbnm
 var version = "X.4.0"
@@ -217,6 +224,20 @@ function getAngleToTarget(imgX, imgY, targetX, targetY) {
     const dx = targetX - imgX;
     const dy = targetY - imgY;
     return Math.atan2(dy, dx);
+}
+
+//catnip ability
+function activateCatnip(){
+    if(money >= 1000){
+        money -= 1000;
+        for(var i=0; i<towerArray.length-1; i++){
+            towerArray[i].effects.push({
+                effectName: "catnip-2xSpeed",
+                length:1200,
+                effect: {speed: 0.5}
+            })
+        }
+    }
 }
 
 //Nuke ability
