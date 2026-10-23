@@ -1,0 +1,61 @@
+body{
+    height:100vh;
+    width:100vw;
+    background-color:black;
+    color:white;
+    margin:0px;
+    overflow:hidden;   
+}
+.fscMenu{
+    position:absolute;
+    top:0;
+    left:0;
+    height:100vh;
+    width:100vw;
+    background-color:white;
+    color:black;
+    display:block;
+}
+.closedMenu{
+    display:none;
+}
+#mainMenuTable{
+    height:100vh;
+    width:100vw;
+    border-collapse:collapse;
+}
+#mapChoiceMenu{
+    border:2px solid red;
+    height:100vh;
+    width:150vh;
+    position:absolute;
+    top:0;
+    left:50vw;
+    transform:translate(-50%,0);
+    border-collapse:collapse;
+}
+tr{
+    border:2px solid red;
+    width:1%;
+    height:100%;
+}
+td{
+    border:2px solid red;
+    width:100%;
+    height:1%;
+}
+.optionButton{
+    height:100%;
+    width:100%;
+    background-color:black;
+    color:white;
+}
+#mainMenuTableHead{
+    height:10vh;
+}
+.sideBar{
+    width:10%;
+}
+.fullBar{
+    width:30%;
+}

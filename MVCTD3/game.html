@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MVCTD 3</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/png" href="images/logo.png">
+</head>
+<body>
+    <div id="background"></div>
+    <div id="leftPart"><p class="top">Bought Towers/Upgrades:</p>
+    <table id="towerSidebar" style="display:none; border:2px solid black; width:30vh; height:100vh; min-width:30vh;">
+        <thead><tr><td>Upgrades:</td></tr></thead>
+        <tbody>
+            <tr><td><button clss="uiButton" onclick="openStatsMenu()" class="uiButton">Check Tower Stats</button></td></tr>
+            <tr><td id="upgradeType">Tower ID: </td></tr>
+            <tr><td><button onclick="attemptBuySpeedUpgrade()" title="Increses firing speed by 20 percent. Stacks multiplicatively." class="uiButton">Buy Speed Upgrade</button></td></tr>
+            <tr><td><p id="sidebarSpeedStat"></p></td></tr>
+            <tr><td><button onclick="attemptBuyRangeUpgrade()" title="Increses range by 20 percent. Stacks multiplicatively." class="uiButton">Buy Range Upgrade</button></td></tr>
+            <tr><td><p id="sidebarRangeStat"></p></td></tr>
+            <tr><td><button onclick="attemptBuyDamageUpgrade()" title="Increses max damage dealt by 1. Stacks additively." class="uiButton">Buy Damage Upgrade</button></td></tr>
+            <tr><td><p id="sidebarDamageStat"></p></td></tr>
+            <tr><td><button onclick="attemptBuySpecialUpgrade()" title="No special upgrades purchased" class="uiButton" id="specialButton">Buy Special Upgrade</button></td></tr>
+            <tr><td><p id="sidebarSpecialStat"></p></td></tr>
+        </tbody></table>
+    </div>
+    <canvas height="1000px" width="1000px" id="mainGameCanvas"></canvas>
+    <div id="rightPart"><p id="moneyCounter">Money: 500</p><p class="top">Towers: </p><button onclick="toggleSpeed()" id="speedButton" class="uiButton">Toggle Double Speed</button><div id="roundControlPanel" style="margin: 10px 0; font-family: sans-serif;">
+        <button id="nextRoundButton" class="uiButton" onclick="startNextRound()">Start Next Round</button>
+        <span id="roundDisplay" style="margin-left: 15px; font-size: 16px; font-weight: bold; color: #333;">
+            Round: 1
+        </span>
+        <div class="progress-container">
+            <div id="my-progress-bar" style="width: 0%;"></div>
+          </div>
+        <table style="width:100%;">
+            <thead><tr><td>Row 1</td><td>Row 2</td></tr></thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <img src="images/towers/Normal.png" title="Normal Cat: Fires a claw at the enemy that has moved the farthest down the track. Cost 150." style="height:10vh" onclick="isPlacingTower = !isPlacingTower; towerBeingPlacedType = 0;if (isPlacingTower) {placementX = 7;placementY = 7;}">
+                    </td>
+                    <td>
+                        <img src="images/towers/music.png" title="Music Cat: Likes to spin in circles, so fires slower but shoots 8 claw sout in a ring. Cost 300." style="height:10vh" onclick="isPlacingTower = !isPlacingTower; towerBeingPlacedType = 1;if (isPlacingTower) {placementX = 7;placementY = 7;}">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="images/towers/boat.png" title="Boat: Can be placed on water. Acts like a Normal Cat with extra range. Has a second cannon, but cannot use it until it is upgraded. Cost 250." style="height:10vh" onclick="isPlacingTower = !isPlacingTower; towerBeingPlacedType = 2;if (isPlacingTower) {placementX = 7;placementY = 7;}">
+                    </td>
+                    <td>
+                        <img src="images/towers/super.png" title="Super Cat: Fires four times as fast as the Normal Cat, with basically the same upgrades. Cost 500." style="height:10vh" onclick="isPlacingTower = !isPlacingTower; towerBeingPlacedType = 3;if (isPlacingTower) {placementX = 7;placementY = 7;}">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="images/towers/farm.png" title="Farm: Creates cans of cat food (don't ask how) every second. Each one is worth 5 dollars. Cost 1000 respectively." style="height:10vh" onclick="isPlacingTower = !isPlacingTower; towerBeingPlacedType = 4;if (isPlacingTower) {placementX = 7;placementY = 7;}">
+                    </td>
+                    <td>
+                        <img src="images/towers/nuke.png" title="Nuke: Deals 50 damage, one every frame, to every enemy on screen. Cost 1000 and activating more than 1 a second can crash the game." style="height:10vh" onclick="activateNuke()">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div></div>
+    <div id="loading"><h1>Loading...</h1><progress id="loadingBar" value="0" max="100"></progress></div>
+    <div id="logs" class="hideLogs"><p class="top"></p><p id="fpsCounter">FPS: 0.</div>
+    <script src="main.js" defer></script>
+</body>
+</html>

@@ -7,12 +7,10 @@
 //WHEN RELEASING, remove "dev" from start to help
 
 
-var mapChoicePrompt = prompt("Please choose a map number (max 2):")
-if (mapChoicePrompt == null || mapChoicePrompt.trim() === "" || Number.isFinite(Number(mapChoicePrompt)) != true) {
-    alert("Not an applicable map choice! Will be set to map one instead! Please reload to pick a diffrent map if you want.")
-    mapChoicePrompt = 2;
-}
-mapChoicePrompt = Math.max(mapChoicePrompt,1)
+//map choice prompt from main page
+var mapChoicePrompt = 1;
+if(localStorage.getItem("mvctd3-mapChoice")){mapChoicePrompt = localStorage.getItem("mvctd3-mapChoice")}else{alert("no map chosen, will reset to 1")}
+localStorage.setItem("mvctd3-mapChoice", 1)
 
 
 //Setup variables
@@ -90,7 +88,8 @@ function error(message){
 function clearLogs(){
     gebid("logs").innerHTML = "<p class='top'></p><p id='fpsCounter'>FPS: waiting..."
 }
-
+var mapChoicePrompt = 1;
+if(!localStorage.getItem("mvctd3-chosenMap")){alert("No map chosen!")} else{mapChoicePrompt = parseInt(localStorage.getItem("mvctd3-chosenMap"))}
 
 //Update loading bar for loading popup
 function updateProgressBar(value) {
@@ -209,7 +208,7 @@ function toggleSpeed(){
 function drawEnemies(){
     if(enemyStats){
         for(var i=0; i<enemyStats.length; i++){
-            if(enemyStats[i]["type"] == "boss1"){
+            if(enemyStats[i]["type"]["type"] == "boss1"){
                 drawImg(enemyStats[i]["type"]["src"], enemyStats[i]["x"], enemyStats[i]["y"], 125, 125, 0)
             }
             else{
@@ -225,6 +224,20 @@ function getAngleToTarget(imgX, imgY, targetX, targetY) {
     const dx = targetX - imgX;
     const dy = targetY - imgY;
     return Math.atan2(dy, dx);
+}
+
+//catnip ability
+function activateCatnip(){
+    if(money >= 1000){
+        money -= 1000;
+        for(var i=0; i<towerArray.length-1; i++){
+            towerArray[i].effects.push({
+                effectName: "catnip-2xSpeed",
+                length:1200,
+                effect: {speed: 0.5}
+            })
+        }
+    }
 }
 
 //Nuke ability
