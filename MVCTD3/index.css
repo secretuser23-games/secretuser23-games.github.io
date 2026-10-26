@@ -3,7 +3,7 @@ body{
     width:100vw;
     background-color:black;
     color:white;
-    margin:0px;
+    margin:0;
     overflow:hidden;   
 }
 .fscMenu{
@@ -45,8 +45,6 @@ td{
     height:1%;
 }
 .optionButton{
-    height:100%;
-    width:100%;
     background-color:black;
     color:white;
 }
@@ -58,4 +56,11 @@ td{
 }
 .fullBar{
     width:30%;
+}
+.mapImages{
+    height:50vh;
+}
+.fullButton{
+    height:100%;
+    width:100%;
 }

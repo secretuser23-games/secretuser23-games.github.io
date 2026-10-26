@@ -9,13 +9,11 @@
 
 //map choice prompt from main page
 var mapChoicePrompt = 1;
-if(localStorage.getItem("mvctd3-mapChoice")){mapChoicePrompt = localStorage.getItem("mvctd3-mapChoice")}else{alert("no map chosen, will reset to 1")}
-localStorage.setItem("mvctd3-mapChoice", 1)
-
+if(localStorage.getItem("mvctd3-chosenMap") === null){alert("No map chosen!");}else{mapChoicePrompt = parseInt(localStorage.getItem("mvctd3-chosenMap"));}
 
 //Setup variables
 //qwertyuiopasdfghjklzxcvbnm
-var version = "X.4.1"
+var version = "X.4.1";
 var loading = 0;
 var loadingMax = 0;
 function gebid(id) {
@@ -33,11 +31,35 @@ window.initImage = function(src){
     out.onerror = function() {
         loading++; 
         error("Failed to load image at destination path: images/" + src);
-        alert("Could not find image: images/" + src + ".")
+        alert("Could not find image: images/" + src + ".");
     };
     out.src = "images/" + src; 
     return out;
 };
+
+//initImage variables
+var roadLD = initImage("RoadLD.png");
+var entranceIndicatorD = initImage("EntranceIndicatorD.png");
+var clawExplosion = initImage("effects/clawExplosion/explosion1.png"), clawExplosion2 = initImage("effects/clawExplosion/explosion2.png"), clawExplosion3 = initImage("effects/clawExplosion/explosion3.png"), clawExplosion4 = initImage("effects/clawExplosion/explosion4.png"), clawExplosion5 = initImage("effects/clawExplosion/explosion5.png"), clawExplosion6 = initImage("effects/clawExplosion/explosion6.png"), clawExplosion7 = initImage("effects/clawExplosion/explosion7.png"), clawExplosion8 = initImage("effects/clawExplosion/explosion8.png");
+var exitIndicatorDown = initImage("ExitIndicatorD.png");
+var roadLR = initImage("RoadLR.jpg");
+var roadUD = initImage("RoadUD.jpg");
+var roadLU = initImage("RoadLU.png");
+var roadRD = initImage("RoadRD.png");
+var roadRU = initImage("RoadRU.png");
+var grass = initImage("grass.png");
+var end = initImage("endU.png");
+var grassRock = initImage("grassRock.png");
+var water = initImage("water/Water.png");
+var deepWater = initImage("water/deepWater.png");
+var entranceIndicator = initImage("EntranceIndicator.png");
+var exitIndicatorUp = initImage("ExitIndicatorU.png");
+var waterCover = initImage("waterCover.png");
+var lightWaterCover = initImage("lightWaterCover.png");
+var nukeEffect = initImage("effects/nukeImages/nukeEffect.png");
+var nukeEffect2 = initImage("effects/nukeImages/nukeEffect2.png");
+var nukeEffect3 = initImage("effects/nukeImages/nukeEffect3.png");
+
 
 //Set logs info
 document.addEventListener("keydown", function(event) {
@@ -53,7 +75,7 @@ document.addEventListener("keydown", function(event) {
             }
         }
     }
-})
+});
 
 //Logs messages (log, warn and error) and clearLogs() to flush info
 function log(message) {
@@ -71,7 +93,7 @@ function warn(message){
         var logEntry = document.createElement("p");
         logEntry.textContent = message;
         logEntry.style.color = "yellow";
-        logEntry.style.backgroundColor = "black"
+        logEntry.style.backgroundColor = "black";
         logsDiv.appendChild(logEntry);
     }
 }
@@ -81,16 +103,13 @@ function error(message){
         var logEntry = document.createElement("p");
         logEntry.textContent = message;
         logEntry.style.color = "red";
-        logEntry.style.backgroundColor = "black"
+        logEntry.style.backgroundColor = "black";
         logsDiv.appendChild(logEntry);
     }
 }
 function clearLogs(){
-    gebid("logs").innerHTML = "<p class='top'></p><p id='fpsCounter'>FPS: waiting..."
+    gebid("logs").innerHTML = "<p class='top'></p><p id='fpsCounter'>FPS: waiting...";
 }
-var mapChoicePrompt = 1;
-if(!localStorage.getItem("mvctd3-chosenMap")){alert("No map chosen!")} else{mapChoicePrompt = parseInt(localStorage.getItem("mvctd3-chosenMap"))}
-
 //Update loading bar for loading popup
 function updateProgressBar(value) {
     try{
@@ -109,10 +128,10 @@ function updateProgressBar(value) {
     progressBar.style.width = `${v}%`;
     progressBar.style.backgroundColor = `rgb(${red}, ${green}, 0)`;}
     catch(error){
-        log("Error updating progress bar: " + error)
+        log("Error updating progress bar: " + error);
     }
 }
-updateProgressBar(100)
+updateProgressBar(100);
 
 
 
@@ -125,11 +144,11 @@ var towerBeingPlacedType = 0, hasSeenEndlessModeAlert = false, effects = [], mon
 
 //For me only: If I am editing, give me infinite money and hp for testing
 
-if(version.includes("dev")){money = 10000000000000000000; hp = 10000000000000000000}
+if(version.includes("dev")){money = 10000000000000000000; hp = 10000000000000000000;}
 
 //Fuunction to get a random number
 function getRandomNumber(max){
-    return Math.round(Math.random()*max)
+    return Math.round(Math.random()*max);
 }
 
 //Setup canvas for drawing information
@@ -149,7 +168,7 @@ function drawImg(image, x, y, width, height, rotation = 0, opacity = 1) {
     ctx.imageSmoothingEnabled = false;
     const [scaledW, scaledH] = scaleImage(width, height);
     const [scaledX, scaledY] = scaleImage(x, y);
-    if(opacity != 1){ctx.globalAlpha = opacity}
+    if(opacity != 1){ctx.globalAlpha = opacity;}
     if (rotation === 0) {
         ctx.setTransform(1, 0, 0, 1, scaledX, scaledY);
         ctx.drawImage(image, -scaledW / 2, -scaledH / 2, scaledW, scaledH); 
@@ -181,10 +200,10 @@ function drawTrack(){
 
         for(var j=0; j<trackInfo[i].length; j++){
             var tile = trackInfo[i][j];
-            if(tile && tile["typeTrack"] != null){
-                drawImg(tile["typeTrack"], (j * tileWidth) + halfWidth, (i * tileHeight) + halfWidth, tileWidth, tileHeight);
-                if(tile["trackDetails"]){
-                    drawImg(tile["trackDetails"], (j * tileWidth) + halfWidth, (i * tileHeight) + halfWidth, tileWidth, tileHeight);
+            if(tile && tile.typeTrack != null){
+                drawImg(tile.typeTrack, (j * tileWidth) + halfWidth, (i * tileHeight) + halfWidth, tileWidth, tileHeight);
+                if(tile.trackDetails){
+                    drawImg(tile.trackDetails, (j * tileWidth) + halfWidth, (i * tileHeight) + halfWidth, tileWidth, tileHeight);
                 }
             }
         }
@@ -200,19 +219,19 @@ function toggleSpeed(){
         currentSpeed = 1;
     }
     preSpaceSpeed = currentSpeed;
-    clearInterval(gameInterval)
-    gameInterval = setInterval(frame, 1000/(60*currentSpeed))
+    clearInterval(gameInterval);
+    gameInterval = setInterval(frame, 1000/(60*currentSpeed));
 }
 
 //Draw the enemies
 function drawEnemies(){
     if(enemyStats){
         for(var i=0; i<enemyStats.length; i++){
-            if(enemyStats[i]["type"]["type"] == "boss1"){
-                drawImg(enemyStats[i]["type"]["src"], enemyStats[i]["x"], enemyStats[i]["y"], 125, 125, 0)
+            if(enemyStats[i].type.type == "boss1"){
+                drawImg(enemyStats[i].type.src, enemyStats[i].x, enemyStats[i].y, 125, 125, 0);
             }
             else{
-                drawImg(enemyStats[i]["type"]["src"], enemyStats[i]["x"], enemyStats[i]["y"], 62.5, 62.5, enemyStats[i]["direction"])
+                drawImg(enemyStats[i].type.src, enemyStats[i].x, enemyStats[i].y, 62.5, 62.5, enemyStats[i].direction);
             }
             }
     }
@@ -232,10 +251,10 @@ function activateCatnip(){
         money -= 1000;
         for(var i=0; i<towerArray.length-1; i++){
             towerArray[i].effects.push({
-                effectName: "catnip-2xSpeed",
+                effectName: "catnip-1.5xSpeed",
                 length:1200,
-                effect: {speed: 0.5}
-            })
+                effect: {speed: 0.75}
+            });
         }
     }
 }
@@ -243,27 +262,24 @@ function activateCatnip(){
 //Nuke ability
 function activateNuke(){
     if(money >= 1000){
-    var nukeEffect = initImage("effects/nukeImages/nukeEffect.png");
-    var nukeEffect2 = initImage("effects/nukeImages/nukeEffect2.png");
-    var nukeEffect3 = initImage("effects/nukeImages/nukeEffect3.png");
     effects.push({
         image: [nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect3, nukeEffect3, nukeEffect3, nukeEffect3, nukeEffect3, nukeEffect3, nukeEffect3, nukeEffect3, nukeEffect3, nukeEffect3, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect2, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect, nukeEffect],
         x: 500, y: 500, width:1000, height:1000, direction: 0, frame: 0, opacity: 0.75
-    })
+    });
     for(var j=0; j<50; j++){
-    setTimeout(() => {for(var i=0; i< enemyStats.length; i++){enemyStats[i]["damageTaken"]++}}, (1000/60)*j)}}
-    else{alert("Not enough money to activate nuke!")}
+    setTimeout(nuke2, (1000/60)*j);}}
+    else{alert("Not enough money to activate nuke!");}
 }
 
-
+function nuke2(){for(var i=0; i< enemyStats.length; i++){enemyStats[i].damageTaken++;}}
 //Draw effects to screen, with rotation, opacity and other info
 function drawEffects(){
     for(var i=0; i < effects.length; i++){
-        var frame = effects[i]["frame"]
-        drawImg(effects[i]["image"][frame], effects[i]["x"], effects[i]["y"], effects[i]["width"], effects[i]["height"], effects[i]["rotation"], effects[i]["opacity"]);
-        effects[i]["frame"]++;
-        if(frame + 1 == effects[i]["image"].length){
-            effects.splice(i,1)
+        var frame = effects[i].frame;
+        drawImg(effects[i].image[frame], effects[i].x, effects[i].y, effects[i].width, effects[i].height, effects[i].rotation, effects[i].opacity);
+        effects[i].frame++;
+        if(frame + 1 == effects[i].image.length){
+            effects.splice(i,1);
         }
     }
 }
@@ -279,21 +295,21 @@ function frame(){
     try {
         framePart++;
         gebid("moneyCounter").innerHTML = "Money: " + money;
-        framePart++
+        framePart++;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        framePart++
+        framePart++;
         updateEnemySpawning();
-        framePart++
+        framePart++;
         drawTrack();
-        framePart++
+        framePart++;
         updateEnemyStats();
-        framePart++
+        framePart++;
         drawEffects();
-        framePart++
+        framePart++;
         drawEnemies();
-        framePart++
+        framePart++;
         drawProjectiles();
-        framePart++
+        framePart++;
         updateTowerStats();
         if (selectedTower) {
             ctx.beginPath();
@@ -313,11 +329,11 @@ function frame(){
         if (isPlacingTower) {
             ctx.globalAlpha = 0.6;
             var type = null;
-            if(towerBeingPlacedType == 0){type = towerLists["basic"]["image"]} else if(towerBeingPlacedType == 1){type = towerLists["music"]["image"]} else if(towerBeingPlacedType == 2){type = towerLists["boat"]["image"]} else if(towerBeingPlacedType == 3){type = towerLists["super"]["image"]} else if(towerBeingPlacedType == 4){type = towerLists["farm"]["image"]}
+            if(towerBeingPlacedType == 0){type = towerLists.basic.image;} else if(towerBeingPlacedType == 1){type = towerLists.music.image;} else if(towerBeingPlacedType == 2){type = towerLists.boat.image;} else if(towerBeingPlacedType == 3){type = towerLists.super.image;} else if(towerBeingPlacedType == 4){type = towerLists.farm.image;}
             drawImg(type, placementX * 62.5+31.25, placementY * 62.5+31.25, 62.5, 62.5, 0);
             ctx.globalAlpha = 1.0;
         }
-        framePart++
+        framePart++;
     } catch (err) {
         log("Loop crashed on frame component execution: " + err.message + " at frame part " + framePart);
     }
@@ -375,7 +391,7 @@ gebid("nextRoundButton").addEventListener("contextmenu", function(event){
             enemyStats = [];
         }
     }
-})
+});
 
 //Gets speed button right click to set up to 20x speed.
 gebid("speedButton").addEventListener("contextmenu", function(event) {
@@ -413,7 +429,7 @@ setTimeout(() => {
             }
             if (!isGameLoopRunning) {
                 isGameLoopRunning = true;
-                if(gameInterval){clearInterval(gameInterval)}
+                if(gameInterval){clearInterval(gameInterval);}
                 gameInterval = setInterval(frame, 1000 / 60);
             }
         }
@@ -486,7 +502,7 @@ if (canvas) {
         var rect = canvas.getBoundingClientRect();
         const rawX = event.clientX - rect.left;
         const rawY = event.clientY - rect.top;
-        mouseX = rawX*1000/window.innerHeight, mouseY = rawY*1000/window.innerHeight;
+        mouseX = rawX*1000/window.innerHeight; mouseY = rawY*1000/window.innerHeight;
         const scaleFactor = 1000 / rect.height;
         const x = rawX * scaleFactor;
         const y = rawY * scaleFactor;
@@ -513,4 +529,4 @@ if(canvas){canvas.addEventListener("click", function(event){
         selectedTower = null;
         hideSidebarUI();
     }
-})}
+});}

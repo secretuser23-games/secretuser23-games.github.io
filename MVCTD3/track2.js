@@ -1,20 +1,8 @@
 //Crossy Roads (Map 1-2)
 //BTW I know this can't be perfectly even, but whatever. I don't care.
 
-//Order is L, then R, then U, then D.  Any modifiers(entrance/exit/etc) comes afterward.
-var roadLR = initImage("RoadLR.jpg")
-var roadUD = initImage("RoadUD.jpg")
-var grass = initImage("grass.png")
-var end = initImage("endU.png")
-var grassRock = initImage("grassRock.png")
-var water = initImage("water/Water.png")
-var deepWater = initImage("water/deepWater.png")
-var entranceIndicator = initImage("EntranceIndicatorD.png")
-var exitIndicatorDown = initImage("ExitIndicatorD.png")
-var waterCover = initImage("waterCover.png")
-var lightWaterCover = initImage("lightWaterCover.png")
-var entrance = {x: 531.25, y: -31.25}
-var exit = {x: 531.25, y: 1031.25}
+var entrance = {x: 531.25, y: -31.25};
+var exit = {x: 531.25, y: 1031.25};
 var path = {0:{x: 531.25, y: -31.25, direction: 1.5*Math.PI}, 1:{x: 531.25, y: 1031.25, direction: 1.5*Math.PI}};
 var trackInfo = [
 //Row 1
@@ -26,7 +14,7 @@ var trackInfo = [
 {track: false, x: 5, y:0, tower:false, typeTrack: grass},
 {track: false, x: 6, y:0, tower:false, typeTrack: grass},
 {track: false, x: 7, y:0, tower:false, typeTrack: grass},
-{track: true, x: 8, y:0, tower:false, typeTrack: roadUD, trackDetails: entranceIndicator},  
+{track: true, x: 8, y:0, tower:false, typeTrack: roadUD, trackDetails: entranceIndicatorD},  
 {track: false, x: 9, y:0, tower:false, typeTrack: grass},
 {track: false, x: 10, y:0, tower:false, typeTrack: grass},
 {track: false, x: 11, y:0, tower:false, typeTrack: grass},
