@@ -13,7 +13,7 @@ if(localStorage.getItem("mvctd3-chosenMap") === null){alert("No map chosen!");}e
 
 //Setup variables
 //qwertyuiopasdfghjklzxcvbnm
-var version = "devX.5.0";
+var version = "X.5.0";
 var loading = 0;
 var loadingMax = 0;
 function gebid(id) {
