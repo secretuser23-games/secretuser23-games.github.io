@@ -13,7 +13,7 @@ if(localStorage.getItem("mvctd3-chosenMap") === null){alert("No map chosen!");}e
 
 //Setup variables
 //qwertyuiopasdfghjklzxcvbnm
-var version = "X.4.1";
+var version = "devX.5.0";
 var loading = 0;
 var loadingMax = 0;
 function gebid(id) {
@@ -249,7 +249,7 @@ function getAngleToTarget(imgX, imgY, targetX, targetY) {
 function activateCatnip(){
     if(money >= 1000){
         money -= 1000;
-        for(var i=0; i<towerArray.length-1; i++){
+        for(var i=0; i<towerArray.length; i++){
             towerArray[i].effects.push({
                 effectName: "catnip-1.5xSpeed",
                 length:1200,

@@ -88,8 +88,6 @@ function findTargetToFireAt(targetPriority, towerPixelX, towerPixelY, enemyID){
     if(enemy != undefined){
         var offsetX = 0;
         var offsetY = 0;
-        clearLogs();
-        log(towerPixelX + " " +enemy.x);
         if(enemy.direction == Math.PI) {
             offsetX = -31.25; 
             offsetY = -31.25;
@@ -122,8 +120,10 @@ function updateTowerStats(){
     for(var i = 0; i < towerArray.length; i++){
         //Get info
         var tower = towerArray[i];
+        log(JSON.stringify(tower.effects));
         for(var j=0; j<tower.effects.length; j++){
             tower.effects[j].length--;
+            if(tower.effects[j].length == 0){tower.effects.splice(j,1);}
         }
         var target;
         //Check if is farm, and then dont rotate if that is the answer
@@ -159,6 +159,10 @@ function updateTowerStats(){
             }
             if(tower.reloadTime <= 0){
                 tower.reloadTime = tower.type.speed*0.8**tower.level[0];
+                for(var k=0; k<tower.effects.length; k++){
+                    if(tower.effects[k].effect.speed){
+                    tower.reloadTime *= tower.effects[k].effect.speed;}
+                }
                 if(tower.type == towerLists.music){
                     if(tower.level[3] == 0){
                         for(var l=0; l<8; l++){
@@ -395,7 +399,6 @@ function attemptBuyDamageUpgrade(){
     updateSidebarUI(towerArray[towerOpenedID]);
 }
 function attemptBuySpecialUpgrade(){
-    log(towerArray[towerOpenedID].type.specialCosts[towerArray[towerOpenedID].level[3]]);
     if(towerArray[towerOpenedID].level[3] != 3 && money >= towerArray[towerOpenedID].type.specialCosts[towerArray[towerOpenedID].level[3]]){
         money -= towerArray[towerOpenedID].type.specialCosts[towerArray[towerOpenedID].level[3]];
         towerArray[towerOpenedID].level[3]++;
