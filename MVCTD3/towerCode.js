@@ -53,7 +53,7 @@ var towerLists = {
             "Gains a minigun to deal 1 extra damage to the target every attack", 
             "Maximum upgrades have been unlocked in this path"]
         },
-        farm: {type: "farm", 
+    farm: {type: "farm", 
         image: initImage("towers/farm.png"), 
         speed:60, 
         damage: 1, 
@@ -65,23 +65,46 @@ var towerLists = {
             "Automatically collects the drops for you.", 
             "Every other Farm gains 5 dollars per drop (equivalent to 1 damage upgrade). Can stack additively.", 
             "Maximum upgrades have been unlocked in this path"]
+        },
+    fire: {type: "fire", 
+        image: initImage("towers/fire.png"), 
+        speed:90, 
+        damage: 1, 
+        range: 250, 
+        baseCost: 600, 
+        specialCosts: [1200, 2400, 3000], 
+        specialUpgrades: [
+            "Fire slows down attacked enemies by 10 percent.", 
+            "The fire now explodes when hitting an enemy.", 
+            "ANy enemy hit by the explosion now is also set on fire for the one damage, but for a shorter time.", 
+            "Maximum upgrades have been unlocked in this path"]
         }
     };
 var towerArray = [];
 function checkForTargetedEnemy(towerX, towerY, targetPriority, range){
     var out = null; 
-    var tPx = towerX * 62.5+31.25;
-    var tPy = towerY * 62.5+31.25;
+    var tPx = towerX * 62.5 + 31.25;
+    var tPy = towerY * 62.5 + 31.25;
+    
+    var maxDistance = -1; // Track the highest progress score seen so far
 
     for(var i = 0; i < enemyStats.length; i++){
-        if(findDist(tPx, tPy, enemyStats[i].x, enemyStats[i].y) <= range){
-            out = i;
-            break;
+        var enemy = enemyStats[i];
+        
+        // Check if this enemy is within the tower's shooting radius
+        if(findDist(tPx, tPy, enemy.x, enemy.y) <= range){
+            
+            // "First" targeting: Pick the enemy that has traveled the most total distance
+            if(targetPriority === "first") {
+                if(enemy.distanceTraveled > maxDistance) {
+                    maxDistance = enemy.distanceTraveled;
+                    out = i; // Save this enemy's index as the current prime target
+                }
+            }
         }
     }
     return out;
 }
-
 //Allows tower to target enemies
 function findTargetToFireAt(targetPriority, towerPixelX, towerPixelY, enemyID){
     var enemy = enemyStats[enemyID];
@@ -120,7 +143,6 @@ function updateTowerStats(){
     for(var i = 0; i < towerArray.length; i++){
         //Get info
         var tower = towerArray[i];
-        log(JSON.stringify(tower.effects));
         for(var j=0; j<tower.effects.length; j++){
             tower.effects[j].length--;
             if(tower.effects[j].length == 0){tower.effects.splice(j,1);}
@@ -247,7 +269,9 @@ function updateTowerStats(){
                         money += (tower.level[2]+1)*5+(farmsBuffExtraMoney*5);
                     }
                 }
-                
+                else if(tower.type == towerLists.fire){
+                    createProjectile(tower.x+0.5, tower.y+0.5, tower.direction, "fire", "basic", tower.level[2]+1, tower.level[3]);
+                }
             }
         }
     }
@@ -278,8 +302,9 @@ function attemptPlaceTower(){
                 isPlacingTower =  false;
             }
             else if(money < 250 && towerBeingPlacedType == 2){
-                alert("Not enough money to place! Cost is 250 btw");
+                alert("Not enough money to place down! Cost is 250 btw");
             }
+            else if(towerBeingPlacedType == 5){alert("Do you really think that placing the FIRE tower in WATER would go well?");}
             else{
                 alert("Cannot place land type tower in water!");
             }
@@ -301,6 +326,9 @@ function attemptPlaceTower(){
         }
         else if(towerBeingPlacedType == 4 && money < 1000){
             alert("Not enough money to place down! Cost is 1000 btw");
+        }
+        else if(towerBeingPlacedType == 5 && money < 600){
+            alert("Not enough money to place down! Cost is 600 btw");
         }
         else{
             location.tower = true;
@@ -354,6 +382,19 @@ function attemptPlaceTower(){
                 y:placementY, 
                 direction: Math.PI, 
                 reloadTime: towerLists["super"].speed,
+                level: [0,0,0,0,false],
+                ID: globalTowerID++,
+                effects:[]});
+                isPlacingTower =  false;
+            }
+            else if(towerBeingPlacedType == 5){
+                money -= 600;
+                towerArray.push({
+                type: towerLists.fire, 
+                x:placementX, 
+                y:placementY, 
+                direction: Math.PI, 
+                reloadTime: 90,
                 level: [0,0,0,0,false],
                 ID: globalTowerID++,
                 effects:[]});

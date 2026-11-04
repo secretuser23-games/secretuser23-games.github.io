@@ -12,7 +12,8 @@ var enemyArray = {
     grey: {src: initImage("enemies/greyMouse.png"), spawn: [], speed: 2,  hpToDrain: 124, type: "grey"},
     rainbow: {src: initImage("enemies/rainbowMouse.png"), spawn: [], speed: 1.75,  hpToDrain: 239, type: "rainbow"},
     brown: {src: initImage("enemies/brownMouse.png"), spawn: [], speed: 0.8, hpToDrain: 718, type: "brown"},
-    boss1: {src: initImage("enemies/normalBoss.png"), spawn: [], speed: 0.25, hpToDrain: 3946, type: "boss1"}
+    boss1: {src: initImage("enemies/normalBoss.png"), spawn: [], speed: 0.25, hpToDrain: 3946, type: "boss1"},
+    blur: {src: initImage("enemies/blur.png"), spawn: [], speed: 9, hpToDrain: 51, type: "blur"}
 };
 
 //Setup nesting info
@@ -28,75 +29,76 @@ enemyArray.grey.spawn = [enemyArray.white, enemyArray.white, enemyArray.white];
 enemyArray.rainbow.spawn = [enemyArray.grey, enemyArray.white, enemyArray.pink, enemyArray.purple, enemyArray.dBlue, enemyArray.lBlue, enemyArray.green, enemyArray.yellow, enemyArray.orange, enemyArray.red];
 enemyArray.brown.spawn = [enemyArray.rainbow, enemyArray.rainbow, enemyArray.rainbow];
 enemyArray.boss1.spawn = [enemyArray.brown, enemyArray.brown, enemyArray.brown, enemyArray.brown, enemyArray.brown];
-var rmeSpawn = [enemyArray.red, enemyArray.orange, enemyArray.yellow, enemyArray.green, enemyArray.lBlue, enemyArray.dBlue, enemyArray.purple, enemyArray.pink, enemyArray.white, enemyArray.grey, enemyArray.rainbow, enemyArray.brown, enemyArray.boss1];
+enemyArray.blur.spawn = [enemyArray.pink, enemyArray.pink];
+var rmeSpawn = [enemyArray.red, enemyArray.orange, enemyArray.yellow, enemyArray.green, enemyArray.lBlue, enemyArray.dBlue, enemyArray.purple, enemyArray.pink, enemyArray.white, enemyArray.grey, enemyArray.rainbow, enemyArray.brown, enemyArray.boss1, enemyArray.blur];
 //Enemy array for each
 var enemyStats = [];
 
 
 //Round stats
 var enemySpawnArray = [
-    [//1
+    [//1, rme 10
         { type: enemyArray.red, inBetweenTime: 120, amount: 10 }
     ],
-    [//2
+    [//2, rme 20
         { type: enemyArray.red, inBetweenTime: 80, amount: 20 }
     ],
-    [//3
+    [//3, rme 50
         { type: enemyArray.red, inBetweenTime: 30, amount: 50 }
     ],
-    [//4
+    [//4, rme 20
         { type: enemyArray.orange, inBetweenTime: 90, amount: 10 }
     ],
-    [//5
+    [//5, rme 50
         {type: enemyArray.orange, inBetweenTime: 45, amount: 25}
     ],
-    [//6
+    [//6, rme 24
         {type: enemyArray.yellow, inBetweenTime: 60, amount: 8}
     ],
-    [//7
+    [//7, rme 80 [RUSH]
         {type: enemyArray.red, inBetweenTime: 30, amount: 20},
         {type: enemyArray.orange, inBetweenTime: 20, amount: 20},
         {type: enemyArray.red, inBetweenTime: 10, amount: 20}
     ],
-    [//8
+    [//8, rme 180
         {type: enemyArray.yellow, inBetweenTime: 60, amount: 60}
     ],
-    [//9
+    [//9, rme 20
         {type: enemyArray.green, inBetweenTime: 120, amount: 5}
     ],
-    [//10
+    [//10, rme 37
         {type: enemyArray.green, inBetweenTime: 25, amount: 5},
         {type: enemyArray.red, inBetweenTime: 1, amount: 1},
         {type: enemyArray.green, inBetweenTime: 25, amount: 4}
     ],
-    [//11
+    [//11, rme 80
         {type: enemyArray.green, inBetweenTime: 60, amount: 20}
 
     ],
-    [//12
+    [//12, rme 25
         {type: enemyArray.lBlue, inBetweenTime: 90, amount: 5}
     ],
-    [//13
+    [//13, rme 130
         {type: enemyArray.lBlue, inBetweenTime: 90, amount: 10},
         {type: enemyArray.yellow, inBetweenTime: 60, amount: 10},
         {type: enemyArray.lBlue, inBetweenTime: 90, amount: 10}
     ],
-    [//14
+    [//14, rme 100 [CLUMP]
         {type: enemyArray.red, inBetweenTime: 10, amount: 100}
     ],
-    [//15
+    [//15, rme 33
         {type: enemyArray.dBlue, inBetweenTime: 120, amount: 3}
     ],
-    [//16
+    [//16, rme 220
         {type: enemyArray.dBlue, inBetweenTime: 120, amount: 20}
     ],
-    [//17
+    [//17, rme 275
         {type: enemyArray.dBlue, inBetweenTime: 75, amount: 25}
     ],
-    [//18
+    [//18, rme 69
         {type: enemyArray.purple, inBetweenTime: 120, amount: 3}
     ],
-    [//19
+    [//19, rme 148 [SPREAD OUT BW RAMP]
         {type: enemyArray.purple, inBetweenTime: 120, amount: 3},
         {type: enemyArray.dBlue, inBetweenTime: 110, amount: 3},
         {type: enemyArray.lBlue, inBetweenTime: 100, amount: 3},
@@ -105,28 +107,28 @@ var enemySpawnArray = [
         {type: enemyArray.orange, inBetweenTime: 30, amount: 3},
         {type: enemyArray.red, inBetweenTime: 1, amount: 3}
     ],
-    [//20
+    [//20, rme 575 [HIGH RME]
         {type: enemyArray.purple, inBetweenTime: 60, amount: 25}
     ],
-    [//21
+    [//21, rme 75
         {type: enemyArray.pink, inBetweenTime: 120, amount: 3}
     ],
-    [//22
+    [//22, rme 250
         {type: enemyArray.pink, inBetweenTime: 120, amount: 10}
     ],
-    [//23
+    [//23, rme 400 [CLUMP]
         {type: enemyArray.green, inBetweenTime: 5, amount: 100}
     ],
-    [//24
+    [//24, rme 205
         {type: enemyArray.white, inBetweenTime: 60, amount: 5}
     ],
-    [//25
+    [//25, rme 1150! [HIGH RME]
         {type: enemyArray.purple, inBetweenTime: 30, amount: 50}
     ],
-    [//26
+    [//26, rme 820
         {type: enemyArray.white, inBetweenTime: 60, amount: 20}
     ],
-    [//27
+    [//27, rme 1695! [HIGH RME, RAMP]
         {type: enemyArray.red, inBetweenTime: 60, amount: 50},
         {type: enemyArray.orange, inBetweenTime: 60, amount: 45},
         {type: enemyArray.yellow, inBetweenTime: 60, amount: 40},
@@ -137,17 +139,104 @@ var enemySpawnArray = [
         {type: enemyArray.pink, inBetweenTime: 60, amount: 15},
         {type: enemyArray.white, inBetweenTime: 60, amount: 10},
         {type: enemyArray.red, inBetweenTime: 5, amount: 500}
+    ],
+    [//28, rme 1240! [HIGH RME]
+        {type: enemyArray.grey, inBetweenTime: 100, amount: 10}
+    ],
+    [//29, rme 1000 [MEGA CLUMP]
+        {type: enemyArray.red, inBetweenTime: 1, amount: 1000}
+    ],
+    [//30, rme 1250
+        {type: enemyArray.pink, inBetweenTime: 10, amount: 50}
+    ],
+    [//31, rme 151
+        {type: enemyArray.blur, inBetweenTime: 180, amount: 3}
+    ],
+    [//32 rme 2000! [HIGH RME, MEGA CLUMP]
+        {type: enemyArray.orange, inBetweenTime: 1, amount: 1000}
+    ],
+    [//33, rme 1650
+        {type: enemyArray.grey, inBetweenTime: 100, amount: 5},
+        {type: enemyArray.white, inBetweenTime: 1, amount: 10},
+        {type: enemyArray.grey, inBetweenTime: 100, amount: 5}
+    
+    ],
+    [//34, rme 1510
+        {type: enemyArray.blur, inBetweenTime: 100, amount: 30}
+    ],
+    [//35, rme 3000! [HIGH RME]
+    {type: enemyArray.yellow, inBetweenTime: 1, amount: 1000}
+    ],
+    [//36, rme 276
+        {type: enemyArray.pink, inBetweenTime: 20, amount: 19},
+        {type: enemyArray.blur, inBetweenTime: 20, amount: 1}
+    ],
+    [//37, rme 2390
+        {type: enemyArray.rainbow, inBetweenTime: 200, amount: 10}
+    ],
+    [//38, rme 2500! [HIGH RME]
+        {type: enemyArray.red, inBetweenTime: 0, amount: 2500}
+    ],
+    [//39, rme 12400!! [MEGA HIGH RME]
+        {type: enemyArray.grey, inBetweenTime: 50, amount: 100}
+    ],
+    [//40, rme 11950!! [MEGA HIGH RME]
+        {type: enemyArray.rainbow, inBetweenTime: 10, amount: 50}
+    ],
+    [//41, rme 3000
+        {type: enemyArray.yellow, inBetweenTime: 1, amount: 1000}
+    ],
+    [//42, rme 4000
+        {type: enemyArray.green, inBetweenTime: 1, amount: 1000}
+    ],
+    [//43, rme 5000
+        {type: enemyArray.lBlue, inBetweenTime: 1, amount: 1000}
+    ],
+    [//44, rme 11000! [HIGH RME]
+        {type: enemyArray.dBlue, inBetweenTime: 1, amount: 1000} 
+    ],
+    [//45, rme 7180
+        {type: enemyArray.brown, inBetweenTime: 100, amount: 10}
+    ],
+    [//46, rme 23000
+        {type: enemyArray.purple, inBetweenTime: 1, amount: 1000}
+    ],
+    [//47, rme 10000
+        {type: enemyArray.red, inBetweenTime: 0, amount: 10000}
+    ],
+    [//48, rme 14360
+        {type: enemyArray.brown, inBetweenTime: 75, amount: 20}
+    ],
+    [//49, almost there!, rme 24000
+        {type: enemyArray.grey, inBetweenTime: 10, amount: 200}
+    ]
+    [//50!! rme is 19730!!!
+        {type: enemyArray.boss1, inBetweenTime: 1000, amount: 5}
     ]
 ];
-
 //Update enemy info
 var gameIsStillPlaying = true;
-var hasSeenEachEnemy = [false, false, false, false, false, false, false, false, false, false, false, false, false];
+var hasSeenEachEnemy = [false, false, false, false, false, false, false, false, false, false, false, false, false, false];
 function updateEnemyStats(){
     if(enemyStats){
         for(var i = enemyStats.length - 1; i >= 0; i--){
             var enemy = enemyStats[i];
-            var nextWaypoint = path[enemy.pathAmount + 1];
+            var speedChange = 1;
+            if(enemy.debuffs.length > 0){
+                for (var k = enemy.debuffs.length - 1; k >= 0; k--) {
+                    if (enemy.debuffs[k].damage && enemy.debuffs[k].length % 60 == 0) {
+                        enemy.damageTaken += (enemy.debuffs[k].damage);
+                    }
+                    if (enemy.debuffs[k].speed) {
+                        speedChange *= enemy.debuffs[k].speed;
+                    }
+                    enemy.debuffs[k].length--;
+                        if (enemy.debuffs[k].length <= 0) {
+                            enemy.debuffs.splice(k, 1);
+                        }
+                    }
+                }
+            var nextWaypoint = path[enemy.pathAmount+1];
             if (!nextWaypoint) {
                 hp -= enemy.type.hpToDrain;
                 updateProgressBar(hp);
@@ -155,19 +244,19 @@ function updateEnemyStats(){
                 enemyStats.splice(i, 1); 
                 continue;
             }
-            if ((Math.abs(enemy.x - nextWaypoint.x)) <= Math.ceil(enemy.type.speed) && 
-                (Math.abs(enemy.y - nextWaypoint.y)) <= Math.ceil(enemy.type.speed)) {
+            if (findDist(enemy.x, enemy.y, nextWaypoint.x, nextWaypoint.y)<= Math.ceil(enemy.type.speed)) {
                 enemy.x = nextWaypoint.x;
                 enemy.y = nextWaypoint.y;
                 enemy.direction = nextWaypoint.direction;
                 enemy.pathAmount++;
             }
-            if(enemy.direction == Math.PI){ enemy.x += enemy.type.speed; }
-            else if(enemy.direction == Math.PI*0.5){ enemy.y -= enemy.type.speed; }
-            else if(enemy.direction == Math.PI*1.5){ enemy.y += enemy.type.speed; }
-            else if(enemy.direction == 0 || enemy.direction == Math.PI*2){ enemy.x -= enemy.type.speed; }
+            if(enemy.direction == Math.PI){ enemy.x += enemy.type.speed*speedChange; }
+            else if(enemy.direction == Math.PI*0.5){ enemy.y -= enemy.type.speed*speedChange; }
+            else if(enemy.direction == Math.PI*1.5){ enemy.y += enemy.type.speed*speedChange; }
+            else if(enemy.direction == 0 || enemy.direction == Math.PI*2){ enemy.x -= enemy.type.speed*speedChange; }
+            enemy.distanceTraveled++;
             if(enemy.damageTaken >= 1){
-                for(var j=0; j< enemy.damageTaken; j++){
+                for(var j=0; j< Math.floor(enemy.damageTaken); j++){
                 enemy.currentHP --;
                 enemy.damageTaken--;
                 
@@ -190,59 +279,63 @@ function updateEnemyStats(){
                     }
                     else if(enemy.type == enemyArray.dBlue){
                         enemy.type = enemyArray.lBlue;
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"lBlue", 1);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"lBlue", 1, enemy.pathAmount, enemy.distanceTraveled);
                         enemy.currentHP = 1;
                     }
                     else if(enemy.type == enemyArray.purple){
                         enemy.type = enemyArray.dBlue;
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"dBlue", 1);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"dBlue", 1, enemy.pathAmount, enemy.distanceTraveled);
                         enemy.currentHP = 1;
                     }
                     else if(enemy.type == enemyArray.pink){
                         enemy.type = enemyArray.purple;
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"purple", 1);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"purple", 1, enemy.pathAmount, enemy.distanceTraveled);
                         enemy.currentHP = 1;
                     }
                     else if(enemy.type == enemyArray.white){
                         enemy.type = enemyArray.pink;
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"dBlue", 1);
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"green", 1);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"dBlue", 1, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"green", 1, enemy.pathAmount, enemy.distanceTraveled);
                         
                         enemy.currentHP = 1;
                     }
                     else if(enemy.type == enemyArray.grey){
                         enemy.type = enemyArray.white;
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"white", 1);
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"white", 1);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"white", 1, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"white", 1, enemy.pathAmount, enemy.distanceTraveled);
                         enemy.currentHP = 1;
                     }
                     else if(enemy.type == enemyArray.rainbow){
                         enemy.type = enemyArray.grey;
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"white", 1);
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"pink", 1);
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"purple", 1);
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"dBlue", 1);
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"lBlue", 1);
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"green", 1);
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"yellow", 1);
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"orange", 1);
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"red", 1);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"white", 1, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"pink", 1, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"purple", 1, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"dBlue", 1, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"lBlue", 1, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"green", 1, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"yellow", 1, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"orange", 1, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"red", 1, enemy.pathAmount, enemy.distanceTraveled);
                         enemy.currentHP = 1;
                     }
                     else if(enemy.type == enemyArray.brown){
                         enemy.type = enemyArray.rainbow;
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"rainbow", 1);
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"rainbow", 1);
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"rainbow", 1);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"rainbow", 1, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"rainbow", 1, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"rainbow", 1, enemy.pathAmount, enemy.distanceTraveled);
                         enemy.currentHP = 1;
                     }
                     else if(enemy.type == enemyArray.boss1){
                         enemy.type = enemyArray.brown;
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"brown", 5);
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"brown", 5);
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"brown", 5);
-                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"brown", 5);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"brown", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"brown", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"brown", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x,enemy.y, enemy.direction,"brown", 5, enemy.pathAmount, enemy.distanceTraveled);
                         enemy.currentHP = 5;
+                    }
+                    else if(enemy.type == enemyArray.blur){//first special, the whole thing is it's a way faster pink (who is already crazy fast) with 2 pinks inside.
+                        enemy.type = enemyArray.pink;
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction,"pink", 1, enemy.pathAmount, enemy.distanceTraveled);
                     }
                     else{
                     enemyStats.splice(i, 1);}
@@ -311,6 +404,7 @@ function startNextRound() {
             }
     } else {
         warn("Action Prevented: You must clear remaining field elements before initiating standard loop sequence transitions!");
+        log(enemyStats[enemyStats.length-1]);
     }
     }
     catch(error){
@@ -350,13 +444,13 @@ function updateEnemySpawning() {
         if(activeWaves[0].type == enemyArray.rainbow && hasSeenEachEnemy[10] == false){hasSeenEachEnemy[10] = true; alert("Rainbow Enemy: \n Yeah, this STILL is not the black one. \n But it has literally one of eveny enemy below it. Why? I don't know either! \n :)");}
         if(activeWaves[0].type == enemyArray.brown && hasSeenEachEnemy[11] == false){hasSeenEachEnemy[11] = true; alert("Brown Enemy: \n No, it is not made of what you think it is, it's just dirt and rocks. But this gives it a 5 hp shield. This is nowhere from the hardest, so keep watching...");}
         if(activeWaves[0].type == enemyArray.boss1 && hasSeenEachEnemy[12] == false){hasSeenEachEnemy[12] = true; alert("Boss One: \n A HUGE spike in difficulty. \n It has 256 hp and spawns 5 browns when defeated. You'd better have your defenses ready...");}
+        if(activeWaves[0].type == enemyArray.blur && hasSeenEachEnemy[13] == false){hasSeenEachEnemy[13] = true; alert("Blur Enemy: \n Better be ready, this thing moves at TEN TIMES the speed of the base red enemy. \n It also takes about half of your health when it escapes, so this is tough, but possible.");}
         }
         //Set up natural HP
         var currentHP = 1;
         if(activeWaves[0].type == enemyArray.brown){currentHP = 5;}
         else if(activeWaves[0].type == enemyArray.boss1){currentHP = 256;}
-        log(JSON.stringify(activeWaves[0].type.type));
-        spawnEnemy(entrance.x, entrance.y, path[0].direction, activeWaves[0].type.type, currentHP);
+        spawnEnemy(entrance.x, entrance.y, path[0].direction, activeWaves[0].type.type, currentHP, 0,0);
         framesToSpawn = 0;
         activeWaves[0].amount -= 1;
     }
@@ -364,17 +458,18 @@ function updateEnemySpawning() {
 }
 
 //Spawn an enemy function
-function spawnEnemy(x,y,direction,type, currentHP){
+function spawnEnemy(x,y,direction,type, currentHP, pathAmount, distanceTraveled){
     enemyStats.push({
         type: enemyArray[type],
             currentHP:currentHP,
             x: x,
             y: y,
             damageTaken:0,
-            pathAmount: 0,
-            distanceTraveled: 0,
+            pathAmount: pathAmount,
+            distanceTraveled: distanceTraveled,
             id: ++enemySpawnedIDs,
-            direction: direction
+            direction: direction,
+            debuffs: []
         
     });
 }

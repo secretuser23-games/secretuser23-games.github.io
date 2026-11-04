@@ -1,4 +1,11 @@
 //NOTES:
+//GAME IDEAS:
+//Rounds to 100 with bosses every 10 rounds
+//Fire tower and debuffs for enemies
+//Multi-lane maps
+//Global Retry Tokens and Cash to spend for repeating permanent upgrades.
+//
+//
 //62.5 is one unit
 //31.25 is half a unit
 //1000*1000 is main canvas size
@@ -10,16 +17,16 @@ function getSaves(lsID){
 }
 var settings = getSaves("mvctd3-settings");
 if(settings.sidebarHexBackgroundColor != "#a52a2a"){gebid("leftPart").style.backgroundColor = settings.sidebarHexBackgroundColor;gebid("rightPart").style.backgroundColor = settings.sidebarHexBackgroundColor;}
-if(settings.sidebarHexTextColor != "#ffffff"){gebid("leftPart").style.color = settings.sidebarHexTextColor;gebid("rightPart").style.clor = settings.sidebarHexTextColor;}
+if(settings.sidebarHexTextColor != "#ffffff"){gebid("leftPart").style.color = settings.sidebarHexTextColor;gebid("rightPart").style.color = settings.sidebarHexTextColor;}
 if(settings.buttonHexBackgroundColor != "#4caf50"){var elements = document.getElementsByClassName("uiButton");Array.from(elements).forEach(element => {element.style.backgroundColor = settings.buttonHexBackgroundColor;});}
 if(settings.buttonHexTextColor != "#ffffff"){var elements = document.getElementsByClassName("uiButton");Array.from(elements).forEach(element => {element.style.color = settings.buttonHexTextColor;});}
-if(settings.bodyBackgroundTextColor != "#888888"){gebid("background").style.backgroundColor = settings.bodyBackgroundTextColor}
+if(settings.bodyBackgroundTextColor != "#888888"){gebid("background").style.backgroundColor = settings.bodyBackgroundTextColor;}
 //map choice prompt from main page
 var mapChoicePrompt = 1;
 if(getSaves("mvctd3-chosenMap") === null){alert("No map chosen!");}else{mapChoicePrompt = parseInt(getSaves("mvctd3-chosenMap"));}
 //Setup variables
 //qwertyuiopasdfghjklzxcvbnm
-var version = "X.5.0";
+var version = "X.7.0";
 var loading = 0;
 var loadingMax = 0;
 function gebid(id) {
@@ -55,6 +62,7 @@ var roadRD = initImage("RoadRD.png");
 var roadRU = initImage("RoadRU.png");
 var grass = initImage("grass.png");
 var end = initImage("endU.png");
+var flamingOverlay = initImage("enemies/flaming.png");
 var grassRock = initImage("grassRock.png");
 var water = initImage("water/Water.png");
 var deepWater = initImage("water/deepWater.png");
@@ -230,19 +238,43 @@ function toggleSpeed(){
 }
 
 //Draw the enemies
+// Draw the enemies
 function drawEnemies(){
     if(enemyStats){
         for(var i=0; i<enemyStats.length; i++){
-            if(enemyStats[i].type.type == "boss1"){
-                drawImg(enemyStats[i].type.src, enemyStats[i].x, enemyStats[i].y, 125, 125, 0);
+            var enemy = enemyStats[i];
+            
+            // 1. Draw the base enemy sprite cleanly
+            if(enemy.type.type == "boss1"){
+                drawImg(enemy.type.src, enemy.x, enemy.y, 125, 125, 0);
             }
             else{
-                drawImg(enemyStats[i].type.src, enemyStats[i].x, enemyStats[i].y, 62.5, 62.5, enemyStats[i].direction);
+                drawImg(enemy.type.src, enemy.x, enemy.y, 62.5, 62.5, enemy.direction);
             }
+            
+            // 2. Check if the enemy is currently on fire
+            var isOnFire = false;
+            if(enemy.debuffs && enemy.debuffs.length > 0){
+                for(var d=0; d<enemy.debuffs.length; d++){
+                    if(enemy.debuffs[d].name === "burning" || enemy.debuffs[d].name === "burning-sideExplosion"){
+                        isOnFire = true;
+                        break; // Found it, no need to keep checking
+                    }
+                }
             }
+            
+            // 3. Render the overlay scaled perfectly to match the enemy type bounds
+            if(isOnFire){
+                if(enemy.type.type == "boss1"){
+                    drawImg(flamingOverlay, enemy.x, enemy.y, 125, 125, 0);
+                }
+                else{
+                    drawImg(flamingOverlay, enemy.x, enemy.y, 62.5, 62.5, enemy.direction, 0.5);
+                }
+            }
+        }
     }
 }
-
 //Maths stuff
 function findDist(x1, y1, x2, y2){return Math.hypot(x2 - x1, y2 - y1);}
 function getAngleToTarget(imgX, imgY, targetX, targetY) {
@@ -335,7 +367,7 @@ function frame(){
         if (isPlacingTower) {
             ctx.globalAlpha = 0.6;
             var type = null;
-            if(towerBeingPlacedType == 0){type = towerLists.basic.image;} else if(towerBeingPlacedType == 1){type = towerLists.music.image;} else if(towerBeingPlacedType == 2){type = towerLists.boat.image;} else if(towerBeingPlacedType == 3){type = towerLists.super.image;} else if(towerBeingPlacedType == 4){type = towerLists.farm.image;}
+            if(towerBeingPlacedType == 0){type = towerLists.basic.image;} else if(towerBeingPlacedType == 1){type = towerLists.music.image;} else if(towerBeingPlacedType == 2){type = towerLists.boat.image;} else if(towerBeingPlacedType == 3){type = towerLists.super.image;} else if(towerBeingPlacedType == 4){type = towerLists.farm.image;} else if(towerBeingPlacedType == 5){type = towerLists.fire.image;}
             drawImg(type, placementX * 62.5+31.25, placementY * 62.5+31.25, 62.5, 62.5, 0);
             ctx.globalAlpha = 1.0;
         }
@@ -470,16 +502,29 @@ document.addEventListener("keydown", function(event) {
     else if(event.key === "ArrowRight"){
         if(placementX<15){placementX++;}
     }
-    else if(event.key === "t"){
+    else if(event.key === "q"){
         isPlacingTower = true;
         towerBeingPlacedType = 0;
     }
-    else if(event.key === "s"){
+    else if(event.key === "w"){
         isPlacingTower = true;
         towerBeingPlacedType = 1;
     }
-    else if(event.key === "T"){
-        isPlacingTower = false;
+    else if(event.key === "e"){
+        isPlacingTower = true;
+        towerBeingPlacedType = 2;
+    }
+    else if(event.key === "r"){
+        isPlacingTower = true;
+        towerBeingPlacedType = 3;
+    }
+    else if(event.key === "t"){
+        isPlacingTower = true;
+        towerBeingPlacedType = 4;
+    }
+    else if(event.key === "y"){
+        isPlacingTower = true;
+        towerBeingPlacedType = 5;
     }
     else if(event.key === "Enter"){
         attemptPlaceTower();
