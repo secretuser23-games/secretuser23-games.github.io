@@ -29,11 +29,11 @@ var towerLists = {
         }, 
     super: {type: "super", 
         image: initImage("towers/super.png"), 
-        speed:15, 
+        speed:12, 
         damage: 1, 
         range: 300, 
-        baseCost: 500, 
-        specialCosts: [1500, 2000, 5000], 
+        baseCost: 1000, 
+        specialCosts: [3000, 4000, 10000], 
         specialUpgrades: [
             "Fires three claws at a time instead of one", 
             "Claws create a small explosion when they hit a target. Explosions deal 1 damage and can hit the original enemy too", 
@@ -45,7 +45,7 @@ var towerLists = {
         speed:60, 
         damage: 1, 
         range: 200, 
-        baseCost: 200, 
+        baseCost: 400, 
         specialCosts: [250, 500, 750], 
         specialUpgrades: [
             "Utilises the second cannon to fire a claw directly backwards from the target", 
@@ -322,7 +322,7 @@ function attemptPlaceTower(){
             alert("Not enough money to place down! Cost is 250 btw");
         }
         else if(towerBeingPlacedType == 3 && money < 500){
-            alert("Not enough money to place down! Cost is 500 btw");
+            alert("Not enough money to place down! Cost is 1000 btw");
         }
         else if(towerBeingPlacedType == 4 && money < 1000){
             alert("Not enough money to place down! Cost is 1000 btw");
@@ -375,7 +375,7 @@ function attemptPlaceTower(){
                 alert("This is a water tower, it cannot go on the land!");
             }
             else if(towerBeingPlacedType == 3){
-                money -= 500;
+                money -= 1000;
                 towerArray.push({
                 type: towerLists["super"], 
                 x:placementX, 
@@ -419,7 +419,7 @@ function attemptBuySpeedUpgrade(){
     if(towerArray[towerOpenedID].level[0] != 3 && money >= Math.floor(towerArray[towerOpenedID].type.baseCost* 1.5 ** (towerArray[towerOpenedID].level[0]+1))){
         money -= Math.floor(towerArray[towerOpenedID].type.baseCost* 1.5 ** towerArray[towerOpenedID].level[0]);
     towerArray[towerOpenedID].level[0]++;}
-    else if(money < Math.floor(towerArray[towerOpenedID].type.baseCost* 1.5 ** (towerArray[towerOpenedID].level[0]+1))){alert("Not enough money: Cost is " + Math.floor(towerArray[towerOpenedID].type.baseCost* 1.5 ** (towerArray[towerOpenedID].level[0]+1)));}
+    else if(money < Math.floor(towerArray[towerOpenedID].type.baseCost* 1.5 ** (towerArray[towerOpenedID].level[0]+1))){alert("Not enough money: Cost is " + Math.round(Math.floor(towerArray[towerOpenedID].type.baseCost* 1.5 ** (towerArray[towerOpenedID].level[0]+1))));}
     else{alert("Max level reached!");}
     updateSidebarUI(towerArray[towerOpenedID]);
 }
@@ -427,7 +427,7 @@ function attemptBuyRangeUpgrade(){
     if(towerArray[towerOpenedID].level[1] != 3 && money >= Math.floor(towerArray[towerOpenedID].type.baseCost* 1.1 ** (towerArray[towerOpenedID].level[1]+1))){
         money -= Math.floor(towerArray[towerOpenedID].type.baseCost* 1.1 ** towerArray[towerOpenedID].level[1]);
     towerArray[towerOpenedID].level[1]++;}
-    else if(money < Math.floor(towerArray[towerOpenedID].type.baseCost* 1.1 ** (towerArray[towerOpenedID].level[1]+1))){alert("Not enough money: Cost is " + Math.floor(towerArray[towerOpenedID].type.baseCost* 1.1 ** (towerArray[towerOpenedID].level[1]+1)));}
+    else if(money < Math.floor(towerArray[towerOpenedID].type.baseCost* 1.1 ** (towerArray[towerOpenedID].level[1]+1))){alert("Not enough money: Cost is " + Math.round(Math.floor(towerArray[towerOpenedID].type.baseCost* 1.1 ** (towerArray[towerOpenedID].level[1]+1))));}
     else{alert("Max level reached!");}
     updateSidebarUI(towerArray[towerOpenedID]);
 }
@@ -435,7 +435,7 @@ function attemptBuyDamageUpgrade(){
     if(towerArray[towerOpenedID].level[2] != 3 && money >= towerArray[towerOpenedID].type.baseCost* 2 ** (towerArray[towerOpenedID].level[2]+1)){
         money -= towerArray[towerOpenedID].type.baseCost* 2 ** towerArray[towerOpenedID].level[2];
     towerArray[towerOpenedID].level[2]++;}
-    else if(money < towerArray[towerOpenedID].type.baseCost* 2 ** (towerArray[towerOpenedID].level[2]+1)){alert("Not enough money: Cost is " + towerArray[towerOpenedID].type.baseCost* 2 ** (towerArray[towerOpenedID].level[2]+1));}
+    else if(money < towerArray[towerOpenedID].type.baseCost* 2 ** (towerArray[towerOpenedID].level[2]+1)){alert("Not enough money: Cost is " + Math.round(towerArray[towerOpenedID].type.baseCost* 2 ** (towerArray[towerOpenedID].level[2]+1)));}
     else{alert("Max level reached!");}
     updateSidebarUI(towerArray[towerOpenedID]);
 }
@@ -460,12 +460,11 @@ function updateSidebarUI(tower) {
     var damageVal = tower.type.damage + tower.level[2];
     gebid("upgradeType").innerHTML = "Tower ID: " + tower.ID;
     if (gebid("sidebarTowerName")) gebid("sidebarTowerName").textContent = "Tower Type: " + tower.type.type.toUpperCase();
-    if (gebid("sidebarSpeedStat")) gebid("sidebarSpeedStat").textContent = "Attack Delay: " + speedVal + "s (Lv. " + tower.level[0] + ") \n Cost is " + towerArray[towerOpenedID].type.baseCost* 1.5 ** (towerArray[towerOpenedID].level[0]+1);
-    if (gebid("sidebarRangeStat")) gebid("sidebarRangeStat").textContent = "Tile Range: " + rangeVal + " (Lv. " + tower.level[1] + ")\n Cost is " + towerArray[towerOpenedID].type.baseCost* 1.1 ** (towerArray[towerOpenedID].level[1]+1);
-    if (gebid("sidebarDamageStat")) gebid("sidebarDamageStat").textContent = "Max Damage: " + damageVal + " (Lv. " + tower.level[2] + ")\n Cost is " + towerArray[towerOpenedID].type.baseCost* 2 ** (towerArray[towerOpenedID].level[2]+1);
+    if (gebid("sidebarSpeedStat")) gebid("sidebarSpeedStat").textContent = "Attack Delay: " + speedVal + "s (Lv. " + tower.level[0] + ") \n Cost is " + Math.round(towerArray[towerOpenedID].type.baseCost* 1.5 ** (towerArray[towerOpenedID].level[0]+1));
+    if (gebid("sidebarRangeStat")) gebid("sidebarRangeStat").textContent = "Tile Range: " + rangeVal + " (Lv. " + tower.level[1] + ")\n Cost is " + Math.round(towerArray[towerOpenedID].type.baseCost* 1.1 ** (towerArray[towerOpenedID].level[1]+1));
+    if (gebid("sidebarDamageStat")) gebid("sidebarDamageStat").textContent = "Max Damage: " + damageVal + " (Lv. " + tower.level[2] + ")\n Cost is " + Math.round(towerArray[towerOpenedID].type.baseCost* 2 ** (towerArray[towerOpenedID].level[2]+1));
     if (gebid("sidebarSpecialStat")) gebid("sidebarSpecialStat").textContent = "Special: (Lv. " + tower.level[3] + ")\n Cost is " + towerArray[towerOpenedID].type.specialCosts[towerArray[towerOpenedID].level[3]];
 }
-
 //Hide upgrade menu
 function hideSidebarUI() {
     var sidebar = gebid("towerSidebar");

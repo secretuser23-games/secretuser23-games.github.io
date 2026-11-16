@@ -28,3 +28,4 @@ async function extractZip() {
 }
 
 extractZip();
+//call using node unzip.js

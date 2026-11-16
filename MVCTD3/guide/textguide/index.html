@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>MVC 3 Text Guide</title>
+        <style>
+            *{
+                background-color: black;
+                color: white;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+            }
+            .redA{
+                color: red;
+            }
+            .orgA{
+                color: orange;
+            }
+            .ylwA{
+                color: yellow;
+            }
+            .grnA{
+                color: green;
+            }
+            .lbluA{
+                color: skyblue;
+            }
+            .dbluA{
+                color: navy;
+                background-color: white;
+            }
+            .pplA{
+                color: purple;
+                background-color: white;
+            }
+            .pnkA{
+                color: #ff0088;
+            }
+            .whtA{
+                color: white;
+            }
+            .gryA{
+                color: #888888;
+            }
+            .blkA{
+                color: black;
+                background-color: white;
+            }
+            .brnA{
+                color: saddlebrown;
+            }
+            .blur{
+                filter: blur(1px)   
+            }
+            .rbwA{
+                background-image: linear-gradient(
+                    to right,
+                    #ff0000,
+                    #ff7f00,
+                    #ffff00,
+                    #00ff00,
+                    #0000ff,
+                    #4b0082,
+                    #9400d3,
+                    #ff0000
+                );
+                background-size: 200% auto;
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+                display: inline-block;
+                animation: rainbow-shift 1s linear infinite;
+            }
+
+            @keyframes rainbow-shift {
+                0% {
+                    background-position: 0% center;
+                }
+                100% {
+                    background-position: 200% center;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Enemies:</h1>
+        <h2>Basic Enemies: </h2>
+        <button onclick="openPage('redenemy.html')" class="redA">Red Enemy</button>
+        <button onclick="openPage('orangeenemy.html')" class="orgA">Orange Enemy</button>
+        <button onclick="openPage('yellowenemy.html')" class="ylwA">Yellow Enemy</button>
+        <button onclick="openPage('greenenemy.html')" class="grnA">Green Enemy</button>
+        <button onclick="openPage('lblueenemy.html')" class="lbluA">Light Blue Enemy</button>
+        <br>
+        <br>
+        <h2>Advanced Enemies:</h2>
+        <button onclick="openPage('dblueenemy.html')" class="dbluA">Dark Blue Enemy</button>
+        <button onclick="openPage('purpleenemy.html')" class="pplA">Purple Enemy</button>
+        <button onclick="openPage('pinkenemy.html')" class="pnkA">Pink Enemy</button>
+        <button onclick="openPage('blurenemy.html')" class="pnkA blur">Blur Enemy</button>
+        <button onclick="openPage('whiteenemy.html')" class="whtA">White Enemy</button>
+        <button onclick="openPage('greyenemy.html')" class="gryA">Grey Enemy</button>
+        <button onclick="openPage('rainbowenemy.html')" class="rbwA">Rainbow Enemy</button>
+        <button onclick="openPage('brownenemy.html')" class="brnA">Brown Enemy</button>
+        <br>
+        <br>
+        <h2>Bosses and Special Variants:</h2>
+        <button onclick="openPage('boss1.html')" class="gryA">Boss One: Vacuum Cleaner</button>
+        <button onclick="openPage('waterenemy.html')" class="dbluA">Fish Enemy</button>
+        <button onclick="openPage('boss2.html')" class="dbluA">Boss Two: Shark</button>
+        <br>
+        <br>
+        <h2>Towers:</h2>
+        <button onclick="openPage('basic.html')" class="brnA">Basic Tower</button>
+        <button onclick="openPage('music.html')" class="lbluA">Music Tower</button>
+        <button onclick="openPage('boat.html')" class="brnA">Boat Tower</button>
+        <button onclick="openPage('souper.html')" class="brnA">Super Tower</button>
+        <button onclick="openPage('farm.html')" class="brnA">Farm Tower</button>
+        <button onclick="openPage('bigbomb.html')" class="blkA">Nuke (bomb ability)</button>
+        <button onclick="openPage('catnip.html')" class="grnA">Catnip (boost ability)</button>
+        <button onclick="openPage('flaming.html')" class="redA">Fire Tower</button>
+        <br>
+        <br>
+        <h2>Game Mechanics:</h2>
+        <button onclick="openPage('rounds.html')" class="brnA">Basic Rounds and ENDLESS mode</button>
+        <button onclick="openPage('upgrades.html')" class="grnA">Upgrades</button>
+        <button onclick="openPage('controls.html')" class="whtA">Controls (keyboard, mouse, and touchscreen)</button>
+        <button onclick="openPage('settings.html')" class="gryA">Settings:</button>
+        <button onclick="openPage('tokenscoins.html')" class="ylwA">Retry Tokens and Cat Coins</button>
+        <button onclick="openPage('maps.html')" class="grnA">Maps</button>
+        <br>
+        <br>
+        <button onclick="openPage('../../index.html')">Back Home</button>
+        
+        <script>
+  function openPage(pageID) {
+    // 1. If we are inside an iframe, tell the parent page to navigate
+    if (window.parent !== window) {
+      window.parent.postMessage({ action: 'navigate', url: pageID }, '*');
+      
+      // Safety fallback: If the parent is Phoenix Code (not an enemy page), 
+      // it won't respond to the message, so navigate inside the current frame after 50ms.
+      setTimeout(() => {
+        window.location.href = pageID;
+      }, 50);
+    } else {
+      // 2. If opened directly as the standalone Home Page, navigate normally
+      window.location.href = pageID;
+    }
+  }
+</script>
+    </body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>MVC 3 Text Guide: Red Enemy</title>
+        <link rel="stylesheet" href="main.css">
+        <link rel="icon" type="image/png" href="../../images/enemies/redMouse.png">
+    </head>
+    <body>
+        <iframe src="index.html?sidebar=1" title="MVC 3 Text Guide Iframe"></iframe>
+        <main>
+            <h1>Red Enemy:</h1>
+            <p>The Red Enemy is the basic enemy in this game. It has one health and when it is destroyed just removes the enemy from the game. More details are listed below.</p>
+            <br>
+            <table style="width:100%; border: 2px solid white;">
+                <tbody>
+                    <tr class="topRow">
+                        <th style="width:20vh;">Description:</th>
+                        <th style="width:50vh;">Value:</th>
+                    </tr>
+                    <tr>
+                        <td>Damage needed to fully destroy enemy:</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>Resistances (if any):</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td>Total money made by fully destroying enemy:</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>Source image:</td>
+                        <td><img src="../../images/enemies/redMouse.png"></td>
+                    </tr>
+                    <tr>
+                        <td>Base Speed:</td>
+                        <td>1UPF (around 1 square per second)</td>
+                    </tr>
+                    <tr>
+                        <td>Official alert text in the game:</td>
+                        <td>Red Enemy: <br> This is the basic enemy you will see throught the game. Place a tower down to defend off the enemies. <br> You can do this by pressing lowercase t on your keyboard or clicking the cat image in the right menu. Happy playing! <br> -The MVCTD3 Dev Team</td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+        <script>
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.action === 'navigate') {
+      window.location.href = event.data.url;
+    }
+  });
+</script>
+    </body>
+</html>

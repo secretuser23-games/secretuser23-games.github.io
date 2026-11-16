@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>MVC 3 Text Guide: Dark Blue Enemy</title>
+        <link rel="stylesheet" href="main.css">
+        <link rel="icon" type="image/png" href="../../images/enemies/dBlueMouse.png">
+    </head>
+    <body>
+        <iframe src="index.html?sidebar=1" title="MVC 3 Text Guide Iframe"></iframe>
+        <main>
+            <h1>Dark Blue Enemy:</h1>
+            <p>Time to spice things up! There are 2 light blue enemies inside a dark blue enemy. More details are listed below</p>
+            <br>
+            <table style="width:100%; border: 2px solid white;">
+                <tbody>
+                    <tr class="topRow">
+                        <th style="width:20vh;">Description:</th>
+                        <th style="width:50vh;">Value:</th>
+                    </tr>
+                    <tr>
+                        <td>Damage needed to fully destroy enemy:</td>
+                        <td>11 (has 2 light blue enemies inside)</td>
+                    </tr>
+                    <tr>
+                        <td>Resistances (if any):</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td>Total money made by fully destroying enemy:</td>
+                        <td>11</td>
+                    </tr>
+                    <tr>
+                        <td>Source image:</td>
+                        <td><img src="../../images/enemies/dBlueMouse.png"></td>
+                    </tr>
+                    <tr>
+                        <td>Base Speed:</td>
+                        <td>2.5UPF (around 2.65 squares per second)</td>
+                    </tr>
+                    <tr>
+                        <td>Official alert text in the game:</td>
+                        <td>Dark Blue Enemy: <br> Yay! Something different! <br> In this case, this Dark Blue enemy has not one, but two light blue enemies inside it! <br> This makes it way more damgerous than anything else you've seen yet!<br> Get ready!</td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+        <script>
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.action === 'navigate') {
+      window.location.href = event.data.url;
+    }
+  });
+</script>
+    </body>
+</html>

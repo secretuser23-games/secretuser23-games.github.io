@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>MVC 3 Text Guide: Orange Enemy</title>
+        <link rel="stylesheet" href="main.css">
+        <link rel="icon" type="image/png" href="../../images/enemies/orangeMouse.png">
+    </head>
+    <body>
+        <iframe src="index.html?sidebar=1" title="MVC 3 Text Guide Iframe"></iframe>
+        <main>
+            <h1>Orange Enemy:</h1>
+            <p>The Orange Enemy is a step up from the Red Enemy. It teaches the player about Nesting, where enemies have lower tiered ones inside them. More details are listed below.</p>
+            <br>
+            <table style="width:100%; border: 2px solid white;">
+                <tbody>
+                    <tr class="topRow">
+                        <th style="width:20vh;">Description:</th>
+                        <th style="width:50vh;">Value:</th>
+                    </tr>
+                    <tr>
+                        <td>Damage needed to fully destroy enemy:</td>
+                        <td>2 (has 1 red enemy inside)</td>
+                    </tr>
+                    <tr>
+                        <td>Resistances (if any):</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td>Total money made by fully destroying enemy:</td>
+                        <td>2</td>
+                    </tr>
+                    <tr>
+                        <td>Source image:</td>
+                        <td><img src="../../images/enemies/orangeMouse.png"></td>
+                    </tr>
+                    <tr>
+                        <td>Base Speed:</td>
+                        <td>1.25UPF (around 1.3 squares per second)</td>
+                    </tr>
+                    <tr>
+                        <td>Official alert text in the game:</td>
+                        <td>Orange Enemy: <br> This is the best time to tell you about an important topic: <br> NESTING. <br> In this case, dealing damage to an orange enemy does not kill it, but instead spawns a red enemy in its place.<br> This will become more prominent during the later rounds, as some enemies may have more than one enemy inside them (hint hint).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+        <script>
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.action === 'navigate') {
+      window.location.href = event.data.url;
+    }
+  });
+</script>
+    </body>
+</html>

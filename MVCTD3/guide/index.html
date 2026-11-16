@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>MVC TD 3 Guide</title>
+        <link rel="stylesheet" type="text/css" href="../index.css" />
+        <link rel="icon" type="image/png" href="../images/logo.png" />
+    </head>
+    <body>
+        <table id="mainMenuTable">
+            <thead>
+                <tr>
+                    <td><button class="optionButton">Options:</button></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><button class="optionButton fullButton" onclick="document.getElementById('playGame').classList = 'fscMenu'" title="Selects a map to play.">Play Game</button></td>
+                </tr>
+                <tr>
+                    <td><button class="optionButton fullButton"  title="Opens the settings menu. Disabled in the guide because the settings menu is already descriptive enough.">Settings</button></td>
+                </tr>
+                <tr>
+                    <td><button class="optionButton fullButton" onclick="document.location.href='textguide/index.html'" title="Opens the more detailed guide, that works like most other guides.">Check out the Text Guide instead</button></td>
+                </tr>
+                <tr>
+                    <td><button class="optionButton fullButton" onclick="alert('I already said that this doesn\'t work. Just stop already!')" title="Exits the game and directs you to google.com. Doesn't work on this.">Exit Game (closes tab)</button></td>
+                </tr>
+            </tbody>
+        </table>
+        <div id="playGame" class="closedMenu">
+            <table id="mapChoiceMenu">
+                <thead>
+                    <tr>
+                        <td class="sideBar">Map Choices:</td>
+                        <td class="fullBar">Column 1:</td>
+                        <td class="fullBar">Column 2:</td>
+                        <td class="fullBar">Column 3:</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="sideBar">Row 1:</td>
+                        <td class="fullBar">
+                            <button onclick="document.location.href='game.html'" class="optionButton" title="Opens the first map for you to play. In the guide's case, this opens up an interactive game that does not work, but allows you to see how things work.">Round and Round the Plains<br><img class="mapImages" src="../images/mapImages/map1.png"></button>
+                        </td>
+                        <td class="fullBar">
+                            <button onclick="document.location.href='game.html'" class="optionButton" title="Opens the second map for you to play. In the guide's case, this opens up an interactive game that does not work, but allows you to see how things work.">Crossroads<br><img class="mapImages" src="../images/mapImages/map2.png"></button>
+                        </td>
+                        <td class="fullBar">Coming soon!</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>

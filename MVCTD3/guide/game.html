@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MVCTD 3</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="icon" type="image/png" href="../images/logo.png">
+</head>
+<body>
+    <div id="background"></div>
+    <div id="leftPart" title="The upgrade sidebar. Select a tower to get its information here."><p class="top">Bought Towers/Upgrades:</p>
+    <table id="towerSidebar" style="border:2px solid black; width:30vh; height:100vh; min-width:30vh;">
+        <thead><tr><td>Upgrades:</td></tr></thead>
+        <tbody>
+            <tr><td><button clss="uiButton" onclick="alert('test stats')" class="uiButton" title="CHecks tower information such as current level, speed, damage, range, and other info in a little popup.">Check Tower Stats</button></td></tr>
+            <tr><td id="upgradeType">Tower ID: </td></tr>
+            <tr><td><button onclick="attemptBuySpeedUpgrade()" title="Max of 3 times. Each time, increases firing speed by 20 percent of the last value. At the third option, it is about half of the starting value." class="uiButton">Buy Speed Upgrade</button></td></tr>
+            <tr><td><p id="sidebarSpeedStat">Speed info</p></td></tr>
+            <tr><td><button onclick="attemptBuyRangeUpgrade()" title="Max of 3 times. Each time, increases range (how far away the tower can see the enemies) by 20 percent of the last value. At the third option, it is about double of the starting value." class="uiButton">Buy Range Upgrade</button></td></tr>
+            <tr><td><p id="sidebarRangeStat">Range info</p></td></tr>
+            <tr><td><button onclick="attemptBuyDamageUpgrade()" title="Max of 3 times. Each time, increases base damage done per projectile by 1. Does not apply to any explosions." class="uiButton">Buy Damage Upgrade</button></td></tr>
+            <tr><td><p id="sidebarDamageStat">Damage increase</p></td></tr>
+            <tr><td><button onclick="attemptBuySpecialUpgrade()" title="Max of 3 times. Each time, you can buy a special upgrade that shows the info here." class="uiButton" id="specialButton">Buy Special Upgrade</button></td></tr>
+            <tr><td><p id="sidebarSpecialStat">Special level</p></td></tr>
+        </tbody></table>
+    </div>
+    <canvas height="1000px" width="1000px" id="mainGameCanvas" title="The game shows up here. You can click on a tower to see it's information on the left sidebar."></canvas>
+    <div id="rightPart"><p id="moneyCounter" title="Shows you how much money you have to spend. Killing an enemy or downgrading it one level gives you one dollar.">Money: Null</p><p class="top">Towers: </p><button title="Clicking this swaps between double speed and normal speed. Right-clicking this sets a choice speed (integer from 1 to 20)." id="speedButton" class="uiButton">Toggle Double Speed</button><div id="roundControlPanel" style="margin: 10px 0; font-family: sans-serif;">
+        <button id="nextRoundButton" class="uiButton" title="Starts the next round. Right-clicking skips a certain amount of rounds.">Start Next Round</button>
+        <span id="roundDisplay" style="margin-left: 15px; font-size: 16px; font-weight: bold; color: #333;" title="What round it currently is.">
+            Round: 1
+        </span>
+        <div class="progress-container" title="How much HP you have left">
+            <div id="my-progress-bar" style="width: 0%;" title="How much HP you have left"></div>
+          </div>
+        <table style="width:100%;">
+            <thead><tr><td>Row 1</td><td>Row 2</td></tr></thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <img src="../images/towers/Normal.png" title="Base Speed: 1.0s. Base Range: 250 (4 squares). Base Cost: 150" style="height:10vh">
+                    </td>
+                    <td>
+                        <img src="../images/towers/music.png" title="Base Speed: 2s. Base Range: 125 (2 squares). Base Cost: 300" style="height:10vh">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="../images/towers/boat.png" title="Base Speed: 1.0s. Base Range: 500 (8 squares). Base Cost: 400" style="height:10vh">
+                    </td>
+                    <td>
+                        <img src="../images/towers/super.png" title="Base Speed: 0.2s. Base Range: 300 (4.8 squares). Base Cost: 1,000" style="height:10vh">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="../images/towers/farm.png" title="Farm: Creates cans of cat food (don't ask how) every second. Each one is worth 5 dollars. Cost 1000 respectively." style="height:10vh" onclick="isPlacingTower = !isPlacingTower; towerBeingPlacedType = 4;if (isPlacingTower) {placementX = 7;placementY = 7;}">
+                    </td>
+                    <td>
+                        <img src="../images/towers/nuke.png" title="Nuke: Deals 50 damage, one every frame, to every enemy on screen. Cost 1000 and activating more than 1 a second can crash the game." style="height:10vh" onclick="activateNuke()">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="../images/towers/catnip.png" title="Catnip: Increases attack speed of all currently placed towers by 50 percent. Can stack to create insane attack speed at like 5 of them. Lasts 20 seconds. Cost 1000." style="height:10vh" onclick="activateCatnip()">
+                    </td>
+                    <td>
+                        <img src="../images/towers/fire.png" title="Fire tower: Sets enemies alight for 3 seconds. Every second, the enemy takes the appropriate damage. Cost 600" style="height:10vh" onclick="isPlacingTower = !isPlacingTower; towerBeingPlacedType = 5;if (isPlacingTower) {placementX = 7;placementY = 7;}">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div></div>
+    </body>
+</html>

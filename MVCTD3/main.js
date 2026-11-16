@@ -1,7 +1,6 @@
 //NOTES:
 //GAME IDEAS:
 //Rounds to 100 with bosses every 10 rounds
-//Fire tower and debuffs for enemies
 //Multi-lane maps
 //Global Retry Tokens and Cash to spend for repeating permanent upgrades.
 //
@@ -23,10 +22,11 @@ if(settings.buttonHexTextColor != "#ffffff"){var elements = document.getElements
 if(settings.bodyBackgroundTextColor != "#888888"){gebid("background").style.backgroundColor = settings.bodyBackgroundTextColor;}
 //map choice prompt from main page
 var mapChoicePrompt = 1;
-if(getSaves("mvctd3-chosenMap") === null){alert("No map chosen!");}else{mapChoicePrompt = parseInt(getSaves("mvctd3-chosenMap"));}
+if(getSaves("mvctd3-chosenMap") === null){alert("No map chosen, auto-redirecting to home menu:"); window.location = "index.html";}else{mapChoicePrompt = parseInt(getSaves("mvctd3-chosenMap"));}
+localStorage.setItem("mvctd3-chosenMap", null);
 //Setup variables
 //qwertyuiopasdfghjklzxcvbnm
-var version = "X.7.0";
+var version = "X.8.0";
 var loading = 0;
 var loadingMax = 0;
 function gebid(id) {
@@ -322,6 +322,13 @@ function drawEffects(){
     }
 }
 
+//rounding funcrtion
+function roundToSize(numToRound, length){//length is how many numbers after the decimal you want
+    return numToRound.toFixed(length);
+}
+log(roundToSize(100.55, 1));
+
+
 //Main game loop
 function frame(){
     for(var l=0; l<currentSpeed; l++){
@@ -332,7 +339,7 @@ function frame(){
     
     try {
         framePart++;
-        gebid("moneyCounter").innerHTML = "Money: " + money;
+        gebid("moneyCounter").innerHTML = "Money: " + Math.round(money);
         framePart++;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         framePart++;

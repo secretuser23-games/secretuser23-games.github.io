@@ -37,11 +37,10 @@ body{
 tr{
     border:2px solid red;
     width:1%;
-    height:100%;
 }
 td{
     border:2px solid red;
-    width:100%;
+    width:16.6vh;
     height:1%;
 }
 .optionButton{

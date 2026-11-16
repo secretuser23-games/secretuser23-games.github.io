@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>MVC 3 Text Guide: Yellow Enemy</title>
+        <link rel="stylesheet" href="main.css">
+        <link rel="icon" type="image/png" href="../../images/enemies/yellowMouse.png">
+    </head>
+    <body>
+        <iframe src="index.html?sidebar=1" title="MVC 3 Text Guide Iframe"></iframe>
+        <main>
+            <h1>Yellow Enemy:</h1>
+            <p>The Yellow Enemy is another step up from the Orange enemy, with a higher top speed. More details are listed below.</p>
+            <br>
+            <table style="width:100%; border: 2px solid white;">
+                <tbody>
+                    <tr class="topRow">
+                        <th style="width:20vh;">Description:</th>
+                        <th style="width:50vh;">Value:</th>
+                    </tr>
+                    <tr>
+                        <td>Damage needed to fully destroy enemy:</td>
+                        <td>3 (has 1 orange enemy inside)</td>
+                    </tr>
+                    <tr>
+                        <td>Resistances (if any):</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td>Total money made by fully destroying enemy:</td>
+                        <td>3</td>
+                    </tr>
+                    <tr>
+                        <td>Source image:</td>
+                        <td><img src="../../images/enemies/yellowMouse.png"></td>
+                    </tr>
+                    <tr>
+                        <td>Base Speed:</td>
+                        <td>1.5UPF (around 1.55 squares per second)</td>
+                    </tr>
+                    <tr>
+                        <td>Official alert text in the game:</td>
+                        <td>Yellow Enemy: <br> This is just like the orange enemy in that it has the enemy below it (in this case an orange enemy). <br> Also, the enemies become a little faster the stronger they are (up to a point, where it becomes almost random).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+        <script>
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.action === 'navigate') {
+      window.location.href = event.data.url;
+    }
+  });
+</script>
+    </body>
+</html>

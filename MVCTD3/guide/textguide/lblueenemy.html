@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>MVC 3 Text Guide: Light Blue Enemy</title>
+        <link rel="stylesheet" href="main.css">
+        <link rel="icon" type="image/png" href="../../images/enemies/lBlueMouse.png">
+    </head>
+    <body>
+        <iframe src="index.html?sidebar=1" title="MVC 3 Text Guide Iframe"></iframe>
+        <main>
+            <h1>Light Blue Enemy:</h1>
+            <p>If you're reading all of these top to bottom, you must be very tired. Anyways, More details are listed below</p>
+            <br>
+            <table style="width:100%; border: 2px solid white;">
+                <tbody>
+                    <tr class="topRow">
+                        <th style="width:20vh;">Description:</th>
+                        <th style="width:50vh;">Value:</th>
+                    </tr>
+                    <tr>
+                        <td>Damage needed to fully destroy enemy:</td>
+                        <td>5 (has 1 green enemy inside)</td>
+                    </tr>
+                    <tr>
+                        <td>Resistances (if any):</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td>Total money made by fully destroying enemy:</td>
+                        <td>5</td>
+                    </tr>
+                    <tr>
+                        <td>Source image:</td>
+                        <td><img src="../../images/enemies/lBlueMouse.png"></td>
+                    </tr>
+                    <tr>
+                        <td>Base Speed:</td>
+                        <td>2UPF (around 2.09 squares per second)</td>
+                    </tr>
+                    <tr>
+                        <td>Official alert text in the game:</td>
+                        <td>Light Blue enemy: <br> Yeah, what did you think was gonna happen? <br> At least the next one is somewhat different... <br> Also, this implies there is a dark blue enemy, so stay tuned!</td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+        <script>
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.action === 'navigate') {
+      window.location.href = event.data.url;
+    }
+  });
+</script>
+    </body>
+</html>

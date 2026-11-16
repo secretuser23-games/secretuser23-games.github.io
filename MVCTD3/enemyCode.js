@@ -13,7 +13,11 @@ var enemyArray = {
     rainbow: {src: initImage("enemies/rainbowMouse.png"), spawn: [], speed: 1.75,  hpToDrain: 239, type: "rainbow"},
     brown: {src: initImage("enemies/brownMouse.png"), spawn: [], speed: 0.8, hpToDrain: 718, type: "brown"},
     boss1: {src: initImage("enemies/normalBoss.png"), spawn: [], speed: 0.25, hpToDrain: 3946, type: "boss1"},
-    blur: {src: initImage("enemies/blur.png"), spawn: [], speed: 9, hpToDrain: 51, type: "blur"}
+    blur: {src: initImage("enemies/blur.png"), spawn: [], speed: 9, hpToDrain: 51, type: "blur"},
+    fishbowl: {src: initImage("enemies/fishbowl.png"), spawn: [], speed: 1, hpToDrain: 40, type: "fishbowl"},
+    fish: {src: initImage("enemies/fish.png"), spawn: [], speed: 0.5, hpToDrain: 35, type: "fish"},
+    sharkbowl: {src: initImage("enemies/sharkbowl.png"), spawn: [], speed: 0.25, hpToDrain: 1312, type: "sharkbowl"},
+    shark: {src: initImage("enemies/shark.png"), spawn: [], speed: 0.125, hpToDrain: 812, type: "shark"}
 };
 
 //Setup nesting info
@@ -30,6 +34,10 @@ enemyArray.rainbow.spawn = [enemyArray.grey, enemyArray.white, enemyArray.pink, 
 enemyArray.brown.spawn = [enemyArray.rainbow, enemyArray.rainbow, enemyArray.rainbow];
 enemyArray.boss1.spawn = [enemyArray.brown, enemyArray.brown, enemyArray.brown, enemyArray.brown, enemyArray.brown];
 enemyArray.blur.spawn = [enemyArray.pink, enemyArray.pink];
+enemyArray.fishbowl.spawn = [enemyArray.fish];
+enemyArray.fish.spawn = [enemyArray.dBlue, enemyArray.dBlue, enemyArray.dBlue];
+enemyArray.sharkbowl.spawn = [enemyArray.shark];
+enemyArray.shark.spawn = [enemyArray.fishbowl, enemyArray.fishbowl, enemyArray.fishbowl, enemyArray.fishbowl, enemyArray.fishbowl, enemyArray.fishbowl, enemyArray.fishbowl, enemyArray.fishbowl, enemyArray.fishbowl, enemyArray.fishbowl, enemyArray.fishbowl, enemyArray.fishbowl, enemyArray.fishbowl, enemyArray.fishbowl, enemyArray.fishbowl, enemyArray.fishbowl, enemyArray.fishbowl, enemyArray.fishbowl, enemyArray.fishbowl, enemyArray.fishbowl];
 var rmeSpawn = [enemyArray.red, enemyArray.orange, enemyArray.yellow, enemyArray.green, enemyArray.lBlue, enemyArray.dBlue, enemyArray.purple, enemyArray.pink, enemyArray.white, enemyArray.grey, enemyArray.rainbow, enemyArray.brown, enemyArray.boss1, enemyArray.blur];
 //Enemy array for each
 var enemyStats = [];
@@ -198,8 +206,8 @@ var enemySpawnArray = [
     [//45, rme 7180
         {type: enemyArray.brown, inBetweenTime: 100, amount: 10}
     ],
-    [//46, rme 23000
-        {type: enemyArray.purple, inBetweenTime: 1, amount: 1000}
+    [//46, rme 5100
+        {type: enemyArray.blur, inBetweenTime: 100, amount: 100}
     ],
     [//47, rme 10000
         {type: enemyArray.red, inBetweenTime: 0, amount: 10000}
@@ -207,16 +215,63 @@ var enemySpawnArray = [
     [//48, rme 14360
         {type: enemyArray.brown, inBetweenTime: 75, amount: 20}
     ],
-    [//49, almost there!, rme 24000
+    [//49, almost there!, rme 24800
         {type: enemyArray.grey, inBetweenTime: 10, amount: 200}
-    ]
+    ],
     [//50!! rme is 19730!!!
-        {type: enemyArray.boss1, inBetweenTime: 1000, amount: 5}
+        {type: enemyArray.boss1, inBetweenTime: 100, amount: 5}
+    ],
+    [//51, after required win spot
+        {type: enemyArray.brown, inBetweenTime: 10, amount: 50}
+    ],
+    [//52
+        {type: enemyArray.blur, inBetweenTime: 5, amount: 50}
+    ],
+    [//53, [BW then FW RAMP]
+        {type: enemyArray.boss1, inBetweenTime: 100, amount: 2},
+        {type: enemyArray.brown, inBetweenTime: 90, amount: 10},
+        {type: enemyArray.rainbow, inBetweenTime: 80, amount: 10},
+        {type: enemyArray.grey, inBetweenTime: 70, amount: 10},
+        {type: enemyArray.white, inBetweenTime: 60, amount: 10},
+        {type: enemyArray.blur, inBetweenTime: 50, amount: 10},
+        {type: enemyArray.pink, inBetweenTime: 40, amount: 10},
+        {type: enemyArray.purple, inBetweenTime: 30, amount: 10},
+        {type: enemyArray.dBlue, inBetweenTime: 20, amount: 10},
+        {type: enemyArray.purple, inBetweenTime: 18, amount: 10},
+        {type: enemyArray.pink, inBetweenTime: 16, amount: 10},
+        {type: enemyArray.white, inBetweenTime: 14, amount: 10},
+        {type: enemyArray.blur, inBetweenTime: 12, amount: 10},
+        {type: enemyArray.grey, inBetweenTime: 10, amount: 10},
+        {type: enemyArray.rainbow, inBetweenTime: 8, amount: 10},
+        {type: enemyArray.brown, inBetweenTime: 6, amount: 10},
+        {type: enemyArray.boss1, inBetweenTime: 4, amount: 2} 
+    ],
+    [//54
+        {type: enemyArray.rainbow, inBetweenTime: 10, amount: 200}
+    ],
+    [//55
+        {type: enemyArray.fishbowl, inBetweenTime: 200, amount: 10}
+    ],
+    [//56
+        {type: enemyArray.fishbowl, inBetweenTime: 20, amount: 10},
+        {type: enemyArray.brown, inBetweenTime: 20, amount: 10}
+    ],
+    [//57
+        {type: enemyArray.blur, inBetweenTime: 10, amount: 1000}
+    ],
+    [//58
+        {type: enemyArray.fishbowl, inBetweenTime: 20, amount: 100}
+    ],
+    [//59
+        {type: enemyArray.dblue, inBetweenTime: 20, amount: 1000}
+    ],
+    [//60
+        {type: enemyArray.sharkbowl, inBetweenTime: 250, amount: 3}
     ]
 ];
 //Update enemy info
 var gameIsStillPlaying = true;
-var hasSeenEachEnemy = [false, false, false, false, false, false, false, false, false, false, false, false, false, false];
+var hasSeenEachEnemy = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
 function updateEnemyStats(){
     if(enemyStats){
         for(var i = enemyStats.length - 1; i >= 0; i--){
@@ -240,7 +295,7 @@ function updateEnemyStats(){
             if (!nextWaypoint) {
                 hp -= enemy.type.hpToDrain;
                 updateProgressBar(hp);
-                if(hp <= 0){alert("Out of lives! Please reload the game or click OK to automatically reload the page."); window.location.reload();}
+                if(hp <= 0){alert("Out of lives! Please reload the game or click OK to automatically reload the page."); hp = (10 ** 10);window.location.reload();}
                 enemyStats.splice(i, 1); 
                 continue;
             }
@@ -254,7 +309,7 @@ function updateEnemyStats(){
             else if(enemy.direction == Math.PI*0.5){ enemy.y -= enemy.type.speed*speedChange; }
             else if(enemy.direction == Math.PI*1.5){ enemy.y += enemy.type.speed*speedChange; }
             else if(enemy.direction == 0 || enemy.direction == Math.PI*2){ enemy.x -= enemy.type.speed*speedChange; }
-            enemy.distanceTraveled++;
+            enemy.distanceTraveled+= enemy.type.speed*speedChange;
             if(enemy.damageTaken >= 1){
                 for(var j=0; j< Math.floor(enemy.damageTaken); j++){
                 enemy.currentHP --;
@@ -337,9 +392,46 @@ function updateEnemyStats(){
                         enemy.type = enemyArray.pink;
                         spawnEnemy(enemy.x, enemy.y, enemy.direction,"pink", 1, enemy.pathAmount, enemy.distanceTraveled);
                     }
+                    else if(enemy.type == enemyArray.fishbowl){//outside layer of fish
+                        enemy.currentHP = 2;
+                        enemy.type = enemyArray.fish;
+                    }
+                    else if(enemy.type == enemyArray.fish){//inside layer of fish
+                        enemy.type = enemyArray.dBlue;
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "dBlue", 1, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "dBlue", 1, enemy.pathAmount, enemy.distanceTraveled);
+                        enemy.currentHP = 1;
+                    }
+                    else if(enemy.type == enemyArray.sharkbowl){//outside layer of boss 2
+                        enemy.currentHP = 12;
+                        enemy.type = enemyArray.shark;
+                    }
+                    else if(enemy.type == enemyArray.shark){//inside layer of boss 2
+                        enemy.currentHP = 5;
+                        enemy.type = enemyArray.fishbowl;
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                        spawnEnemy(enemy.x, enemy.y, enemy.direction, "fishbowl", 5, enemy.pathAmount, enemy.distanceTraveled);
+                    }
                     else{
                     enemyStats.splice(i, 1);}
-                    money++;
+                    money += (1 / (1+(currentRound*0.025)));
                     break;
                 }}
             }
@@ -363,7 +455,6 @@ function startNextRound() {
             var nextRoundIndex = currentRound + 1;
             if (nextRoundIndex >= enemySpawnArray.length) {
                 if(hasSeenEndlessModeAlert != true){
-                warn("Game completed! No further rounds are defined inside the spawn tracking index.");
                 alert("You won! Reload the page to retry the demo again. OR keep playing to unlock ENDLESS MODE, where the enemies get randomized each round and become more and more later on! That's fun!");hasSeenEndlessModeAlert = true;}
                 var rme = 25*1.15 ** currentRound;
                 enemySpawnArray.push([]);
@@ -402,10 +493,7 @@ function startNextRound() {
             if (roundLabel) {
                 roundLabel.textContent = "Round: " + (currentRound + 1);
             }
-    } else {
-        warn("Action Prevented: You must clear remaining field elements before initiating standard loop sequence transitions!");
-        log(enemyStats[enemyStats.length-1]);
-    }
+        }
     }
     catch(error){
         error("Error in spawning enemies: " + error);
@@ -435,21 +523,25 @@ function updateEnemySpawning() {
         if(activeWaves[0].type == enemyArray.orange && hasSeenEachEnemy[1] == false){hasSeenEachEnemy[1] = true; alert("Orange Enemy: \n This is the best time to tell you about an important topic: \n NESTING. \n In this case, dealing damage to an orange enemy does not kill it, but instead spawns a red enemy in its place.\n This will become more prominent during the later rounds, as some enemies may have more than one enemy inside them (hint hint).");}
         if(activeWaves[0].type == enemyArray.yellow && hasSeenEachEnemy[2] == false){hasSeenEachEnemy[2] = true; alert("Yellow Enemy: \n This is just like the orange enemy in that it has the enemy below it (in this case an orange enemy). \n Also, the enemies become a little faster the stronger they are (up to a point, where it becomes almost random).");}
         if(activeWaves[0].type == enemyArray.green && hasSeenEachEnemy[3] == false){hasSeenEachEnemy[3] = true; alert("Green Enemy: \n Yep, it's this again. This guy is even faster and has a yellow enemy inside. \n Yes, there is some differences later on, so be quiet.");}
-        if(activeWaves[0].type == enemyArray.lBlue && hasSeenEachEnemy[4] == false){hasSeenEachEnemy[4] = true; alert("Light Blue enemy: \n Yeah, what did you thing was gonna happen? \n At least the next one is somewhat different... \n Also, this implies there is a dark blue enemy, so stay tuned!");}
+        if(activeWaves[0].type == enemyArray.lBlue && hasSeenEachEnemy[4] == false){hasSeenEachEnemy[4] = true; alert("Light Blue enemy: \n Yeah, what did you think was gonna happen? \n At least the next one is somewhat different... \n Also, this implies there is a dark blue enemy, so stay tuned!");}
         if(activeWaves[0].type == enemyArray.dBlue && hasSeenEachEnemy[5] == false){hasSeenEachEnemy[5] = true; alert("Dark Blue Enemy: \n Yay! Something different! \n In this case, this Dark Blue enemy has not one, but two light blue enemies inside it! \n This makes it way more damgerous than anything else you've seen yet!\n Get ready!");}
-        if(activeWaves[0].type == enemyArray.purple && hasSeenEachEnemy[6] == false){ hasSeenEachEnemy[6] = true; alert("Purple Enemy: \n Yes, this has two dark bluies inside, but it is slower than the dark blue enemy for some reason.");}
+        if(activeWaves[0].type == enemyArray.purple && hasSeenEachEnemy[6] == false){ hasSeenEachEnemy[6] = true; alert("Purple Enemy: \n Yes, this has two dark blues inside, but it is slower than the dark blue enemy for some reason.");}
         if(activeWaves[0].type == enemyArray.pink && hasSeenEachEnemy[7] == false){hasSeenEachEnemy[7] = true; alert("Pink Enemy: \n Also something different. It is way too fast for this game (I had to edit the code because it kept flying off the track),\n and this has a purple and a ... red enemy inside?\nYeah, I wanted to be different.");}
         if(activeWaves[0].type == enemyArray.white && hasSeenEachEnemy[8] == false){hasSeenEachEnemy[8] = true; alert("White Enemy: \n This has a pink, a green, and a dark blue inside for some random fun. Also this enemy cannot be stunned by light becaus eit is so bright itself. \n This currently does nothing, but evantually it will do something.");}
         if(activeWaves[0].type == enemyArray.grey && hasSeenEachEnemy[9] == false){hasSeenEachEnemy[9] = true; alert("After White comes...: \n Grey? Yeah, I don't know what I was thinking with this one. It has THREE whites inside it for some reason. \n Ramping in this game is insane fr fr.");}
         if(activeWaves[0].type == enemyArray.rainbow && hasSeenEachEnemy[10] == false){hasSeenEachEnemy[10] = true; alert("Rainbow Enemy: \n Yeah, this STILL is not the black one. \n But it has literally one of eveny enemy below it. Why? I don't know either! \n :)");}
         if(activeWaves[0].type == enemyArray.brown && hasSeenEachEnemy[11] == false){hasSeenEachEnemy[11] = true; alert("Brown Enemy: \n No, it is not made of what you think it is, it's just dirt and rocks. But this gives it a 5 hp shield. This is nowhere from the hardest, so keep watching...");}
         if(activeWaves[0].type == enemyArray.boss1 && hasSeenEachEnemy[12] == false){hasSeenEachEnemy[12] = true; alert("Boss One: \n A HUGE spike in difficulty. \n It has 256 hp and spawns 5 browns when defeated. You'd better have your defenses ready...");}
-        if(activeWaves[0].type == enemyArray.blur && hasSeenEachEnemy[13] == false){hasSeenEachEnemy[13] = true; alert("Blur Enemy: \n Better be ready, this thing moves at TEN TIMES the speed of the base red enemy. \n It also takes about half of your health when it escapes, so this is tough, but possible.");}
+        if(activeWaves[0].type == enemyArray.blur && hasSeenEachEnemy[13] == false){hasSeenEachEnemy[13] = true; alert("Blur Enemy: \n Better be ready, this thing moves at NINE TIMES the speed of the base red enemy. \n It also takes about half of your health when it escapes, so this is tough, but possible.");}
+        if(activeWaves[0].type == enemyArray.fishbowl && hasSeenEachEnemy[14] == false){hasSeenEachEnemy[14] = true; alert("Fish Enemy: \n This fish lives in a bowl, and upon cracking it, the fish zooms out to annoy you. \n Inside that are a few dark blues, but who cares? \n Honestly, making these cool enemies was fun, but I'm not done yet, so stay prepared! (next new boss on round 60)");}
+        if(activeWaves[0].type == enemyArray.sharkbowl && hasSeenEachEnemy[15] == false){hasSeenEachEnemy[15] = true; alert("Shark Enemy: \n This guy works like the fish enemy but it has way more health and spawns TWENTY little fishies when it dies. \n Yes, I did say 20 fishies.");}
         }
         //Set up natural HP
         var currentHP = 1;
         if(activeWaves[0].type == enemyArray.brown){currentHP = 5;}
         else if(activeWaves[0].type == enemyArray.boss1){currentHP = 256;}
+        else if(activeWaves[0].type == enemyArray.fishbowl){currentHP = 5;}
+        else if(activeWaves[0].type == enemyArray.sharkbowl){currentHP = 500;}
         spawnEnemy(entrance.x, entrance.y, path[0].direction, activeWaves[0].type.type, currentHP, 0,0);
         framesToSpawn = 0;
         activeWaves[0].amount -= 1;
